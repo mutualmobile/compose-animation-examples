@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.R
+import dev.baseio.composeplayground.contributors.AnmolVerma
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -249,6 +251,14 @@ private fun CloudList(
       centerCloudScale.value,
       dividerHeight = dividerHeight.value
     )
+
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(200.dp).background(MaterialTheme.colors.background)
+    ) {
+      AnmolVerma(Modifier.align(Alignment.Center))
+    }
 
     RandomCard(yellow)
 
