@@ -11,7 +11,6 @@ class StarParticleSystem(
   ParticleSystem() {
 
   private val random = Random(particleCount)
-  private val randomAlpha = Random
 
   val particles by lazy {
     prepare()
@@ -19,9 +18,9 @@ class StarParticleSystem(
 
   override suspend fun update() {
     particles.forEach {
-      delay(800)
-      it.scale = randomAlpha.nextDouble(1.0, 5.0).toFloat()
-      it.alpha = randomAlpha.nextDouble(0.0, 1.0).toFloat()
+      delay(500)
+      it.scale = Random.nextDouble(1.0, 5.0).toFloat()
+      it.alpha = Random.nextDouble(0.0, 1.0).toFloat()
     }
   }
 
