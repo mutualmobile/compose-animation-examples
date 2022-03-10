@@ -114,7 +114,7 @@ private fun Clapper(
 ) {
   Column(
     horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.graphicsLayer(
-      rotationZ = swayAnim
+      rotationZ = swayAnimReverse
     )
   ) {
     Box(
@@ -125,9 +125,9 @@ private fun Clapper(
     )
     Box(
       Modifier
-        .width(16.dp)
+        .width(24.dp)
         .height(bellHeight)
-        .graphicsLayer(rotationZ = swayAnimReverse)
+        .graphicsLayer(rotationZ = swayAnim)
         .background(
           Color.Red, RoundedCornerShape(
             topStart = 0.dp,
