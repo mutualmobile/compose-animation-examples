@@ -1,5 +1,6 @@
 package dev.baseio.composeplayground.ui.animations.planetarysystem
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,16 +16,21 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.contributors.AnmolVerma
+import dev.baseio.composeplayground.ui.animations.NotificationBellDefinition
+import dev.baseio.composeplayground.ui.animations.isBellMoveMode
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.NightSky
-import kotlin.math.min
-import kotlin.random.Random
-
 
 /**
+ * Inspiration
  * https://codepen.io/leimapapa/pen/wvPLbBd
  */
 @Composable
-fun PlanetarySystem(modifier: Modifier, numOfPlanets: Int = 9) {
+fun PlanetarySystem(modifier: Modifier) {
+
+  var needsAnimate by remember {
+    mutableStateOf(false)
+  }
+
   val height = with(LocalDensity.current) {
     LocalConfiguration.current.screenHeightDp.dp.toPx()
   }
@@ -37,6 +43,44 @@ fun PlanetarySystem(modifier: Modifier, numOfPlanets: Int = 9) {
     LocalConfiguration.current.screenWidthDp.div(10).dp.toPx()
   }
 
+  val centerOffset = with(LocalDensity.current) {
+    Offset(
+      LocalConfiguration.current.screenWidthDp.div(2).dp.toPx(),
+      LocalConfiguration.current.screenHeightDp.div(2).dp.toPx()
+    )
+  }
+
+
+  val planetX by animateFloatAsState(
+    targetValue = if (needsAnimate) 1f else 0f,
+    animationSpec = infiniteRepeatable(keyframes {
+      durationMillis = 1000
+      centerOffset.x at 0 with FastOutLinearInEasing
+      centerOffset.x.plus(10f) at 250 with FastOutLinearInEasing
+      centerOffset.x.plus(20f) at 500 with FastOutLinearInEasing
+      centerOffset.x.plus(30f) at 750 with FastOutLinearInEasing
+      centerOffset.x.plus(40f) at 1000 with FastOutLinearInEasing
+    })
+  )
+
+  val planetY by animateFloatAsState(
+    targetValue = if (needsAnimate) 1f else 0f,
+    animationSpec = infiniteRepeatable(keyframes {
+      durationMillis = 1000
+      centerOffset.y at 0 with FastOutLinearInEasing
+      centerOffset.y.plus(10f) at 250 with FastOutLinearInEasing
+      centerOffset.y.plus(20f) at 500 with FastOutLinearInEasing
+      centerOffset.y.plus(30f) at 750 with FastOutLinearInEasing
+      centerOffset.y.plus(40f) at 1000 with FastOutLinearInEasing
+    })
+  )
+
+
+  LaunchedEffect(true) {
+    needsAnimate = !needsAnimate
+  }
+
+
   Surface(
     modifier
       .background(Color.Black)
@@ -48,9 +92,7 @@ fun PlanetarySystem(modifier: Modifier, numOfPlanets: Int = 9) {
 
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
           universalSun(universalSunRadius)
-          repeat(numOfPlanets) {
-            planet(it+1, planetRadius)
-          }
+          planet(planetRadius, Offset(planetX, planetY))
         })
 
         CreatorBlock()
@@ -78,22 +120,10 @@ private fun DrawScope.universalSun(universalSunRadius: Float) {
   drawCircle(Color.Yellow, radius = universalSunRadius)
 }
 
-private fun DrawScope.planet(index: Int, planetRadius: Float) {
-  val color = (Math.random() * 16777215).toInt() or (0xFF shl 24)
-
-  val posX =
-    min(random.nextDouble((center.x / 1.5), center.x / 1.2).toFloat(), center.x)
-  val posY =
-    min(random.nextDouble((center.y / 1.8), center.y / 1.6).toFloat(), center.y)
-
-  val x = index.times(posX)
-  val y = index.times(posY)
-
+private fun DrawScope.planet(planetRadius: Float, offset: Offset) {
   drawCircle(
-    color = Color(color),
+    color = Color.Green,
     radius = planetRadius,
-    center = Offset(x, y)
+    center = offset
   )
 }
-
-val random = Random

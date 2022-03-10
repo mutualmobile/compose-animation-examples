@@ -29,7 +29,7 @@ class StarParticleSystem(
     repeat(particleCount) {
       val position = getRandomVect(0f, 0f, viewPortWidth, viewPortHeight, random)
       val particle =
-        Particle(alpha = 1f, pos = PointF(position[0], position[1]), scale = 1f)
+        Particle(alpha = 1f, pos = PointF(position[0], position[1]), scale = Random.nextDouble(1.0, 3.0).toFloat())
       particles.add(particle)
     }
     return particles
