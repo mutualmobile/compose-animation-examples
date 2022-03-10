@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AnmolVerma
@@ -45,6 +46,12 @@ fun BellAnimation(modifier: Modifier) {
         if (isBellMoveMode(needsAnimate)) NotificationBellDefinition.NotificationBellState.BellIdle else NotificationBellDefinition.NotificationBellState.BellMove
     }
 
+    val containerHeight = 120.dp
+    val height = 100.dp
+
+    val clapperHeight = containerHeight.times(0.9f)
+    val bellHeight = containerHeight.times(0.1f)
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
       Button(onClick = {
         needsAnimate =
@@ -52,10 +59,11 @@ fun BellAnimation(modifier: Modifier) {
       }) {
         Text(text = "Repeat Animation!")
       }
-      Column(
+
+      Box(
         Modifier
+          .size(containerHeight)
           .align(Alignment.CenterHorizontally)
-          .padding(32.dp)
           .clickable {
             needsAnimate =
               if (isBellMoveMode(needsAnimate)) NotificationBellDefinition.NotificationBellState.BellIdle else NotificationBellDefinition.NotificationBellState.BellMove
@@ -63,35 +71,9 @@ fun BellAnimation(modifier: Modifier) {
           }
       ) {
 
-        Icon(
-          painter = painterResource(R.drawable.ic_notification_bell),
-          contentDescription = null,
-          tint = if (isSystemInDarkTheme()) Color.White else Color(0xff0b0b31),
-          modifier = Modifier
-            .size(56.dp)
-            .graphicsLayer(
-              transformOrigin = TransformOrigin(0.5f, 0f),
-              rotationZ = swayAnim
-            )
-        )
+        Svg(swayAnim, height,Modifier.align(Alignment.Center))
 
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Box(
-          Modifier
-            .graphicsLayer(rotationZ = swayAnimReverse)
-            .background(
-              if (isSystemInDarkTheme()) Color.White else Color(0xff0b0b31), RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp,
-                bottomStart = 15.dp,
-                bottomEnd = 15.dp
-              )
-            )
-            .width(16.dp)
-            .height(8.dp)
-            .align(Alignment.CenterHorizontally)
-        )
+        Clapper(swayAnimReverse, clapperHeight, bellHeight, swayAnim,Modifier.align(Alignment.Center))
 
       }
 
@@ -104,6 +86,57 @@ fun BellAnimation(modifier: Modifier) {
         AnmolVerma(Modifier.align(Alignment.Center))
       }
     }
+  }
+}
+
+@Composable
+private fun Svg(swayAnim: Float, height: Dp, modifier: Modifier) {
+  Icon(
+    painter = painterResource(R.drawable.ic_notification_bell),
+    contentDescription = null,
+    tint = if (isSystemInDarkTheme()) Color.White else Color(0xff0b0b31),
+    modifier = modifier
+      .size(height)
+      .graphicsLayer(
+        transformOrigin = TransformOrigin(0.5f, 0f),
+        rotationZ = swayAnim
+      )
+  )
+}
+
+@Composable
+private fun Clapper(
+  swayAnimReverse: Float,
+  clapperHeight: Dp,
+  bellHeight: Dp,
+  swayAnim: Float,
+  modifier: Modifier
+) {
+  Column(
+    horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.graphicsLayer(
+      rotationZ = swayAnim
+    )
+  ) {
+    Box(
+      Modifier
+        .width(16.dp)
+        .height(clapperHeight)
+        .background(Color.Transparent)
+    )
+    Box(
+      Modifier
+        .width(16.dp)
+        .height(bellHeight)
+        .graphicsLayer(rotationZ = swayAnimReverse)
+        .background(
+          Color.Red, RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 0.dp,
+            bottomStart = 15.dp,
+            bottomEnd = 15.dp
+          )
+        )
+    )
   }
 }
 
