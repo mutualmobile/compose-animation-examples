@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                       ChatMessageReactions(Modifier.align(Alignment.Center))
                     }
                   }
-                  4 -> {
+                  3 -> {
                     Box(Modifier.fillMaxSize()) {
                       MenuToClose(Modifier.align(Alignment.Center))
                     }
