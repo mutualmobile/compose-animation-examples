@@ -2,12 +2,7 @@
 
 ## Animations
 
-- Chat Message Reactions
-- Like Button Animation
-- Menu To Close
-- Pull To Refresh By Yalantis.
-
-| Animation            | Animation          |
-|----------------	|------------------------------	|
-| ![](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art1.mp4) | ![](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art2.mp4) |
-| ![](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art3.mp4) | ![](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art4.mp4) |
+![Pull To Refresh By Yalantis](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art1.mp4)
+![Chat Message Reactions](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art2.mp4)
+![Like Button Animation](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art3.mp4) 
+![Menu To Close](https://github.com/mutualmobile/compose-animation-examples/blob/master/art/art4.mp4) 
