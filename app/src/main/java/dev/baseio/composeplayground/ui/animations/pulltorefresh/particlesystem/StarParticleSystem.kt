@@ -1,7 +1,6 @@
-package dev.baseio.composeplayground.particlesystem
+package dev.baseio.composeplayground.ui.animations.pulltorefresh.particlesystem
 
 import android.graphics.PointF
-import androidx.core.util.toRange
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 

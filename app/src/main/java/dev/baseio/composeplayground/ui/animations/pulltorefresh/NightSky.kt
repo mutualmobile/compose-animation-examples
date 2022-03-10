@@ -1,4 +1,4 @@
-package dev.baseio.composeplayground.ui.animations
+package dev.baseio.composeplayground.ui.animations.pulltorefresh
 
 import android.graphics.PointF
 import androidx.compose.foundation.Canvas
@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import dev.baseio.composeplayground.particlesystem.StarParticleSystem
+import dev.baseio.composeplayground.ui.animations.pulltorefresh.particlesystem.StarParticleSystem
 import kotlinx.coroutines.launch
 
 @Composable
