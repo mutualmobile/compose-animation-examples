@@ -4,7 +4,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,8 +15,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.contributors.AnmolVerma
-import dev.baseio.composeplayground.ui.animations.NotificationBellDefinition
-import dev.baseio.composeplayground.ui.animations.isBellMoveMode
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.NightSky
 
 /**
@@ -43,10 +40,10 @@ fun PlanetarySystem(modifier: Modifier) {
     LocalConfiguration.current.screenWidthDp.div(10).dp.toPx()
   }
 
-  val centerOffset = with(LocalDensity.current) {
+  val planetPosition = with(LocalDensity.current) {
     Offset(
-      LocalConfiguration.current.screenWidthDp.div(2).dp.toPx(),
-      LocalConfiguration.current.screenHeightDp.div(2).dp.toPx()
+      LocalConfiguration.current.screenWidthDp.div(1.5).dp.toPx(),
+      LocalConfiguration.current.screenHeightDp.div(1.5).dp.toPx()
     )
   }
 
@@ -55,31 +52,34 @@ fun PlanetarySystem(modifier: Modifier) {
     targetValue = if (needsAnimate) 1f else 0f,
     animationSpec = infiniteRepeatable(keyframes {
       durationMillis = 1000
-      centerOffset.x at 0 with FastOutLinearInEasing
-      centerOffset.x.plus(10f) at 250 with FastOutLinearInEasing
-      centerOffset.x.plus(20f) at 500 with FastOutLinearInEasing
-      centerOffset.x.plus(30f) at 750 with FastOutLinearInEasing
-      centerOffset.x.plus(40f) at 1000 with FastOutLinearInEasing
-    })
+      planetPosition.x at 0 with FastOutLinearInEasing
+      planetPosition.x.plus(10f) at 250 with FastOutLinearInEasing
+      planetPosition.x.plus(20f) at 300 with FastOutLinearInEasing
+      planetPosition.x.plus(30f) at 450 with FastOutLinearInEasing
+      planetPosition.x.plus(20f) at 500 with FastOutLinearInEasing
+      planetPosition.x.minus(10f) at 750 with FastOutLinearInEasing
+      planetPosition.x at 1000 with FastOutLinearInEasing
+    }, repeatMode = RepeatMode.Reverse)
   )
 
   val planetY by animateFloatAsState(
     targetValue = if (needsAnimate) 1f else 0f,
     animationSpec = infiniteRepeatable(keyframes {
       durationMillis = 1000
-      centerOffset.y at 0 with FastOutLinearInEasing
-      centerOffset.y.plus(10f) at 250 with FastOutLinearInEasing
-      centerOffset.y.plus(20f) at 500 with FastOutLinearInEasing
-      centerOffset.y.plus(30f) at 750 with FastOutLinearInEasing
-      centerOffset.y.plus(40f) at 1000 with FastOutLinearInEasing
-    })
+      planetPosition.y at 0 with FastOutLinearInEasing
+      planetPosition.y.plus(10f) at 250 with FastOutLinearInEasing
+      planetPosition.y.plus(20f) at 300 with FastOutLinearInEasing
+      planetPosition.y.plus(30f) at 450 with FastOutLinearInEasing
+      planetPosition.y.minus(20f) at 500 with FastOutLinearInEasing
+      planetPosition.y.minus(10f) at 750 with FastOutLinearInEasing
+      planetPosition.y at 1000 with FastOutLinearInEasing
+    }, repeatMode = RepeatMode.Reverse)
   )
 
 
   LaunchedEffect(true) {
     needsAnimate = !needsAnimate
   }
-
 
   Surface(
     modifier
@@ -88,7 +88,7 @@ fun PlanetarySystem(modifier: Modifier) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
       Box {
-        NightSky(height, particleCount = 500)
+        NightSky(height, particleCount = 250)
 
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
           universalSun(universalSunRadius)
@@ -96,7 +96,6 @@ fun PlanetarySystem(modifier: Modifier) {
         })
 
         CreatorBlock()
-
       }
     }
   }
@@ -109,8 +108,7 @@ private fun BoxScope.CreatorBlock() {
       .fillMaxWidth()
       .align(Alignment.BottomCenter)
       .height(200.dp)
-      .padding(bottom = 8.dp)
-      .background(MaterialTheme.colors.background)
+      .background(Color.Transparent)
   ) {
     AnmolVerma(Modifier.align(Alignment.Center))
   }
