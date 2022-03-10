@@ -19,3 +19,7 @@ Menu To Close
 
 https://user-images.githubusercontent.com/32521663/157591331-460b525d-0441-4601-b6f7-d0b2ed1e76b3.mp4
 
+Notification Icon Animation
+
+https://user-images.githubusercontent.com/32521663/157620834-6a53ef52-9755-4a8b-a053-5d2bd737b00a.mp4
+
