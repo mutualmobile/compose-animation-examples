@@ -38,10 +38,10 @@ class MainActivity : ComponentActivity() {
               ) { page ->
                 // Our page content
                 when (page) {
-                  1 -> {
+                  0 -> {
                     PullToRefreshOne()
                   }
-                  0 -> {
+                  1 -> {
                     Box(Modifier.fillMaxSize()) {
                       LikeAnimation(Modifier.align(Alignment.Center))
                     }
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                       ChatMessageReactions(Modifier.align(Alignment.Center))
                     }
                   }
-                  else -> {
+                  4 -> {
                     Box(Modifier.fillMaxSize()) {
                       MenuToClose(Modifier.align(Alignment.Center))
                     }

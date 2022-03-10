@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
@@ -255,7 +256,8 @@ private fun CloudList(
     Box(
       modifier = Modifier
         .fillMaxWidth()
-        .height(200.dp).background(MaterialTheme.colors.background)
+        .height(200.dp)
+        .background(MaterialTheme.colors.background)
     ) {
       AnmolVerma(Modifier.align(Alignment.Center))
     }
@@ -277,13 +279,19 @@ fun RandomCard(color: Color) {
       .height(200.dp)
       .background(color)
   ) {
-    Icon(
-      imageVector = Icons.Filled.ShoppingCart,
-      contentDescription = null,
-      modifier = Modifier
-        .size(100.dp)
-        .align(Alignment.Center), tint = Color.White
-    )
+    Column(
+      Modifier.align(Alignment.Center),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
+    ) {
+      Icon(
+        imageVector = Icons.Filled.ShoppingCart,
+        contentDescription = null,
+        modifier = Modifier
+          .size(100.dp), tint = Color.White
+      )
+      Text(text = "Pull down to refresh")
+    }
   }
 }
 
