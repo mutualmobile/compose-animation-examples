@@ -14,6 +14,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.ui.animations.*
+import dev.baseio.composeplayground.ui.animations.planetarysystem.PlanetarySystem
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.PullToRefreshOne
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
 
@@ -32,12 +33,17 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 5, state = pagerState,
+                count = 6, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
                   4 -> {
                     PullToRefreshOne()
+                  }
+                  0->{
+                    Box(Modifier.fillMaxSize()) {
+                      PlanetarySystem(Modifier.align(Alignment.Center))
+                    }
                   }
                   1 -> {
                     Box(Modifier.fillMaxSize()) {
@@ -54,7 +60,7 @@ class MainActivity : ComponentActivity() {
                       MenuToClose(Modifier.align(Alignment.Center))
                     }
                   }
-                  0 -> {
+                  5 -> {
                     Box(Modifier.fillMaxSize()) {
                       BellAnimation(Modifier.align(Alignment.Center))
                     }

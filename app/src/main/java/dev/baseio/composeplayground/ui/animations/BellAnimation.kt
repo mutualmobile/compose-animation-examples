@@ -140,7 +140,7 @@ private fun Clapper(
   }
 }
 
-private fun isBellMoveMode(needsAnimate: NotificationBellDefinition.NotificationBellState) =
+fun isBellMoveMode(needsAnimate: NotificationBellDefinition.NotificationBellState) =
   needsAnimate == NotificationBellDefinition.NotificationBellState.BellMove
 
 object NotificationBellDefinition {

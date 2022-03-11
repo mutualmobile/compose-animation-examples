@@ -13,10 +13,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.particlesystem.StarParticleSystem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun Sky(content: @Composable (BoxScope) -> Unit) {
+  val height = with(LocalDensity.current) {
+    200.dp.toPx()
+  }
   Box(
     Modifier
       .fillMaxWidth()
@@ -24,7 +28,7 @@ fun Sky(content: @Composable (BoxScope) -> Unit) {
   ) {
     Box {
       if (isSystemInDarkTheme()) {
-        NightSky()
+        NightSky(height)
       } else {
         DaySky()
       }
@@ -50,18 +54,17 @@ fun DaySky() {
 }
 
 @Composable
-fun NightSky() {
+fun NightSky(height: Float, particleCount: Int = 100) {
   val width = with(LocalDensity.current) {
     LocalConfiguration.current.screenWidthDp.dp.toPx()
   }
-  val height = with(LocalDensity.current) {
-    200.dp.toPx()
-  }
 
   val nightParticles by remember {
-    mutableStateOf(StarParticleSystem(width, height, 100))
+    mutableStateOf(StarParticleSystem(width, height, particleCount))
   }
   val coroutineScope = rememberCoroutineScope()
+
+
   Box(
     modifier = Modifier
       .fillMaxSize()
