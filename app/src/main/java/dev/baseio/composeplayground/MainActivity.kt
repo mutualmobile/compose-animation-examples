@@ -33,19 +33,24 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 7, state = pagerState,
+                count = 8, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
                   4 -> {
                     PullToRefreshOne()
                   }
-                  0->{
+                  7 -> {
                     Box(Modifier.fillMaxSize()) {
                       GlowingRingLoader(Modifier.align(Alignment.Center))
                     }
                   }
-                  6->{
+                  0 -> {
+                    Box(Modifier.fillMaxSize()) {
+                      YahooWeatherAndSun(Modifier.align(Alignment.Center))
+                    }
+                  }
+                  6 -> {
                     Box(Modifier.fillMaxSize()) {
                       PlanetarySystem(Modifier.align(Alignment.Center))
                     }
