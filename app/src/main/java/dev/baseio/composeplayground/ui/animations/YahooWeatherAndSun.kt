@@ -30,28 +30,26 @@ import dev.baseio.composeplayground.ui.theme.Typography
 @Composable
 fun YahooWeatherAndSun(modifier: Modifier) {
 
-  var sunMovesAlong by remember {
-    mutableStateOf(false)
-  }
-
-  var maskedRectScaledAlong by remember {
-    mutableStateOf(false)
-  }
-
-  val angleRotation by animateFloatAsState(
-    targetValue = if (sunMovesAlong) 145f else 20f,
-    animationSpec = tween(durationMillis = 5000, delayMillis = 2000, easing = LinearEasing)
+  val infiniteTransition = rememberInfiniteTransition()
+  val angleRotation by infiniteTransition.animateFloat(
+    initialValue = 20f,
+    targetValue = 145f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(durationMillis = 5000, delayMillis = 2000, easing = LinearEasing),
+      repeatMode = RepeatMode.Reverse
+    )
   )
 
-  val scaleRect by animateFloatAsState(
-    targetValue = if (maskedRectScaledAlong) 0.9f else 0f,
-    animationSpec = tween(durationMillis = 5000, delayMillis = 2000, easing = LinearEasing)
-  )
 
-  LaunchedEffect(key1 = true) {
-    sunMovesAlong = !sunMovesAlong
-    maskedRectScaledAlong = !maskedRectScaledAlong
-  }
+  val infiniteTransition2 = rememberInfiniteTransition()
+  val scaleRect by infiniteTransition2.animateFloat(
+    initialValue = 0f,
+    targetValue = 0.9f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(durationMillis = 5000, delayMillis = 2000, easing = LinearEasing),
+      repeatMode = RepeatMode.Reverse
+    )
+  )
 
 
   Box(
@@ -82,6 +80,20 @@ fun YahooWeatherAndSun(modifier: Modifier) {
           style = Typography.caption.copy(color = Color.White),
           modifier = Modifier.offset(y = 280.dp, x = (190).dp)
         )
+
+        Box(
+          Modifier
+            .offset(x = (-100).dp,y = 262.dp)
+            .clip(CircleShape)
+            .size(10.dp)
+            .background(Color(0xfff9d71c)))
+
+        Box(
+          Modifier
+            .offset(x= (220).dp,y = 262.dp)
+            .clip(CircleShape)
+            .size(10.dp)
+            .background(Color(0xfff9d71c)))
       }
 
       Box {
@@ -91,13 +103,14 @@ fun YahooWeatherAndSun(modifier: Modifier) {
           painter = painterResource(id = R.drawable.ic_sun),
           contentDescription = null,
           modifier = Modifier
-            .offset(x = 26.dp, y = 146.dp)
+            .offset(x = 30.dp, y = 106.dp)
             .rotate(angleRotation),
           tint = Color(0xfff9d71c)
         )
 
         Box(
-          Modifier.clip(CircleShape)
+          Modifier
+            .clip(CircleShape)
             .align(Alignment.Center)
             .size(320.dp)
         ) {
@@ -112,6 +125,8 @@ fun YahooWeatherAndSun(modifier: Modifier) {
             .background(Color.White.copy(0.5f))
             .offset(y = 160.dp)
         )
+
+
       }
 
       Box(
@@ -134,8 +149,9 @@ private fun ContainedCanvas(scaleRect: Float) {
       .graphicsLayer(
         transformOrigin = TransformOrigin(0f, 0f),
         scaleX = scaleRect, scaleY = 1f, alpha = 0.1f
-      ).background(Color(0xfff9d71c)),
-   )
+      )
+      .background(Color(0xfff9d71c)),
+  )
 }
 
 @Composable
