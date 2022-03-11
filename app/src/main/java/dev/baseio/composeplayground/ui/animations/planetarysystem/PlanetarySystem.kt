@@ -52,7 +52,7 @@ fun PlanetarySystem(modifier: Modifier) {
   }
   var radian = 0f
 
-  val velocity = 20f / 1000
+  val velocity = 40f / 1000
 
   val planetX = remember {
     Animatable(0f)
@@ -75,12 +75,14 @@ fun PlanetarySystem(modifier: Modifier) {
       val jobX = coroutineScope.launch {
         planetX.animateTo(
           updatedX,
+          animationSpec = spring(visibilityThreshold = 0.4f)
         )
       }
 
       val jobY = coroutineScope.launch {
         planetY.animateTo(
           updatedY,
+          animationSpec = spring(visibilityThreshold = 0.4f)
         )
       }
       joinAll(jobX, jobY)
@@ -94,7 +96,7 @@ fun PlanetarySystem(modifier: Modifier) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
       Box {
-        NightSky(height, particleCount = 250)
+        NightSky(height, particleCount = 2500)
 
         SunBox(universalSunRadius, centerOffset)
 

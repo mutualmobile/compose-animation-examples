@@ -83,7 +83,7 @@ fun PullToRefreshOne() {
 
   Box(
     Modifier
-      .fillMaxSize()
+      .fillMaxSize().background(MaterialTheme.colors.background)
   ) {
     CloudList(
       animateOffset,
