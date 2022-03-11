@@ -83,17 +83,19 @@ fun YahooWeatherAndSun(modifier: Modifier) {
 
         Box(
           Modifier
-            .offset(x = (-100).dp,y = 262.dp)
+            .offset(x = (-100).dp, y = 262.dp)
             .clip(CircleShape)
             .size(10.dp)
-            .background(Color(0xfff9d71c)))
+            .background(Color(0xfff9d71c))
+        )
 
         Box(
           Modifier
-            .offset(x= (220).dp,y = 262.dp)
+            .offset(x = (220).dp, y = 262.dp)
             .clip(CircleShape)
             .size(10.dp)
-            .background(Color(0xfff9d71c)))
+            .background(Color(0xfff9d71c))
+        )
       }
 
       Box {
