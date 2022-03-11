@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 6, state = pagerState,
+                count = 7, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
@@ -41,6 +41,11 @@ class MainActivity : ComponentActivity() {
                     PullToRefreshOne()
                   }
                   0->{
+                    Box(Modifier.fillMaxSize()) {
+                      GlowingRingLoader(Modifier.align(Alignment.Center))
+                    }
+                  }
+                  6->{
                     Box(Modifier.fillMaxSize()) {
                       PlanetarySystem(Modifier.align(Alignment.Center))
                     }
