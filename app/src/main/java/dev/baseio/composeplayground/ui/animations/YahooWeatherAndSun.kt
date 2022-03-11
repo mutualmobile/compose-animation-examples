@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.R
@@ -48,11 +49,16 @@ fun YahooWeatherAndSun(modifier: Modifier) {
           style = Typography.caption.copy(color = Color.White),
           modifier = Modifier.offset(y = 160.dp, x = (-20).dp)
         )
-
         Text(
           text = "20:01 PM",
           style = Typography.caption.copy(color = Color.White),
           modifier = Modifier.offset(y = 160.dp, x = (270).dp)
+        )
+        Icon(
+          painter = painterResource(id = R.drawable.ic_sun),
+          contentDescription = null,
+          modifier = Modifier.offset(y = 130.dp, x = (-10).dp),
+          tint = Color(0xfff9d71c)
         )
       }
 
