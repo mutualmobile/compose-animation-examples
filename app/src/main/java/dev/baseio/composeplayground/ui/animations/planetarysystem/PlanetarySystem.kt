@@ -44,6 +44,12 @@ fun PlanetarySystem(modifier: Modifier) {
     )
   }
 
+  val centerOffset = with(LocalDensity.current){
+    Offset(
+      LocalConfiguration.current.screenWidthDp.div(2).dp.toPx(),
+      LocalConfiguration.current.screenHeightDp.div(2).dp.toPx()
+    )
+  }
   var radian = 0f
 
   val velocity = 20f / 1000
@@ -90,7 +96,7 @@ fun PlanetarySystem(modifier: Modifier) {
       Box {
         NightSky(height, particleCount = 250)
 
-        SunBox(universalSunRadius)
+        SunBox(universalSunRadius, centerOffset)
 
         PlanetBox(planetRadius, planetX.value, planetY.value)
 
@@ -110,11 +116,11 @@ private fun PlanetBox(planetRadius: Float, planetX: Float, planetY: Float) {
 }
 
 @Composable
-private fun SunBox(universalSunRadius: Float) {
+private fun SunBox(universalSunRadius: Float, centerOffset: Offset) {
   Canvas(modifier = Modifier
     .fillMaxSize()
     .blur(2.dp), onDraw = {
-    universalSun(universalSunRadius)
+    universalSun(universalSunRadius, centerOffset)
   })
 }
 
@@ -131,8 +137,8 @@ private fun BoxScope.CreatorBlock() {
   }
 }
 
-private fun DrawScope.universalSun(universalSunRadius: Float) {
-  drawCircle(Color(0xfff9d71c), radius = universalSunRadius)
+private fun DrawScope.universalSun(universalSunRadius: Float, centerOffset: Offset) {
+  drawCircle(Color(0xfff9d71c), radius = universalSunRadius, center = centerOffset)
 }
 
 private fun DrawScope.planet(planetRadius: Float, offset: Offset) {
