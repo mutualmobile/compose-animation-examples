@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -89,10 +90,19 @@ fun YahooWeatherAndSun(modifier: Modifier) {
         Icon(
           painter = painterResource(id = R.drawable.ic_sun),
           contentDescription = null,
-          modifier = Modifier.offset(x=26.dp,y=146.dp)
+          modifier = Modifier
+            .offset(x = 26.dp, y = 146.dp)
             .rotate(angleRotation),
           tint = Color(0xfff9d71c)
         )
+
+        Box(
+          Modifier.clip(CircleShape)
+            .align(Alignment.Center)
+            .size(320.dp)
+        ) {
+          ContainedCanvas(scaleRect)
+        }
 
         Box(
           Modifier
@@ -102,20 +112,6 @@ fun YahooWeatherAndSun(modifier: Modifier) {
             .background(Color.White.copy(0.5f))
             .offset(y = 160.dp)
         )
-
-
-
-        Box(
-          Modifier
-            .graphicsLayer(shape = CircleShape)
-            .align(Alignment.Center)
-            .size(320.dp)
-        ) {
-          ContainedCanvas(scaleRect)
-        }
-
-
-
       }
 
       Box(
@@ -131,20 +127,15 @@ fun YahooWeatherAndSun(modifier: Modifier) {
 
 @Composable
 private fun ContainedCanvas(scaleRect: Float) {
-  Canvas(
+  Box(
     modifier = Modifier
       .width(300.dp)
       .height(160.dp)
       .graphicsLayer(
         transformOrigin = TransformOrigin(0f, 0f),
-        scaleX = scaleRect, scaleY = 1f
-      ),
-    onDraw = {
-      drawRect(
-        color = Color(0xfff9d71c),
-        alpha = 0.1f,
-      )
-    })
+        scaleX = scaleRect, scaleY = 1f, alpha = 0.1f
+      ).background(Color(0xfff9d71c)),
+   )
 }
 
 @Composable
