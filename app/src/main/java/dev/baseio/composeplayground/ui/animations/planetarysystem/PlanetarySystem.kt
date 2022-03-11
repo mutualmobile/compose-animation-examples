@@ -1,6 +1,5 @@
 package dev.baseio.composeplayground.ui.animations.planetarysystem
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -9,7 +8,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -23,10 +22,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
 
-/**
- * Inspiration
- * https://codepen.io/leimapapa/pen/wvPLbBd
- */
 @Composable
 fun PlanetarySystem(modifier: Modifier) {
 
@@ -51,7 +46,6 @@ fun PlanetarySystem(modifier: Modifier) {
 
   var radian = 0f
 
-  val orbitRadius = universalSunRadius.times(1.2f)
   val velocity = 20f / 1000
 
   val planetX = remember {
@@ -68,9 +62,9 @@ fun PlanetarySystem(modifier: Modifier) {
     while (true) {
       radian += velocity
       // Get the new x based on our new angle and radius
-      val updatedX = (planetPosition.x + cos(radian.toDouble()) * orbitRadius).toFloat()
+      val updatedX = (planetPosition.x + cos(radian.toDouble()) * universalSunRadius).toFloat()
       // Get the new y based on our new angle and radius
-      val updatedY = (planetPosition.y + sin(radian.toDouble()) * orbitRadius).toFloat()
+      val updatedY = (planetPosition.y + sin(radian.toDouble()) * universalSunRadius).toFloat()
 
       val jobX = coroutineScope.launch {
         planetX.animateTo(
@@ -108,14 +102,18 @@ fun PlanetarySystem(modifier: Modifier) {
 
 @Composable
 private fun PlanetBox(planetRadius: Float, planetX: Float, planetY: Float) {
-  Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
+  Canvas(modifier = Modifier
+    .fillMaxSize()
+    .blur(2.dp), onDraw = {
     planet(planetRadius, Offset(planetX, planetY))
   })
 }
 
 @Composable
 private fun SunBox(universalSunRadius: Float) {
-  Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
+  Canvas(modifier = Modifier
+    .fillMaxSize()
+    .blur(2.dp), onDraw = {
     universalSun(universalSunRadius)
   })
 }
