@@ -27,9 +27,10 @@ Glowing Ring Loader - Anmol Verma
 
 https://user-images.githubusercontent.com/32521663/157807787-a227b339-2b70-40b1-84d5-840be9cd46d9.mp4
 
-[Work in Progress] Planetary System - Anmol Verma 
+Planetary System - Anmol Verma 
 
-https://user-images.githubusercontent.com/32521663/157809265-8ce57b36-edfa-48eb-ad15-310957266431.mp4
+https://user-images.githubusercontent.com/4393101/158027145-955ff386-d04d-4f70-920e-44d33c279730.mp4
+
 
 Yahoo Sun and moon animation.
 
