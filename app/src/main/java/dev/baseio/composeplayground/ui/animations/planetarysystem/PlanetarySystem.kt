@@ -1,5 +1,6 @@
 package dev.baseio.composeplayground.ui.animations.planetarysystem
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,13 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.NightSky
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun PlanetarySystem(modifier: Modifier) {
@@ -32,11 +34,20 @@ fun PlanetarySystem(modifier: Modifier) {
     )
   }
 
+  val infiniteTransition = rememberInfiniteTransition()
+  val angleRotation by infiniteTransition.animateFloat(
+    initialValue = 20f,
+    targetValue = 45f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(durationMillis = 1000, easing = FastOutLinearInEasing),
+    )
+  )
 
   val solarSystem by remember {
     mutableStateOf(SolarSystem(centerOffset))
   }
 
+  val coroutineScope = rememberCoroutineScope()
 
   Surface(
     modifier
@@ -46,12 +57,37 @@ fun PlanetarySystem(modifier: Modifier) {
 
       Box {
         NightSky(height, particleCount = 2500)
-
+        angleRotation// hack to get the canvas called again!
         Canvas(modifier = Modifier
           .fillMaxSize(), onDraw = {
-          this.drawIntoCanvas {
-            solarSystem.animate(it)
+          solarSystem.planets.forEach {
+            coroutineScope.launch {
+              it.update()
+            }
+            // axis
+            drawCircle(
+              color = Color.Gray,
+              center = centerOffset,
+              radius = it.orbitRadius,
+              style = Stroke(width = 2f)
+            )
+
+            //planet
+            drawCircle(
+              color = it.planetColor,
+              center = Offset(it.x, it.y),
+              radius = it.radius,
+            )
+
+            //moon
+            drawCircle(
+              color = Color.Gray,
+              center = Offset(it.moon.x, it.moon.y),
+              radius = 2f
+            )
           }
+
+
         })
         CreatorBlock()
       }

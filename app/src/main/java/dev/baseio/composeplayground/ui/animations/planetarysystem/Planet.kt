@@ -9,12 +9,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-data class Planet(
+class Planet(
   var x: Float,
   var y: Float,
   val radius: Float,
   val planetColor: Color,
-  val velocity: Float,
+  private val velocity: Float,
   val orbitRadius: Float,
 ) {
   var radian: Float = 0f
@@ -26,45 +26,26 @@ data class Planet(
     moon.prepare(this)
   }
 
-  private fun draw(canvas: Canvas, centerOffset: Offset) {
-    // arc
-    canvas.drawCircle(centerOffset, this.orbitRadius, Paint().apply {
-      this.color = Color.Gray
-      this.style = PaintingStyle.Stroke
-      this.strokeWidth = 4f
-    })
-
-    //planet
-    canvas.drawCircle(Offset(x, y), this.radius, Paint().apply {
-      this.color = planetColor
-      this.style = PaintingStyle.Fill
-    })
-
-    //moon
-    canvas.drawCircle(Offset(moon.x, moon.y), 2f, Paint().apply {
-      this.color = Color.Gray
-      this.style = PaintingStyle.Fill
-    })
-  }
-
-  fun update(canvas: Canvas, centerOffset: Offset) {
-    this.draw(canvas, centerOffset)
+  fun update() {
     if (this.velocity > 0) {
       this.radian += this.velocity
-      this.moon.radian += this.moon.velocity
-      this.moon.x =
-        (this.x + cos(this.moon.radian.toDouble()) * (this.radius + 5)).toFloat()
-      this.moon.y =
-        (this.y + sin(this.moon.radian.toDouble()) * (this.radius + 5)).toFloat()
-
+      this.updateMoon()
       this.x = (this.startX + cos(this.radian.toDouble()) * this.orbitRadius).toFloat()
       this.y = (this.startY + sin(this.radian.toDouble()) * this.orbitRadius).toFloat()
     }
   }
 }
 
+private fun Planet.updateMoon() {
+  moon.radian += moon.velocity
+  moon.x =
+    (this.x + cos(moon.radian.toDouble()) * (this.radius + 5)).toFloat()
+  moon.y =
+    (this.y + sin(moon.radian.toDouble()) * (this.radius + 5)).toFloat()
+
+}
 class SolarSystem(private val centerOffset: Offset) {
-  private val planets by lazy {
+  val planets by lazy {
     val planets = mutableListOf<Planet>()
     planets.add(
       getPlanetForOptions(
@@ -160,7 +141,7 @@ class SolarSystem(private val centerOffset: Offset) {
       getPlanetForOptions(
         centerOffset.x,
         centerOffset.y,
-        radius = 7f,
+        radius = 18f,
         velocity = 10f,
         orbitRadius = 450f,
         color = Color.Gray
@@ -186,12 +167,6 @@ class SolarSystem(private val centerOffset: Offset) {
       velocity / 1000,
       orbitRadius
     )
-  }
-
-  fun animate(canvas: Canvas) {
-    planets.forEach {
-      it.update(canvas, centerOffset)
-    }
   }
 }
 
