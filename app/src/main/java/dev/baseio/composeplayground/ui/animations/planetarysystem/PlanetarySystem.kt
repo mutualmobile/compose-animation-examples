@@ -11,16 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.NightSky
-import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
 fun PlanetarySystem(modifier: Modifier) {
@@ -29,65 +27,27 @@ fun PlanetarySystem(modifier: Modifier) {
     LocalConfiguration.current.screenHeightDp.dp.toPx()
   }
 
-  val universalSunRadius = with(LocalDensity.current) {
-    LocalConfiguration.current.screenWidthDp.div(5).dp.toPx()
-  }
-
-  val planetRadius = with(LocalDensity.current) {
-    LocalConfiguration.current.screenWidthDp.div(25).dp.toPx()
-  }
-
-  val planetPosition = with(LocalDensity.current) {
+  val centerOffset = with(LocalDensity.current) {
     Offset(
       LocalConfiguration.current.screenWidthDp.div(2).dp.toPx(),
       LocalConfiguration.current.screenHeightDp.div(2).dp.toPx()
     )
   }
 
-  val centerOffset = with(LocalDensity.current){
-    Offset(
-      LocalConfiguration.current.screenWidthDp.div(2).dp.toPx(),
-      LocalConfiguration.current.screenHeightDp.div(2).dp.toPx()
+  val infiniteTransition = rememberInfiniteTransition()
+  val angleRotation by infiniteTransition.animateFloat(
+    initialValue = 20f,
+    targetValue = 45f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(durationMillis = 1000, easing = FastOutLinearInEasing),
     )
-  }
-  var radian = 0f
+  )
 
-  val velocity = 40f / 1000
-
-  val planetX = remember {
-    Animatable(0f)
-  }
-
-  val planetY = remember {
-    Animatable(0f)
+  val solarSystem by remember {
+    mutableStateOf(SolarSystem(centerOffset))
   }
 
   val coroutineScope = rememberCoroutineScope()
-
-  LaunchedEffect(true) {
-    while (true) {
-      radian += velocity
-      // Get the new x based on our new angle and radius
-      val updatedX = (planetPosition.x + cos(radian.toDouble()) * universalSunRadius).toFloat()
-      // Get the new y based on our new angle and radius
-      val updatedY = (planetPosition.y + sin(radian.toDouble()) * universalSunRadius).toFloat()
-
-      val jobX = coroutineScope.launch {
-        planetX.animateTo(
-          updatedX,
-          animationSpec = spring(visibilityThreshold = 0.4f)
-        )
-      }
-
-      val jobY = coroutineScope.launch {
-        planetY.animateTo(
-          updatedY,
-          animationSpec = spring(visibilityThreshold = 0.4f)
-        )
-      }
-      joinAll(jobX, jobY)
-    }
-  }
 
   Surface(
     modifier
@@ -97,11 +57,38 @@ fun PlanetarySystem(modifier: Modifier) {
 
       Box {
         NightSky(height, particleCount = 2500)
+        angleRotation// hack to get the canvas called again!
+        Canvas(modifier = Modifier
+          .fillMaxSize(), onDraw = {
+          solarSystem.planets.forEach {
+            coroutineScope.launch {
+              it.update()
+            }
+            // axis
+            drawCircle(
+              color = Color.Gray,
+              center = centerOffset,
+              radius = it.orbitRadius,
+              style = Stroke(width = 2f)
+            )
 
-        SunBox(universalSunRadius, centerOffset)
+            //planet
+            drawCircle(
+              color = it.planetColor,
+              center = Offset(it.x, it.y),
+              radius = it.radius,
+            )
 
-        PlanetBox(planetRadius, planetX.value, planetY.value)
+            //moon
+            drawCircle(
+              color = Color.Gray,
+              center = Offset(it.moon.x, it.moon.y),
+              radius = 2f
+            )
+          }
 
+
+        })
         CreatorBlock()
       }
     }
@@ -109,20 +96,17 @@ fun PlanetarySystem(modifier: Modifier) {
 }
 
 @Composable
-private fun PlanetBox(planetRadius: Float, planetX: Float, planetY: Float) {
-  Canvas(modifier = Modifier
-    .fillMaxSize()
-    .blur(2.dp), onDraw = {
-    planet(planetRadius, Offset(planetX, planetY))
-  })
-}
+private fun PlanetBox(planetRadius: Float, planetX: Float, planetY: Float, color: Color) {
 
-@Composable
-private fun SunBox(universalSunRadius: Float, centerOffset: Offset) {
   Canvas(modifier = Modifier
     .fillMaxSize()
     .blur(2.dp), onDraw = {
-    universalSun(universalSunRadius, centerOffset)
+    val offset = Offset(planetX, planetY)
+    drawCircle(
+      color = color,
+      radius = planetRadius,
+      center = offset
+    )
   })
 }
 
@@ -137,16 +121,4 @@ private fun BoxScope.CreatorBlock() {
   ) {
     AnmolVerma(Modifier.align(Alignment.Center))
   }
-}
-
-private fun DrawScope.universalSun(universalSunRadius: Float, centerOffset: Offset) {
-  drawCircle(Color(0xfff9d71c), radius = universalSunRadius, center = centerOffset)
-}
-
-private fun DrawScope.planet(planetRadius: Float, offset: Offset) {
-  drawCircle(
-    color = Color(0xff7da27e),
-    radius = planetRadius,
-    center = offset
-  )
 }

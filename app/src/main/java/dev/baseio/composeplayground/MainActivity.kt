@@ -45,12 +45,12 @@ class MainActivity : ComponentActivity() {
                       GlowingRingLoader(Modifier.align(Alignment.Center))
                     }
                   }
-                  0 -> {
+                  6 -> {
                     Box(Modifier.fillMaxSize()) {
                       YahooWeatherAndSun(Modifier.align(Alignment.Center))
                     }
                   }
-                  6 -> {
+                  0 -> {
                     Box(Modifier.fillMaxSize()) {
                       PlanetarySystem(Modifier.align(Alignment.Center))
                     }
