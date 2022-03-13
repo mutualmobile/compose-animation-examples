@@ -37,4 +37,9 @@ Yahoo Sun and moon animation.
 https://user-images.githubusercontent.com/32521663/157847448-81663201-25c7-44d6-9f77-15dfb5f1c590.mp4
 
 
+Scaling Rotating Loader.
+
+
+https://user-images.githubusercontent.com/4393101/158059803-4511f9f4-43a7-45e3-bbb8-778cc4115596.mp4
+
 
