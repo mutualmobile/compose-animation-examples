@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 9, state = pagerState,
+                count = 11, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
@@ -78,6 +78,16 @@ class MainActivity : ComponentActivity() {
                   5 -> {
                     Box(Modifier.fillMaxSize()) {
                       BellAnimation(Modifier.align(Alignment.Center))
+                    }
+                  }
+                  9 -> {
+                    Box(Modifier.fillMaxSize()) {
+                      PlayPauseAnimation(Modifier.align(Alignment.Center))
+                    }
+                  }
+                  10 -> {
+                    Box(Modifier.fillMaxSize()) {
+                      RunDinoRun(Modifier.align(Alignment.Center))
                     }
                   }
                 }
