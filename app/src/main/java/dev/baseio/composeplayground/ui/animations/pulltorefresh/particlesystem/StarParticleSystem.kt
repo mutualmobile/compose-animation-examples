@@ -12,21 +12,16 @@ class StarParticleSystem(
   ParticleSystem() {
 
   private val random = Random(particleCount)
-  val isModifying = AtomicBoolean(false)
 
   val particles by lazy {
     prepare()
   }
 
   override suspend fun update() {
-    if (!isModifying.get()) {
-      isModifying.set(true)
-      particles.forEach {
-        delay(100)
-        it.scale = Random.nextDouble(1.0, 5.0).toFloat()
-        it.alpha = Random.nextDouble(0.0, 1.0).toFloat()
-      }
-      isModifying.set(false)
+    particles.forEach {
+      delay(50)
+      it.scale = Random.nextDouble(1.0, 3.0).toFloat()
+      it.alpha = Random.nextDouble(0.0, 1.0).toFloat()
     }
   }
 

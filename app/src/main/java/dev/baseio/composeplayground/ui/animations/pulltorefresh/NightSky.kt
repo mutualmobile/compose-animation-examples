@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.particlesystem.StarParticleSystem
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -75,11 +76,7 @@ fun NightSky(height: Float, particleCount: Int = 1000) {
       repeatMode = RepeatMode.Restart
     )
   )
-  LaunchedEffect(key1 = true) {
-    while (true) {
-      nightParticles.update()
-    }
-  }
+  val coroutineScope = rememberCoroutineScope()
 
   Box(
     modifier = Modifier
@@ -89,6 +86,9 @@ fun NightSky(height: Float, particleCount: Int = 1000) {
       .background(Color.Black)
   ) {
     Canvas(modifier = Modifier.fillMaxSize()) {
+      coroutineScope.launch{
+        nightParticles.update()
+      }
       nightParticles.particles.forEach {
         drawCircle(Color.White, it.scale, it.pos.toOffset(), it.alpha)
       }
