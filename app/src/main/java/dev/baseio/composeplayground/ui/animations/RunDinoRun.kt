@@ -128,7 +128,6 @@ fun LaunchButton(
                 )
             ) {
                 Text(text = "INITIAL POSITION")
-
             }
         } else {
             Button(onClick = onToggleAnimationState) {
