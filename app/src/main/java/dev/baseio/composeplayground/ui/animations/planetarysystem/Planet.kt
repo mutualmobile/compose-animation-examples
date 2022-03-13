@@ -1,10 +1,7 @@
 package dev.baseio.composeplayground.ui.animations.planetarysystem
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.PaintingStyle
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -16,6 +13,7 @@ class Planet(
   val planetColor: Color,
   private val velocity: Float,
   val orbitRadius: Float,
+  val isForward: Boolean = true
 ) {
   var radian: Float = 0f
   var moon = Moon()
@@ -28,10 +26,18 @@ class Planet(
 
   fun update() {
     if (this.velocity > 0) {
-      this.radian += this.velocity
       this.updateMoon()
+      when {
+        isForward -> {
+          this.radian += this.velocity
+        }
+        else -> {
+          this.radian -= this.velocity
+        }
+      }
       this.x = (this.startX + cos(this.radian.toDouble()) * this.orbitRadius).toFloat()
       this.y = (this.startY + sin(this.radian.toDouble()) * this.orbitRadius).toFloat()
+
     }
   }
 }
@@ -44,6 +50,7 @@ private fun Planet.updateMoon() {
     (this.y + sin(moon.radian.toDouble()) * (this.radius + 5)).toFloat()
 
 }
+
 class SolarSystem(private val centerOffset: Offset) {
   val planets by lazy {
     val planets = mutableListOf<Planet>()
@@ -54,7 +61,7 @@ class SolarSystem(private val centerOffset: Offset) {
         radius = 35f,
         velocity = 0f,
         orbitRadius = 0f,
-        color = Color(0xfff9d71c)
+        color = Color(0xfff9d71c), isForward = true
       )
     ); // sun
     planets.add(
@@ -62,9 +69,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 5f,
+        color = Color.Gray,
         velocity = 50f,
         orbitRadius = 65f,
-        color = Color.Gray
+        false
       )
     ); // mercury
     planets.add(
@@ -72,9 +80,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 10f,
+        color = Color(0xffFFA500),
         velocity = 40f,
         orbitRadius = 90f,
-        color = Color(0xffFFA500)
+        true
       )
     ); // venus
     planets.add(
@@ -82,9 +91,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 15f,
+        color = Color.Blue,
         velocity = 30f,
         orbitRadius = 125f,
-        color = Color.Blue
+        false
       )
     ); // earth
     planets.add(
@@ -92,9 +102,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 20f,
+        color = Color.Red,
         velocity = 35f,
         orbitRadius = 175f,
-        color = Color.Red
+        true
       )
     ); // mars
     planets.add(
@@ -102,9 +113,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 25f,
+        color = Color(0xffFFA500),
         velocity = 30f,
         orbitRadius = 225f,
-        color = Color(0xffFFA500)
+        true
       )
     ); // jupiter
     planets.add(
@@ -112,9 +124,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 20f,
+        color = Color(0xfff9d71c),
         velocity = 25f,
         orbitRadius = 275f,
-        color = Color(0xfff9d71c)
+        true
       )
     ); // saturn
     planets.add(
@@ -122,9 +135,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 15f,
+        color = Color.Blue,
         velocity = 20f,
         orbitRadius = 325f,
-        color = Color.Blue
+        true
       )
     ); // uranus
     planets.add(
@@ -132,9 +146,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 25f,
+        color = Color(0xff800080),
         velocity = 15f,
         orbitRadius = 375f,
-        color = Color(0xff800080)
+        true
       )
     ); // neptune
     planets.add(
@@ -142,9 +157,10 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.x,
         centerOffset.y,
         radius = 18f,
+        color = Color.Gray,
         velocity = 10f,
         orbitRadius = 450f,
-        color = Color.Gray
+        false
       )
     ) // pluto
     planets
@@ -157,7 +173,8 @@ class SolarSystem(private val centerOffset: Offset) {
     radius: Float,
     color: Color,
     velocity: Float,
-    orbitRadius: Float
+    orbitRadius: Float,
+    isForward: Boolean
   ): Planet {
     return Planet(
       centerX,
@@ -165,7 +182,7 @@ class SolarSystem(private val centerOffset: Offset) {
       radius,
       color,
       velocity / 1000,
-      orbitRadius
+      orbitRadius, isForward = isForward
     )
   }
 }
