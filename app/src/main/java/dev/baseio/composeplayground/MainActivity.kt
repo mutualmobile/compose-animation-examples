@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 9, state = pagerState,
+                count = 10, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
@@ -51,6 +51,11 @@ class MainActivity : ComponentActivity() {
                     }
                   }
                   0 -> {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                      IOSSleepSchedule()
+                    }
+                  }
+                  9 -> {
                     Box(modifier = Modifier.fillMaxSize()) {
                       ScalingRotatingLoader()
                     }
