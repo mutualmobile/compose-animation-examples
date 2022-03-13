@@ -70,7 +70,7 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.y,
         radius = 5f,
         color = Color.Gray,
-        velocity = 50f,
+        velocity = 20f,
         orbitRadius = 65f,
         false
       )
@@ -81,7 +81,7 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.y,
         radius = 10f,
         color = Color(0xffFFA500),
-        velocity = 40f,
+        velocity = 10f,
         orbitRadius = 90f,
         true
       )
@@ -92,7 +92,7 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.y,
         radius = 15f,
         color = Color.Blue,
-        velocity = 30f,
+        velocity = 5f,
         orbitRadius = 125f,
         false
       )
@@ -103,7 +103,7 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.y,
         radius = 20f,
         color = Color.Red,
-        velocity = 35f,
+        velocity = 7f,
         orbitRadius = 175f,
         true
       )
@@ -114,7 +114,7 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.y,
         radius = 25f,
         color = Color(0xffFFA500),
-        velocity = 30f,
+        velocity = 5f,
         orbitRadius = 225f,
         true
       )
@@ -125,7 +125,7 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.y,
         radius = 20f,
         color = Color(0xfff9d71c),
-        velocity = 25f,
+        velocity = 4f,
         orbitRadius = 275f,
         true
       )
@@ -136,7 +136,7 @@ class SolarSystem(private val centerOffset: Offset) {
         centerOffset.y,
         radius = 15f,
         color = Color.Blue,
-        velocity = 20f,
+        velocity = 10f,
         orbitRadius = 325f,
         true
       )
