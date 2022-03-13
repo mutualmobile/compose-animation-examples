@@ -84,17 +84,10 @@ private fun TouchMoveControlTrack() {
     LocalConfiguration.current.screenWidthDp.div(3.5).dp.toPx()
   }
 
-  var radius by remember {
-    mutableStateOf(0f)
-  }
-
   var shapeCenter by remember {
     mutableStateOf(Offset.Zero)
   }
 
-  var handleCenter by remember {
-    mutableStateOf(Offset.Zero)
-  }
 
   var angle by remember {
     mutableStateOf(20.0)
@@ -109,7 +102,6 @@ private fun TouchMoveControlTrack() {
             // TODO fix this logic for dragging the handle
             // the handle works fine when it's size is small, if the size if big,
             // then the method getRotationAngle fails to calculate the angle
-            handleCenter += dragAmount
             angle = getRotationAngle(change.position, shapeCenter)
             change.consumeAllChanges()
           })
@@ -124,14 +116,6 @@ private fun TouchMoveControlTrack() {
       drawCircle(color = offGray, radius = clockRadius)
 
       shapeCenter = center
-
-      radius = size.minDimension / 2
-
-      val x = (shapeCenter.x + cos(Math.toRadians(angle)) * radius).toFloat()
-      val y = (shapeCenter.y + sin(Math.toRadians(angle)) * radius).toFloat()
-
-      handleCenter = Offset(x, y)
-
 
       drawArc(
         offGray,
