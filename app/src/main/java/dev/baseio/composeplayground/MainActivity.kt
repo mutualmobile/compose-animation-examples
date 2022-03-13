@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 8, state = pagerState,
+                count = 9, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
@@ -51,6 +51,11 @@ class MainActivity : ComponentActivity() {
                     }
                   }
                   0 -> {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                      ScalingRotatingLoader()
+                    }
+                  }
+                  8 -> {
                     Box(Modifier.fillMaxSize()) {
                       PlanetarySystem(Modifier.align(Alignment.Center))
                     }
