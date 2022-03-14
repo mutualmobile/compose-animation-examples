@@ -256,6 +256,12 @@ private fun DrawScope.drawClockCircle(clockRadius: Float, shapeCenter: Offset) {
       color = android.graphics.Color.WHITE
       textSize = 32f
     }
+
+    val boldPaint = Paint().apply {
+      color = android.graphics.Color.WHITE
+      textSize = 32f
+      this.isFakeBoldText = true
+    }
     val rect = Rect()
     paint.getTextBounds(it, 0, it.length, rect);
     val angle = index * Math.PI * 2 / 24 - (Math.PI / 2)
@@ -263,20 +269,23 @@ private fun DrawScope.drawClockCircle(clockRadius: Float, shapeCenter: Offset) {
     val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.85f) - rect.width() / 2).toFloat()
     val y =
       (shapeCenter.y + sin(angle) * clockRadius.times(0.9f) + rect.height() / 2).toFloat()
-    if (it.contains("AM", ignoreCase = true) || it.contains(
-        "PM",
-        ignoreCase = true
-      ) || it.toInt() % 2 == 0
+    if (isClockBoldNeeded(it) || it.toInt() % 2 == 0
     ) {
       drawContext.canvas.nativeCanvas.drawText(
-        it.toString(),
+        it,
         x,
-        y, paint
+        y, if (isClockBoldNeeded(it)) boldPaint else paint
       )
     }
 
   }
 }
+
+private fun isClockBoldNeeded(it: String) =
+  it.contains("AM", ignoreCase = true) || it.contains(
+    "PM",
+    ignoreCase = true
+  )
 
 private fun clockLabels() =
   arrayOf(
