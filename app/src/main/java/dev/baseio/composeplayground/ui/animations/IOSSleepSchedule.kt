@@ -1,7 +1,5 @@
 package dev.baseio.composeplayground.ui.animations
 
-import android.graphics.Point
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -16,12 +14,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.ui.theme.Typography
@@ -80,6 +80,7 @@ private fun TouchMoveControlTrack() {
 
 
   val constraintsScope = rememberCoroutineScope()
+
   val clockRadius = with(LocalDensity.current) {
     LocalConfiguration.current.screenWidthDp.div(3.5).dp.toPx()
   }
@@ -88,11 +89,17 @@ private fun TouchMoveControlTrack() {
     mutableStateOf(Offset.Zero)
   }
 
-
   var angle by remember {
-    mutableStateOf(20.0)
+    mutableStateOf(0.0)
   }
 
+  var starIconOffset by remember {
+    mutableStateOf(IntOffset.Zero)
+  }
+
+  var endIconOffset by remember {
+    mutableStateOf(IntOffset.Zero)
+  }
 
   Box(Modifier) {
     Canvas(modifier = Modifier
@@ -103,37 +110,54 @@ private fun TouchMoveControlTrack() {
             // the handle works fine when it's size is small, if the size if big,
             // then the method getRotationAngle fails to calculate the angle
             angle = getRotationAngle(change.position, shapeCenter)
+            val theta = radians(change.position, shapeCenter)
+            val x = (shapeCenter.x + cos(theta) * 218f)
+            val y = (shapeCenter.y + sin(theta) * 218f)
+            starIconOffset = IntOffset(x.toInt(), y.toInt())
+
             change.consumeAllChanges()
           })
         }
       }
       .size(300.dp), onDraw = {
-
-      drawArc(
-        Color(1, 0, 0), 0f, 360f,
-        useCenter = true, style = Stroke(width = 178f)
-      )
-      drawCircle(color = offGray, radius = clockRadius)
-
       shapeCenter = center
 
-      drawArc(
-        offGray,
-        angle.toFloat(),
-        120f, false,
-        style = Stroke(
-          width = 124f, cap = StrokeCap.Round,
-          join =
-          StrokeJoin.Round,
-        )
-      )
+      drawKnobBackground()
+      drawClockCircle(clockRadius)
+      drawRotatingKnob(angle)
     })
 
-    //SleepBedTimeIcon(true, Modifier)
-    //SleepBedTimeIcon(false, Modifier)
-
+    Box(Modifier.size(300.dp)) {
+      SleepBedTimeIcon(true, Modifier.offset {
+        starIconOffset
+      })
+      SleepBedTimeIcon(false, Modifier.offset {
+        endIconOffset
+      })
+    }
   }
 
+}
+
+private fun DrawScope.drawClockCircle(clockRadius: Float) {
+  drawCircle(color = offGray, radius = clockRadius)
+}
+
+private fun DrawScope.drawKnobBackground() {
+  drawArc(
+    Color(1, 0, 0), 0f, 360f,
+    useCenter = true, style = Stroke(width = 178f)
+  )
+}
+
+private fun DrawScope.drawRotatingKnob(angle: Double) {
+  drawArc(
+    offGray,
+    angle.toFloat(),
+    120f,
+    false,
+    style = Stroke(width = 124f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+  )
 }
 
 @Composable
@@ -163,15 +187,18 @@ fun VerticalGroupTime(isStart: Boolean) {
 @Composable
 private fun SleepBedTimeIcon(isStart: Boolean, modifier: Modifier = Modifier) {
   Icon(
-    painter = if (isStart) painterResource(id = R.drawable.ic_bed) else painterResource(id = R.drawable.ic_alarm),
+    painter = painterResource(isStart),
     tint = textSecondary,
     contentDescription = null, modifier = modifier
   )
 }
 
+@Composable
+private fun painterResource(isStart: Boolean) =
+  if (isStart) painterResource(id = R.drawable.ic_bed) else painterResource(id = R.drawable.ic_alarm)
+
 private fun getRotationAngle(currentPosition: Offset, center: Offset): Double {
-  val (dx, dy) = currentPosition - center
-  val theta = atan2(dy, dx).toDouble()
+  val theta = radians(currentPosition, center)
 
   var angle = Math.toDegrees(theta)
 
@@ -179,4 +206,13 @@ private fun getRotationAngle(currentPosition: Offset, center: Offset): Double {
     angle += 360.0
   }
   return angle
+}
+
+private fun radians(
+  currentPosition: Offset,
+  center: Offset
+): Double {
+  val (dx, dy) = currentPosition - center
+  val theta = atan2(dy, dx).toDouble()
+  return theta
 }
