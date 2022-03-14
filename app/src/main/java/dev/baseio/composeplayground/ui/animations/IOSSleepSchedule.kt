@@ -5,10 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -21,9 +21,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.R
+import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
 import kotlinx.coroutines.launch
 import kotlin.math.atan2
@@ -33,6 +35,15 @@ import kotlin.math.sin
 
 val offGray = Color(45, 44, 46)
 val textSecondary = Color(157, 156, 167)
+
+
+@Preview
+@Composable
+fun PreviewIOSSleepSchedule() {
+  MaterialTheme() {
+    IOSSleepSchedule()
+  }
+}
 
 @Composable
 fun IOSSleepSchedule() {
@@ -71,18 +82,31 @@ fun IOSSleepSchedule() {
 
     }
 
+    Box(
+      modifier = Modifier
+        .align(Alignment.BottomCenter)
+        .fillMaxWidth()
+    ) {
+      AnmolVerma(Modifier.align(Alignment.Center))
+    }
+
   }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun TouchMoveControlTrack() {
-
-
   val constraintsScope = rememberCoroutineScope()
 
   val clockRadius = with(LocalDensity.current) {
     LocalConfiguration.current.screenWidthDp.div(3.5).dp.toPx()
+  }
+
+  val knobTrackStrokeWidth = with(LocalDensity.current) {
+    LocalConfiguration.current.screenWidthDp.div(6).dp.toPx()
+  }
+
+  val knobStrokeWidth = with(LocalDensity.current) {
+    LocalConfiguration.current.screenWidthDp.div(8).dp.toPx()
   }
 
   var shapeCenter by remember {
@@ -93,70 +117,131 @@ private fun TouchMoveControlTrack() {
     mutableStateOf(0.0)
   }
 
-  var starIconOffset by remember {
-    mutableStateOf(IntOffset.Zero)
+  var startIconOffset by remember {
+    mutableStateOf(Offset.Zero)
   }
 
   var endIconOffset by remember {
-    mutableStateOf(IntOffset.Zero)
+    mutableStateOf(Offset.Zero)
   }
+
+  val reduceOffsetIcon = with(LocalDensity.current) {
+    24.dp.toPx()
+  }
+
+
+  val sweepAngleForKnow = remember {
+    mutableStateOf(120f)
+  }
+
 
   Box(Modifier) {
     Canvas(modifier = Modifier
+      .size(300.dp), onDraw = {
+      drawKnobBackground(knobTrackStrokeWidth)
+      drawClockCircle(clockRadius)
+    })
+
+    Canvas(modifier = Modifier
+      .size(300.dp)
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures(onDrag = { change, dragAmount ->
-            // TODO fix this logic for dragging the handle
-            // the handle works fine when it's size is small, if the size if big,
-            // then the method getRotationAngle fails to calculate the angle
-            angle = getRotationAngle(change.position, shapeCenter)
-            val theta = radians(change.position, shapeCenter)
-            val x = (shapeCenter.x + cos(theta) * 218f)
-            val y = (shapeCenter.y + sin(theta) * 218f)
-            starIconOffset = IntOffset(x.toInt(), y.toInt())
-
+            startIconOffset += dragAmount
+            angle = getRotationAngle(startIconOffset, shapeCenter)
             change.consumeAllChanges()
           })
         }
-      }
-      .size(300.dp), onDraw = {
+      }, onDraw = {
       shapeCenter = center
 
-      drawKnobBackground()
-      drawClockCircle(clockRadius)
-      drawRotatingKnob(angle)
+      val radius = size.minDimension / 2
+
+      val startIconX = (shapeCenter.x + cos(Math.toRadians(angle)) * radius).toFloat()
+      val startIconY = (shapeCenter.y + sin(Math.toRadians(angle)) * radius).toFloat()
+
+      val endIconX =
+        (shapeCenter.x + cos(Math.toRadians(angle + sweepAngleForKnow.value)) * radius).toFloat()
+      val endIconY =
+        (shapeCenter.x + sin(Math.toRadians(angle + sweepAngleForKnow.value)) * radius).toFloat()
+
+      startIconOffset = Offset(startIconX, startIconY)
+      endIconOffset = Offset(endIconX, endIconY)
+      drawRotatingKnob(angle, knobStrokeWidth, sweepAngleForKnow.value)
+
     })
 
     Box(Modifier.size(300.dp)) {
-      SleepBedTimeIcon(true, Modifier.offset {
-        starIconOffset
-      })
-      SleepBedTimeIcon(false, Modifier.offset {
-        endIconOffset
-      })
+      StartIcon(startIconOffset, reduceOffsetIcon)
+
+      EndIcon(endIconOffset, reduceOffsetIcon)
     }
   }
 
+}
+
+@Composable
+private fun EndIcon(
+  endIconOffset: Offset,
+  reduceOffsetIcon: Float
+) {
+  SleepBedTimeIcon(false,
+    Modifier
+      .padding(0.dp)
+      .offset {
+        IntOffset(
+          endIconOffset.x
+            .toInt()
+            .minus(reduceOffsetIcon / 2)
+            .toInt(),
+          endIconOffset.y
+            .toInt()
+            .minus(reduceOffsetIcon / 2)
+            .toInt()
+        )
+      })
+}
+
+@Composable
+private fun StartIcon(
+  startIconOffset: Offset,
+  reduceOffsetIcon: Float
+) {
+  SleepBedTimeIcon(true,
+    Modifier
+      .padding(0.dp)
+      .offset {
+        IntOffset(
+          startIconOffset.x
+            .toInt()
+            .minus(reduceOffsetIcon / 2)
+            .toInt(),
+          startIconOffset.y
+            .toInt()
+            .minus(reduceOffsetIcon / 2)
+            .toInt()
+        )
+      })
 }
 
 private fun DrawScope.drawClockCircle(clockRadius: Float) {
   drawCircle(color = offGray, radius = clockRadius)
 }
 
-private fun DrawScope.drawKnobBackground() {
+private fun DrawScope.drawKnobBackground(knobTrackStrokeWidth: Float) {
   drawArc(
     Color(1, 0, 0), 0f, 360f,
-    useCenter = true, style = Stroke(width = 178f)
+    useCenter = true, style = Stroke(width = knobTrackStrokeWidth)
   )
 }
 
-private fun DrawScope.drawRotatingKnob(angle: Double) {
+private fun DrawScope.drawRotatingKnob(angle: Double, knobStrokeWidth: Float, value: Float) {
   drawArc(
     offGray,
     angle.toFloat(),
-    120f,
+    value,
     false,
-    style = Stroke(width = 124f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+    style = Stroke(width = knobStrokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
   )
 }
 
@@ -213,6 +298,5 @@ private fun radians(
   center: Offset
 ): Double {
   val (dx, dy) = currentPosition - center
-  val theta = atan2(dy, dx).toDouble()
-  return theta
+  return atan2(dy, dx).toDouble()
 }
