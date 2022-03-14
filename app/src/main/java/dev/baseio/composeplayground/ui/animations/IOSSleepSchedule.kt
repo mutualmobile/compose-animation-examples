@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -24,17 +25,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalTime
-import java.util.*
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -161,8 +162,9 @@ private fun TouchMoveControlTrack(startTime: (LocalTime) -> Unit, endTime: (Loca
       .size(300.dp), onDraw = {
       drawKnobBackground(knobTrackStrokeWidth)
       drawClockCircle(clockRadius, shapeCenter)
-
     })
+
+    DrawTicks(clockSize)
 
     Canvas(modifier = Modifier
       .size(300.dp)
@@ -200,6 +202,36 @@ private fun TouchMoveControlTrack(startTime: (LocalTime) -> Unit, endTime: (Loca
       EndIcon(endIconOffset, reduceOffsetIcon)
     }
   }
+
+}
+
+@Composable
+private fun BoxScope.DrawTicks(clockSize: Dp) {
+  Box(
+    modifier = Modifier
+      .align(Alignment.Center)
+      .size(clockSize)
+  ) {
+    repeat(120) {
+      Tick(it)
+    }
+  }
+}
+
+@Composable
+fun BoxScope.Tick(tick: Int) {
+  val angle = 360f / 120f * tick
+  Text(
+    text = "|",
+    modifier = Modifier
+      .align(Alignment.Center)
+      .rotate(angle) // rotate your number by 'angle' and now 'up' is towards the numbers final position
+      .offset(0.dp, (-110).dp),
+    style = Typography.caption.copy(
+      fontSize = if (tick % 5 == 0) 8.sp else 2.sp,
+      color = if (tick % 5 == 0) textSecondary else Color.White
+    )
+  ) //positive y is down on the screen. -100 goes "up" in the direction of angle
 
 }
 
@@ -249,26 +281,26 @@ private fun StartIcon(
 
 private fun DrawScope.drawClockCircle(clockRadius: Float, shapeCenter: Offset) {
   drawCircle(color = offGray, radius = clockRadius)
+  drawClockNumerals(shapeCenter, clockRadius)
+}
+
+private fun DrawScope.drawClockNumerals(
+  shapeCenter: Offset,
+  clockRadius: Float
+) {
   val labels = clockLabels()
 
   labels.forEachIndexed { index, it ->
-    val paint = Paint().apply {
-      color = android.graphics.Color.WHITE
-      textSize = 32f
-    }
+    val paint = normalTextPaint()
 
-    val boldPaint = Paint().apply {
-      color = android.graphics.Color.WHITE
-      textSize = 32f
-      this.isFakeBoldText = true
-    }
+    val boldPaint = boldTextPaint()
     val rect = Rect()
     paint.getTextBounds(it, 0, it.length, rect);
     val angle = index * Math.PI * 2 / 24 - (Math.PI / 2)
 
-    val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.85f) - rect.width() / 2).toFloat()
+    val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.75f) - rect.width() / 2).toFloat()
     val y =
-      (shapeCenter.y + sin(angle) * clockRadius.times(0.9f) + rect.height() / 2).toFloat()
+      (shapeCenter.y + sin(angle) * clockRadius.times(0.75f) + rect.height() / 2).toFloat()
     if (isClockBoldNeeded(it) || it.toInt() % 2 == 0
     ) {
       drawContext.canvas.nativeCanvas.drawText(
@@ -278,6 +310,21 @@ private fun DrawScope.drawClockCircle(clockRadius: Float, shapeCenter: Offset) {
       )
     }
 
+  }
+}
+
+private fun boldTextPaint(): Paint {
+  return Paint().apply {
+    color = android.graphics.Color.WHITE
+    textSize = 32f
+    this.isFakeBoldText = true
+  }
+}
+
+private fun normalTextPaint(): Paint {
+  return Paint().apply {
+    color = android.graphics.Color.LTGRAY
+    textSize = 32f
   }
 }
 
