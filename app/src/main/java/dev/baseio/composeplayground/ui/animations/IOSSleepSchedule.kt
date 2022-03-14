@@ -1,5 +1,7 @@
 package dev.baseio.composeplayground.ui.animations
 
+import android.graphics.Paint
+import android.graphics.Rect
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -11,16 +13,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -31,8 +30,11 @@ import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
 import kotlinx.coroutines.launch
+import org.threeten.bp.LocalTime
+import java.util.*
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -50,6 +52,15 @@ fun PreviewIOSSleepSchedule() {
 
 @Composable
 fun IOSSleepSchedule() {
+
+  var startTime by remember {
+    mutableStateOf(LocalTime.of(22, 0))
+  }
+
+  var endTime by remember {
+    mutableStateOf(LocalTime.of(5, 0))
+  }
+
   Box(
     modifier = Modifier
       .fillMaxSize()
@@ -66,7 +77,11 @@ fun IOSSleepSchedule() {
       Spacer(modifier = Modifier.padding(28.dp))
 
 
-      TouchMoveControlTrack()
+      TouchMoveControlTrack({ time ->
+        startTime = time
+      }) { time ->
+        endTime = time
+      }
 
       Spacer(modifier = Modifier.padding(28.dp))
 
@@ -97,12 +112,14 @@ fun IOSSleepSchedule() {
 }
 
 @Composable
-private fun TouchMoveControlTrack() {
+private fun TouchMoveControlTrack(startTime: (LocalTime) -> Unit, endTime: (LocalTime) -> Unit) {
   val constraintsScope = rememberCoroutineScope()
 
   val clockRadius = with(LocalDensity.current) {
     LocalConfiguration.current.screenWidthDp.div(3.5).dp.toPx()
   }
+
+  val clockSize = LocalConfiguration.current.screenWidthDp.div(3.5).dp
 
   val knobTrackStrokeWidth = with(LocalDensity.current) {
     LocalConfiguration.current.screenWidthDp.div(6).dp.toPx()
@@ -138,14 +155,13 @@ private fun TouchMoveControlTrack() {
   }
 
   val haptic = LocalHapticFeedback.current
-  val context = LocalContext.current
-
 
   Box(Modifier) {
     Canvas(modifier = Modifier
       .size(300.dp), onDraw = {
       drawKnobBackground(knobTrackStrokeWidth)
-      drawClockCircle(clockRadius)
+      drawClockCircle(clockRadius, shapeCenter)
+
     })
 
     Canvas(modifier = Modifier
@@ -231,9 +247,64 @@ private fun StartIcon(
       })
 }
 
-private fun DrawScope.drawClockCircle(clockRadius: Float) {
+private fun DrawScope.drawClockCircle(clockRadius: Float, shapeCenter: Offset) {
   drawCircle(color = offGray, radius = clockRadius)
+  val labels = clockLabels()
+
+  labels.forEachIndexed { index, it ->
+    val paint = Paint().apply {
+      color = android.graphics.Color.WHITE
+      textSize = 32f
+    }
+    val rect = Rect()
+    paint.getTextBounds(it, 0, it.length, rect);
+    val angle = index * Math.PI * 2 / 24 - (Math.PI / 2)
+
+    val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.85f) - rect.width() / 2).toFloat()
+    val y =
+      (shapeCenter.y + sin(angle) * clockRadius.times(0.9f) + rect.height() / 2).toFloat()
+    if (it.contains("AM", ignoreCase = true) || it.contains(
+        "PM",
+        ignoreCase = true
+      ) || it.toInt() % 2 == 0
+    ) {
+      drawContext.canvas.nativeCanvas.drawText(
+        it.toString(),
+        x,
+        y, paint
+      )
+    }
+
+  }
 }
+
+private fun clockLabels() =
+  arrayOf(
+    "12AM",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6AM",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12PM",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6PM",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11"
+  )
 
 private fun DrawScope.drawKnobBackground(knobTrackStrokeWidth: Float) {
   drawArc(
