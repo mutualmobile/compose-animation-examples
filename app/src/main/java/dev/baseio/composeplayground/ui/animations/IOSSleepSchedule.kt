@@ -16,10 +16,13 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -134,6 +137,9 @@ private fun TouchMoveControlTrack() {
     mutableStateOf(120f)
   }
 
+  val haptic = LocalHapticFeedback.current
+  val context = LocalContext.current
+
 
   Box(Modifier) {
     Canvas(modifier = Modifier
@@ -149,6 +155,7 @@ private fun TouchMoveControlTrack() {
           detectDragGestures(onDrag = { change, dragAmount ->
             startIconOffset += dragAmount
             angle = getRotationAngle(startIconOffset, shapeCenter)
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
             change.consumeAllChanges()
           })
         }
