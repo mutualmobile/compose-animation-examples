@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
@@ -89,7 +88,7 @@ fun IOSSleepSchedule() {
 
 
       Text(
-        text = "Some hr",
+        text = "12 hr",
         style = Typography.h5.copy(color = Color.White)
       )
 
@@ -166,14 +165,13 @@ private fun TouchMoveControlTrack(
     mutableStateOf(0f)
   }
 
-  var isStart: Boolean? = null
 
   val sweepAngleForKnob = remember {
     mutableStateOf(convertHourToAngle(startTimeValue, endTimeValue))
   }
 
-  var startAngle by remember {
-    mutableStateOf(270f)
+  var knobStartAngle by remember {
+    mutableStateOf(0f)
   }
 
   val reduceOffsetIcon = with(LocalDensity.current) {
@@ -200,25 +198,36 @@ private fun TouchMoveControlTrack(
     Canvas(modifier = Modifier
       .size(300.dp)
       .pointerInput(Unit) {
+        var isStart: Boolean? = null
+
         constraintsScope.launch {
           detectDragGestures(
             onDragEnd = { isStart = null },
             onDragCancel = { isStart = null },
             onDragStart = { offset ->
               val angleFromStartOffset = getRotationAngle(offset, shapeCenter).toFloat()
-              val time = convertAngleToHour(angleFromStartOffset)
-              isStart =
-                startTimeValue.hour == time.hour
-              Log.e("is start clicked", "$isStart")
+              val time =
+                convertAngleToHour(angleFromStartOffset.plus(90f)) // .plus(90f),fix startAngle - Starting angle in degrees. 0 represents 3 o'clock
+              isStart = startTimeValue.hour == time.hour
             },
             onDrag = { change, _ ->
-              val newStartAngle = getRotationAngle(change.position, shapeCenter).toFloat()
-              startAngle =
-                calculateTheStartAngle(isStart, endTimeValue, startTimeValue, newStartAngle)
-              haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-              Log.e("startTime", "${startTimeValue.hour}")
-              Log.e("endTime", "${endTimeValue.hour}")
+              var newStartAngle = getRotationAngle(change.position, shapeCenter).toFloat()
+              newStartAngle += 90f //plus(90f),fix startAngle - Starting angle in degrees. 0 represents 3 o'clock
+              knobStartAngle = if (isStart == false) {
+                //the user clicked on the alarm icon
+                val sweepAdjust = convertHourToAngle(endTimeValue, startTimeValue)
+                val resultant = newStartAngle.minus(sweepAdjust)
+                if (resultant < 0f) {
+                  newStartAngle.plus(sweepAdjust)
+                } else {
+                  resultant
+                }
+              } else {
+                // the user clicked on bed icon
+                newStartAngle
+              }
 
+              haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
               change.consumeAllChanges()
 
             })
@@ -230,27 +239,27 @@ private fun TouchMoveControlTrack(
 
 
       // start and end time
-      val startTimeAngle = startAngle
+      val startTimeAngle = knobStartAngle
       val startTimeCalc = convertAngleToHour(startTimeAngle)
 
-      startTime(startTimeCalc)
+      startTime.invoke(startTimeCalc)
       startTimeValue = startTimeCalc
 
 
       val endTimeAngle = startTimeAngle + sweepAngleForKnob.value
       val endTimeCalc = convertAngleToHour(endTimeAngle)
 
-      endTime(endTimeCalc)
+      endTime.invoke(endTimeCalc)
       endTimeValue = endTimeCalc
 
-      drawRotatingKnob(startAngle, knobStrokeWidth, sweepAngleForKnob.value)
+      drawRotatingKnob(knobStartAngle, knobStrokeWidth, sweepAngleForKnob.value)
     })
 
     DrawHandleLinesOnTheKnob(
       clockRadiusDp,
       knobTrackStrokeWidth,
       sweepAngleForKnob.value,
-      startAngle
+      knobStartAngle
     )
 
     Box(
@@ -261,7 +270,7 @@ private fun TouchMoveControlTrack(
         reduceOffsetIcon,
         shapeCenter,
         true,
-        startAngle,
+        knobStartAngle,
         radius,
 
         )
@@ -269,32 +278,13 @@ private fun TouchMoveControlTrack(
         reduceOffsetIcon,
         shapeCenter,
         false,
-        startAngle + sweepAngleForKnob.value,
+        knobStartAngle + sweepAngleForKnob.value,
         radius,
 
         )
     }
   }
 
-}
-
-private fun calculateTheStartAngle(
-  isStart: Boolean?,
-  endTimeValue: LocalDateTime,
-  startTimeValue: LocalDateTime,
-  newStartAngle: Float
-) = if (isStart == false) {
-  //the user clicked on the alarm icon
-  val sweepAdjust = convertHourToAngle(endTimeValue, startTimeValue)
-  val resultant = newStartAngle.minus(sweepAdjust)
-  if (resultant < 0f) {
-    newStartAngle.plus(sweepAdjust)
-  } else {
-    resultant
-  }
-} else {
-  // the user clicked on bed icon
-  newStartAngle
 }
 
 
@@ -308,7 +298,11 @@ private fun BoxScope.DrawHandleLinesOnTheKnob(
   val handleLinesCount = (sweepAngleForKnob).div(2).toInt()
   Box(
     modifier = Modifier
-      .rotate(startAngle.plus(handleLinesCount))
+      .rotate(
+        startAngle
+          .minus(90f)
+          .plus(handleLinesCount)
+      ) // .minus(90f),fix startAngle - Starting angle in degrees. 0 represents 3 o'clock
       .align(Alignment.Center)
       .size(clockSize.plus(knobTrackStrokeWidth.div(2).dp))
   ) {
@@ -352,17 +346,15 @@ fun BoxScope.Handle(handle: Int, totalAngle: Float, handleLinesCount: Int) {
 @Composable
 fun BoxScope.Tick(tick: Int) {
   val angle = 360f / 120f * tick
-  Text(
-    text = "|",
+  Box(
     modifier = Modifier
       .align(Alignment.Center)
-      .rotate(angle) // rotate your number by 'angle' and now 'up' is towards the numbers final position
-      .offset(0.dp, (-110).dp),
-    style = Typography.caption.copy(
-      fontSize = if (tick % 5 == 0) 8.sp else 2.sp,
-      color = if (tick % 5 == 0) textSecondary else Color.White
-    )
-  ) //positive y is down on the screen. -100 goes "up" in the direction of angle
+      .width(if (tick % 5 == 0) 1.5.dp else 1.dp)
+      .height(if (tick % 5 == 0) 6.dp else 2.dp)
+      .rotate(angle)
+      .offset(0.dp, (-110).dp)
+      .background(textSecondary.copy(alpha = 0.5f)),
+  )
 
 }
 
@@ -374,6 +366,8 @@ private fun KnobIcon(
   angleKnob: Float,
   radius: Float
 ) {
+  val angleKnob =
+    angleKnob.minus(90f)// .minus(90f),fix startAngle - Starting angle in degrees. 0 represents 3 o'clock
   // start icon offset
   val iconX = (shapeCenter.x + cos(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
   val iconY = (shapeCenter.y + sin(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
@@ -419,9 +413,9 @@ private fun DrawScope.drawClockNumerals(
     paint.getTextBounds(it, 0, it.length, rect);
     val angle = index * Math.PI * 2 / 24 - (Math.PI / 2)
 
-    val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.75f) - rect.width() / 2).toFloat()
+    val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.80f) - rect.width() / 2).toFloat()
     val y =
-      (shapeCenter.y + sin(angle) * clockRadius.times(0.75f) + rect.height() / 2).toFloat()
+      (shapeCenter.y + sin(angle) * clockRadius.times(0.85f) + rect.height() / 2).toFloat()
     if (isClockBoldNeeded(it) || it.toInt() % 2 == 0
     ) {
       drawContext.canvas.nativeCanvas.drawText(
@@ -495,9 +489,12 @@ private fun DrawScope.drawRotatingKnob(
   knobStrokeWidth: Float,
   sweepAngleForKnob: Float
 ) {
+  Log.e("start angle", "$startAngle")
+  Log.e("sweepAngleForKnob angle", "$sweepAngleForKnob")
+
   drawArc(
     color = offGray,
-    startAngle = startAngle,
+    startAngle = startAngle.minus(90f),
     sweepAngle = sweepAngleForKnob,
     false,
     style = Stroke(width = knobStrokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
