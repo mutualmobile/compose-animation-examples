@@ -16,6 +16,7 @@ import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.contributors.ShubhamSingh
 import dev.baseio.composeplayground.ui.animations.ChatMessageReactions
 import dev.baseio.composeplayground.ui.animations.LikeAnimation
+import dev.baseio.composeplayground.ui.animations.LogoAnimation
 import dev.baseio.composeplayground.ui.animations.MenuToClose
 import dev.baseio.composeplayground.ui.animations.PinterestLogoProgressAnim
 import dev.baseio.composeplayground.ui.animations.PullToRefreshOne
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 5, state = pagerState,
+                count = 6, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
@@ -61,6 +62,12 @@ class MainActivity : ComponentActivity() {
                   4 -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                       PinterestLogoProgressAnim()
+                      ShubhamSingh()
+                    }
+                  }
+                  5 -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                      LogoAnimation()
                       ShubhamSingh()
                     }
                   }
