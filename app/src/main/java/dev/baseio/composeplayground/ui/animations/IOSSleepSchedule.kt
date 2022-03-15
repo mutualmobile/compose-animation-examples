@@ -158,6 +158,10 @@ private fun TouchMoveControlTrack(
     mutableStateOf(Offset.Zero)
   }
 
+  var radius by remember {
+    mutableStateOf(0f)
+  }
+
   val sweepAngleForKnob = remember {
     mutableStateOf(convertHourToAngle(sTime, enTime))
   }
@@ -167,10 +171,6 @@ private fun TouchMoveControlTrack(
   }
 
   var startIconOffset by remember {
-    mutableStateOf(Offset.Zero)
-  }
-
-  var endIconOffset by remember {
     mutableStateOf(Offset.Zero)
   }
 
@@ -204,36 +204,22 @@ private fun TouchMoveControlTrack(
       }, onDraw = {
       shapeCenter = center
 
-      val radius = size.minDimension / 2
+      radius = size.minDimension / 2
 
-      // start icon offset
-      val startIconX = (shapeCenter.x + cos(Math.toRadians(angle.toDouble())) * radius).toFloat()
-      val startIconY = (shapeCenter.y + sin(Math.toRadians(angle.toDouble())) * radius).toFloat()
-      startIconOffset = Offset(startIconX, startIconY)
-
-      // end icon offset
-      val endIconX =
-        (shapeCenter.x + cos(Math.toRadians((angle + sweepAngleForKnob.value).toDouble())) * radius).toFloat()
-      val endIconY =
-        (shapeCenter.x + sin(Math.toRadians((angle + sweepAngleForKnob.value).toDouble())) * radius).toFloat()
-      endIconOffset = Offset(endIconX, endIconY)
 
       // start and end time
       startTime(convertAngleToHour(angle))
       endTime(convertAngleToHour(angle + sweepAngleForKnob.value))
-
-
-
 
       drawRotatingKnob(angle, knobStrokeWidth, sweepAngleForKnob.value)
 
     })
 
     Box(Modifier.size(300.dp)) {
-      KnobIcon(startIconOffset, reduceOffsetIcon, shapeCenter, true) {
+      KnobIcon(reduceOffsetIcon, shapeCenter, true, angle, radius) {
         sweepAngleForKnob.value = it.toFloat()
       }
-      KnobIcon(endIconOffset, reduceOffsetIcon, shapeCenter, false) {
+      KnobIcon(reduceOffsetIcon, shapeCenter, false, angle + sweepAngleForKnob.value, radius) {
         sweepAngleForKnob.value = it.toFloat()
       }
     }
@@ -273,23 +259,25 @@ fun BoxScope.Tick(tick: Int) {
 
 @Composable
 private fun KnobIcon(
-  startIconOffset: Offset,
   reduceOffsetIcon: Float,
   shapeCenter: Offset,
   isStart: Boolean,
+  angleKnob: Float,
+  radius: Float,
   angle: (Double) -> Unit
 ) {
-  val rememberDragValue = remember {
-    mutableStateOf(startIconOffset)
-  }
+  // start icon offset
+  val startIconX = (shapeCenter.x + cos(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
+  val startIconY = (shapeCenter.y + sin(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
+  val startIconOffset = Offset(startIconX, startIconY)
+
   val constraintsScope = rememberCoroutineScope()
   SleepBedTimeIcon(isStart,
     Modifier
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures(onDrag = { change, dragAmount ->
-            rememberDragValue.value += dragAmount
-            angle.invoke(getRotationAngle(startIconOffset, shapeCenter))
+            angle.invoke(getRotationAngle(change.position, shapeCenter))
             change.consumeAllChanges()
           })
         }
