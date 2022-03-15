@@ -1,4 +1,4 @@
-package dev.baseio.composeplayground.ui.animations
+package dev.baseio.composeplayground.ui.animations.pulltorefresh
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -83,7 +83,7 @@ fun PullToRefreshOne() {
 
   Box(
     Modifier
-      .fillMaxSize()
+      .fillMaxSize().background(MaterialTheme.colors.background)
   ) {
     CloudList(
       animateOffset,

@@ -32,7 +32,7 @@ fun ChatMessageReactions(modifier: Modifier) {
   }
   Surface(
     modifier
-      .background(MaterialTheme.colors.onBackground)
+      .background(MaterialTheme.colors.background)
   ) {
 
     val scaleEffect by animateFloatAsState(
