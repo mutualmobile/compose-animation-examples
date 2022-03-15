@@ -166,12 +166,8 @@ private fun TouchMoveControlTrack(
     mutableStateOf(convertHourToAngle(sTime, enTime))
   }
 
-  var angle by remember {
+  var startAngle by remember {
     mutableStateOf(0.0f)
-  }
-
-  var startIconOffset by remember {
-    mutableStateOf(Offset.Zero)
   }
 
   val reduceOffsetIcon = with(LocalDensity.current) {
@@ -191,12 +187,11 @@ private fun TouchMoveControlTrack(
     DrawTicks(clockSize)
 
     Canvas(modifier = Modifier
-      .size(300.dp)
+      .size(300.dp).rotate(270f)
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures { change, dragAmount ->
-            startIconOffset += dragAmount
-            angle = getRotationAngle(change.position, shapeCenter).toFloat()
+            startAngle = getRotationAngle(change.position, shapeCenter).toFloat()
             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
             change.consumeAllChanges()
           }
@@ -208,18 +203,18 @@ private fun TouchMoveControlTrack(
 
 
       // start and end time
-      startTime(convertAngleToHour(angle))
-      endTime(convertAngleToHour(angle + sweepAngleForKnob.value))
+      startTime(convertAngleToHour(startAngle))
+      endTime(convertAngleToHour(startAngle + sweepAngleForKnob.value))
 
-      drawRotatingKnob(angle, knobStrokeWidth, sweepAngleForKnob.value)
+      drawRotatingKnob(startAngle, knobStrokeWidth, sweepAngleForKnob.value)
 
     })
 
-    Box(Modifier.size(300.dp)) {
-      KnobIcon(reduceOffsetIcon, shapeCenter, true, angle, radius) {
+    Box(Modifier.size(300.dp).rotate(270f)) {
+      KnobIcon(reduceOffsetIcon, shapeCenter, true, startAngle, radius) {
         sweepAngleForKnob.value = it.toFloat()
       }
-      KnobIcon(reduceOffsetIcon, shapeCenter, false, angle + sweepAngleForKnob.value, radius) {
+      KnobIcon(reduceOffsetIcon, shapeCenter, false, startAngle + sweepAngleForKnob.value, radius) {
         sweepAngleForKnob.value = it.toFloat()
       }
     }
@@ -387,13 +382,13 @@ private fun DrawScope.drawKnobBackground(knobTrackStrokeWidth: Float) {
 }
 
 private fun DrawScope.drawRotatingKnob(
-  angle: Float,
+  startAngle: Float,
   knobStrokeWidth: Float,
   sweepAngleForKnob: Float
 ) {
   drawArc(
     color = offGray,
-    startAngle = angle,
+    startAngle = startAngle,
     sweepAngle = sweepAngleForKnob,
     false,
     style = Stroke(width = knobStrokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
@@ -404,7 +399,7 @@ private fun DrawScope.drawRotatingKnob(
 fun VerticalGroupTime(isStart: Boolean, startTime: LocalTime, endTime: LocalTime) {
   Column(horizontalAlignment = Alignment.CenterHorizontally) {
     Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-      SleepBedTimeIcon(isStart, Modifier)
+      SleepBedTimeIcon(isStart, Modifier.rotate(-90f))
       Spacer(modifier = Modifier.padding(end = 2.dp))
       Text(
         text = if (isStart) "BEDTIME" else "WAKE UP",
@@ -431,7 +426,7 @@ private fun SleepBedTimeIcon(isStart: Boolean, modifier: Modifier = Modifier) {
   Icon(
     painter = painterResource(isStart),
     tint = textSecondary,
-    contentDescription = null, modifier = modifier
+    contentDescription = null, modifier = modifier.rotate(90f)
   )
 
 }
