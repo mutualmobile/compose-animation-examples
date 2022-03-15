@@ -138,6 +138,14 @@ private fun TouchMoveControlTrack(
   endTime: (LocalTime) -> Unit
 ) {
 
+  var startTimeValue by remember {
+    mutableStateOf(sTime)
+  }
+
+  var endTimeValue by remember {
+    mutableStateOf(enTime)
+  }
+
 
   val constraintsScope = rememberCoroutineScope()
 
@@ -166,7 +174,7 @@ private fun TouchMoveControlTrack(
   var isStart: Boolean? = null
 
   val sweepAngleForKnob = remember {
-    mutableStateOf(convertHourToAngle(sTime, enTime))
+    mutableStateOf(convertHourToAngle(startTimeValue, endTimeValue))
   }
 
   var startAngle by remember {
@@ -202,22 +210,14 @@ private fun TouchMoveControlTrack(
             onDragStart = { offset ->
               val angleFromStartOffset = getRotationAngle(offset, shapeCenter).toFloat()
               val time = convertAngleToHour(angleFromStartOffset)
-              isStart = sTime.hour == time.hour // TODO fix the knob rotation here, when drag again this is returning false and defaults to 0 hour
-              Log.e("is start clicked", "${time} ${sTime.hour} ${isStart}")
+              isStart =
+                startTimeValue.hour == time.hour
+              Log.e("is start clicked", "$isStart")
             },
             onDrag = { change, _ ->
               val newStartAngle = getRotationAngle(change.position, shapeCenter).toFloat()
-              if (isStart == false) {
-                val knobSweepedAngle = newStartAngle - convertHourToAngle(enTime, sTime)
-                Log.e("convertHourToAngle","${newStartAngle} - ${convertHourToAngle(enTime, sTime)}")
-                Log.e("knobSweepedAngle", "$knobSweepedAngle")
-                startAngle = knobSweepedAngle
-
-              } else {
-                startAngle = newStartAngle
-              }
-
-
+              startAngle =
+                calculateTheStartAngle(isStart, endTimeValue, startTimeValue, newStartAngle)
               haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
               change.consumeAllChanges()
             })
@@ -229,8 +229,18 @@ private fun TouchMoveControlTrack(
 
 
       // start and end time
-      startTime(convertAngleToHour(startAngle))
-      endTime(convertAngleToHour(startAngle + sweepAngleForKnob.value))
+      val startTimeAngle = startAngle
+      val startTimeCalc = convertAngleToHour(startTimeAngle)
+
+      startTime(startTimeCalc)
+      startTimeValue = startTimeCalc
+
+
+      val endTimeAngle = startTimeAngle + sweepAngleForKnob.value
+      val endTimeCalc = convertAngleToHour(endTimeAngle)
+
+      endTime(endTimeCalc)
+      endTimeValue = endTimeCalc
 
       drawRotatingKnob(startAngle, knobStrokeWidth, sweepAngleForKnob.value)
     })
@@ -251,6 +261,25 @@ private fun TouchMoveControlTrack(
     }
   }
 
+}
+
+private fun calculateTheStartAngle(
+  isStart: Boolean?,
+  endTimeValue: LocalTime,
+  startTimeValue: LocalTime,
+  newStartAngle: Float
+) = if (isStart == false) {
+  //the user clicked on the alarm icon
+  val sweepAdjust = convertHourToAngle(endTimeValue, startTimeValue)
+  val resultant = newStartAngle.minus(sweepAdjust)
+  if (resultant < 0f) {
+    newStartAngle.plus(sweepAdjust)
+  } else {
+    resultant
+  }
+} else {
+  // the user clicked on bed icon
+  newStartAngle
 }
 
 
@@ -341,7 +370,7 @@ private fun KnobIcon(
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures(onDrag = { change, dragAmount ->
-            sweepAngleUpdate.invoke(angleKnob + getRotationAngle(change.position, shapeCenter))
+            sweepAngleUpdate.invoke(getRotationAngle(change.position, shapeCenter))
             change.consumeAllChanges()
           })
         }
