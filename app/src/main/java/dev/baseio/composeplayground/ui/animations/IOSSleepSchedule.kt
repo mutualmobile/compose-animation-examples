@@ -121,7 +121,7 @@ fun convertHourToAngle(startTime: LocalDateTime, endTime: LocalDateTime): Float 
 
 fun convertAngleToHour(startAngle: Float): LocalDateTime {
   var startAngle = startAngle
-  if (startAngle > 360) {
+  while (startAngle > 360) {
     startAngle = startAngle.minus(360f)
   }
   val hour = (startAngle / 15).toInt()
@@ -191,9 +191,6 @@ private fun TouchMoveControlTrack(
 
 
     DrawTicks(clockRadiusDp)
-
-    Log.e("startTime", "${startTimeValue.hour}")
-    Log.e("endTime", "${endTimeValue.hour}")
 
     Canvas(modifier = Modifier
       .size(300.dp)
@@ -413,9 +410,9 @@ private fun DrawScope.drawClockNumerals(
     paint.getTextBounds(it, 0, it.length, rect);
     val angle = index * Math.PI * 2 / 24 - (Math.PI / 2)
 
-    val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.80f) - rect.width() / 2).toFloat()
+    val x = (shapeCenter.x + cos(angle) * clockRadius.times(0.75f) - rect.width() / 2).toFloat()
     val y =
-      (shapeCenter.y + sin(angle) * clockRadius.times(0.85f) + rect.height() / 2).toFloat()
+      (shapeCenter.y + sin(angle) * clockRadius.times(0.78f) + rect.height() / 2).toFloat()
     if (isClockBoldNeeded(it) || it.toInt() % 2 == 0
     ) {
       drawContext.canvas.nativeCanvas.drawText(
@@ -489,9 +486,6 @@ private fun DrawScope.drawRotatingKnob(
   knobStrokeWidth: Float,
   sweepAngleForKnob: Float
 ) {
-  Log.e("start angle", "$startAngle")
-  Log.e("sweepAngleForKnob angle", "$sweepAngleForKnob")
-
   drawArc(
     color = offGray,
     startAngle = startAngle.minus(90f),
