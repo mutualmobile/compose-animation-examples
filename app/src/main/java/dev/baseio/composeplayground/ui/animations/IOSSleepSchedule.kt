@@ -202,7 +202,7 @@ private fun TouchMoveControlTrack(
             onDragStart = { offset ->
               val angleFromStartOffset = getRotationAngle(offset, shapeCenter).toFloat()
               val time = convertAngleToHour(angleFromStartOffset)
-              isStart = sTime.hour == time.hour
+              isStart = sTime.hour == time.hour // TODO fix the knob rotation here, when drag again this is returning false and defaults to 0 hour
               Log.e("is start clicked", "${time} ${sTime.hour} ${isStart}")
             },
             onDrag = { change, _ ->
