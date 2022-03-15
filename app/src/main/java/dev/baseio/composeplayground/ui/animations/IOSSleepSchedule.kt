@@ -59,7 +59,7 @@ fun IOSSleepSchedule() {
   }
 
   var endTime by remember {
-    mutableStateOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 0)))
+    mutableStateOf(LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 0)))
   }
 
   Box(
@@ -126,6 +126,7 @@ fun convertAngleToHour(startAngle: Float): LocalDateTime {
   }
   val hour = (startAngle / 15).toInt()
   return LocalDateTime.of(LocalDate.now(), LocalTime.of(hour, 0))
+
 }
 
 @Composable
@@ -136,9 +137,13 @@ private fun TouchMoveControlTrack(
   endTime: (LocalDateTime) -> Unit
 ) {
 
-  var startTimeValue = sTime
+  var startTimeValue by remember {
+    mutableStateOf(sTime)
+  }
 
-  var endTimeValue = enTime
+  var endTimeValue by remember {
+    mutableStateOf(enTime)
+  }
 
 
   val constraintsScope = rememberCoroutineScope()
@@ -196,34 +201,49 @@ private fun TouchMoveControlTrack(
       .size(300.dp)
       .pointerInput(Unit) {
         var isStart: Boolean? = null
-
+        var isEnd: Boolean? = null
+        var canMove = true;
+        var timeAtTouchScroll: LocalDateTime? = null
         constraintsScope.launch {
           detectDragGestures(
-            onDragEnd = { isStart = null },
-            onDragCancel = { isStart = null },
+            onDragEnd = {
+              isStart = null
+            },
+            onDragCancel = {
+              isStart = null
+            },
             onDragStart = { offset ->
               val angleFromStartOffset = getRotationAngle(offset, shapeCenter).toFloat()
-              val time =
+              timeAtTouchScroll =
                 convertAngleToHour(angleFromStartOffset.plus(90f)) // .plus(90f),fix startAngle - Starting angle in degrees. 0 represents 3 o'clock
-              isStart = startTimeValue.hour == time.hour
+              canMove =
+                timeAtTouchScroll!!.hour >= startTimeValue.hour || timeAtTouchScroll!!.hour <= endTimeValue.hour
+              Log.e(
+                "times",
+                "${timeAtTouchScroll!!.hour} ${startTimeValue.hour} ${endTimeValue.hour}"
+              )
+              isStart = timeAtTouchScroll!!.hour == startTimeValue.hour
+              isEnd = timeAtTouchScroll!!.hour == endTimeValue.hour
+              Log.e("which end ", "${isStart} ${isEnd}")
+              haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+
             },
             onDrag = { change, _ ->
+              if (!canMove) {
+                change.consumeAllChanges()
+                return@detectDragGestures
+              }
               var newStartAngle = getRotationAngle(change.position, shapeCenter).toFloat()
               newStartAngle += 90f //plus(90f),fix startAngle - Starting angle in degrees. 0 represents 3 o'clock
-              knobStartAngle = if (isStart == false) {
+              knobStartAngle = if (isEnd == true) {
                 //the user clicked on the alarm icon
                 val sweepAdjust = convertHourToAngle(endTimeValue, startTimeValue)
-                val resultant = newStartAngle.minus(sweepAdjust)
-                if (resultant < 0f) {
-                  newStartAngle.plus(sweepAdjust)
-                } else {
-                  resultant
-                }
+                sweepAngleForKnob.value
               } else {
                 // the user clicked on bed icon
                 newStartAngle
               }
-
+              Log.e("final knobStartAngle", "$knobStartAngle")
               haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
               change.consumeAllChanges()
 
@@ -294,12 +314,7 @@ private fun BoxScope.DrawHandleLinesOnTheKnob(
 ) {
   val handleLinesCount = (sweepAngleForKnob).div(2).toInt()
   Box(
-    modifier = Modifier
-      .rotate(
-        startAngle
-          .minus(90f)
-          .plus(handleLinesCount)
-      ) // .minus(90f),fix startAngle - Starting angle in degrees. 0 represents 3 o'clock
+    modifier = Modifier.rotate(startAngle)
       .align(Alignment.Center)
       .size(clockSize.plus(knobTrackStrokeWidth.div(2).dp))
   ) {
