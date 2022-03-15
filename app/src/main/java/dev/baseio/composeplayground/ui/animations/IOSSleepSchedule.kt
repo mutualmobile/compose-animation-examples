@@ -35,6 +35,7 @@ import dev.baseio.composeplayground.ui.theme.Typography
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -88,7 +89,7 @@ fun IOSSleepSchedule() {
       Spacer(modifier = Modifier.padding(28.dp))
 
       Text(
-        text = "8 hr",
+        text = "${abs(endTime.hour.minus(startTime.hour))} hr",
         style = Typography.h5.copy(color = Color.White)
       )
 
@@ -114,13 +115,22 @@ fun IOSSleepSchedule() {
 }
 
 fun convertHourToAngle(startTime: LocalTime, endTime: LocalTime): Float {
-  val angle = 360f / 120f * startTime.hour.times(5)
-  val endAngle = 360f / 120f * endTime.hour.times(5)
+  val angle = startTime.hour.times(15f)
+  val endAngle = endTime.hour.times(15f)
   return endAngle.minus(angle)
 }
 
+fun convertAngleToHour(startAngle: Float): LocalTime {
+  var startAngle = startAngle
+  if (startAngle > 360) {
+    startAngle = startAngle.minus(360f)
+  }
+  val hour = (startAngle / 15).toInt()
+  return LocalTime.of(hour, 0)
+}
+
 @Composable
-private fun ColumnScope.TouchMoveControlTrack(
+private fun TouchMoveControlTrack(
   sTime: LocalTime,
   enTime: LocalTime,
   startTime: (LocalTime) -> Unit,
@@ -184,28 +194,37 @@ private fun ColumnScope.TouchMoveControlTrack(
       .size(300.dp)
       .pointerInput(Unit) {
         constraintsScope.launch {
-          detectDragGestures(onDrag = { change, dragAmount ->
+          detectDragGestures { change, dragAmount ->
             startIconOffset += dragAmount
             angle = getRotationAngle(change.position, shapeCenter).toFloat()
             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
             change.consumeAllChanges()
-          })
+          }
         }
       }, onDraw = {
       shapeCenter = center
 
       val radius = size.minDimension / 2
 
+      // start icon offset
       val startIconX = (shapeCenter.x + cos(Math.toRadians(angle.toDouble())) * radius).toFloat()
       val startIconY = (shapeCenter.y + sin(Math.toRadians(angle.toDouble())) * radius).toFloat()
+      startIconOffset = Offset(startIconX, startIconY)
 
+      // end icon offset
       val endIconX =
         (shapeCenter.x + cos(Math.toRadians((angle + sweepAngleForKnob.value).toDouble())) * radius).toFloat()
       val endIconY =
         (shapeCenter.x + sin(Math.toRadians((angle + sweepAngleForKnob.value).toDouble())) * radius).toFloat()
-
-      startIconOffset = Offset(startIconX, startIconY)
       endIconOffset = Offset(endIconX, endIconY)
+
+      // start and end time
+      startTime(convertAngleToHour(angle))
+      endTime(convertAngleToHour(angle + sweepAngleForKnob.value))
+
+
+
+
       drawRotatingKnob(angle, knobStrokeWidth, sweepAngleForKnob.value)
 
     })
@@ -379,7 +398,11 @@ private fun DrawScope.drawKnobBackground(knobTrackStrokeWidth: Float) {
   )
 }
 
-private fun DrawScope.drawRotatingKnob(angle: Float, knobStrokeWidth: Float, sweepAngleForKnob: Float) {
+private fun DrawScope.drawRotatingKnob(
+  angle: Float,
+  knobStrokeWidth: Float,
+  sweepAngleForKnob: Float
+) {
   drawArc(
     color = offGray,
     startAngle = angle,
