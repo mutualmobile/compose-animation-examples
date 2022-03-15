@@ -43,7 +43,7 @@ import kotlin.math.sin
 
 val offGray = Color(45, 44, 46)
 val textSecondary = Color(157, 156, 167)
-
+const val handleLinesCount = 60
 
 @Preview
 @Composable
@@ -144,7 +144,7 @@ private fun TouchMoveControlTrack(
     LocalConfiguration.current.screenWidthDp.div(3.5).dp.toPx()
   }
 
-  val clockSize = LocalConfiguration.current.screenWidthDp.div(3.5).dp
+  val clockRadiusDp = LocalConfiguration.current.screenWidthDp.div(3.5).dp
 
   val knobTrackStrokeWidth = with(LocalDensity.current) {
     LocalConfiguration.current.screenWidthDp.div(6).dp.toPx()
@@ -166,12 +166,8 @@ private fun TouchMoveControlTrack(
     mutableStateOf(convertHourToAngle(sTime, enTime))
   }
 
-  var angle by remember {
+  var startAngle by remember {
     mutableStateOf(0.0f)
-  }
-
-  var startIconOffset by remember {
-    mutableStateOf(Offset.Zero)
   }
 
   val reduceOffsetIcon = with(LocalDensity.current) {
@@ -188,15 +184,17 @@ private fun TouchMoveControlTrack(
       drawClockCircle(clockRadius, shapeCenter)
     })
 
-    DrawTicks(clockSize)
+
+
+    DrawTicks(clockRadiusDp)
 
     Canvas(modifier = Modifier
       .size(300.dp)
+      .rotate(270f)
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures { change, dragAmount ->
-            startIconOffset += dragAmount
-            angle = getRotationAngle(change.position, shapeCenter).toFloat()
+            startAngle = getRotationAngle(change.position, shapeCenter).toFloat()
             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
             change.consumeAllChanges()
           }
@@ -208,23 +206,49 @@ private fun TouchMoveControlTrack(
 
 
       // start and end time
-      startTime(convertAngleToHour(angle))
-      endTime(convertAngleToHour(angle + sweepAngleForKnob.value))
+      startTime(convertAngleToHour(startAngle))
+      endTime(convertAngleToHour(startAngle + sweepAngleForKnob.value))
 
-      drawRotatingKnob(angle, knobStrokeWidth, sweepAngleForKnob.value)
-
+      drawRotatingKnob(startAngle, knobStrokeWidth, sweepAngleForKnob.value)
     })
 
-    Box(Modifier.size(300.dp)) {
-      KnobIcon(reduceOffsetIcon, shapeCenter, true, angle, radius) {
+    DrawHandleForKnob(clockRadiusDp, knobTrackStrokeWidth, sweepAngleForKnob.value,startAngle)
+
+    Box(
+      Modifier
+        .size(300.dp)
+        .rotate(270f)
+    ) {
+      KnobIcon(reduceOffsetIcon, shapeCenter, true, startAngle, radius) {
         sweepAngleForKnob.value = it.toFloat()
       }
-      KnobIcon(reduceOffsetIcon, shapeCenter, false, angle + sweepAngleForKnob.value, radius) {
+      KnobIcon(reduceOffsetIcon, shapeCenter, false, startAngle + sweepAngleForKnob.value, radius) {
         sweepAngleForKnob.value = it.toFloat()
       }
     }
   }
 
+}
+
+
+@Composable
+private fun BoxScope.DrawHandleForKnob(
+  clockSize: Dp,
+  knobTrackStrokeWidth: Float,
+  sweepAngleForKnob: Float,
+  startAngle: Float
+) {
+  Box(
+    modifier = Modifier.rotate(startAngle)
+      .align(Alignment.Center)
+      .size(clockSize.plus(knobTrackStrokeWidth.div(2).dp))
+  ) {
+    repeat(handleLinesCount) {
+      if (it > 3 && it < handleLinesCount.minus(3)) {
+        Handle(it, sweepAngleForKnob)
+      }
+    }
+  }
 }
 
 @Composable
@@ -238,6 +262,22 @@ private fun BoxScope.DrawTicks(clockSize: Dp) {
       Tick(it)
     }
   }
+}
+
+@Composable
+fun BoxScope.Handle(handle: Int, startAngle: Float) {
+  val angle = startAngle / handleLinesCount * handle
+
+  Box(
+    modifier = Modifier
+      .align(Alignment.Center)
+      .width(3.dp)
+      .height(14.dp)
+      .rotate(angle)
+      .offset(0.dp, (-150).dp)
+      .background(Color(1, 0, 0).copy(alpha = 0.6f))
+  )
+
 }
 
 @Composable
@@ -264,7 +304,7 @@ private fun KnobIcon(
   isStart: Boolean,
   angleKnob: Float,
   radius: Float,
-  angle: (Double) -> Unit
+  sweepAngleUpdate: (Double) -> Unit
 ) {
   // start icon offset
   val startIconX = (shapeCenter.x + cos(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
@@ -277,7 +317,7 @@ private fun KnobIcon(
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures(onDrag = { change, dragAmount ->
-            angle.invoke(getRotationAngle(change.position, shapeCenter))
+            sweepAngleUpdate.invoke(getRotationAngle(change.position, shapeCenter))
             change.consumeAllChanges()
           })
         }
@@ -387,13 +427,13 @@ private fun DrawScope.drawKnobBackground(knobTrackStrokeWidth: Float) {
 }
 
 private fun DrawScope.drawRotatingKnob(
-  angle: Float,
+  startAngle: Float,
   knobStrokeWidth: Float,
   sweepAngleForKnob: Float
 ) {
   drawArc(
     color = offGray,
-    startAngle = angle,
+    startAngle = startAngle,
     sweepAngle = sweepAngleForKnob,
     false,
     style = Stroke(width = knobStrokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
@@ -404,7 +444,7 @@ private fun DrawScope.drawRotatingKnob(
 fun VerticalGroupTime(isStart: Boolean, startTime: LocalTime, endTime: LocalTime) {
   Column(horizontalAlignment = Alignment.CenterHorizontally) {
     Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-      SleepBedTimeIcon(isStart, Modifier)
+      SleepBedTimeIcon(isStart, Modifier.rotate(-90f))
       Spacer(modifier = Modifier.padding(end = 2.dp))
       Text(
         text = if (isStart) "BEDTIME" else "WAKE UP",
@@ -431,7 +471,7 @@ private fun SleepBedTimeIcon(isStart: Boolean, modifier: Modifier = Modifier) {
   Icon(
     painter = painterResource(isStart),
     tint = textSecondary,
-    contentDescription = null, modifier = modifier
+    contentDescription = null, modifier = modifier.rotate(90f)
   )
 
 }
