@@ -194,6 +194,9 @@ private fun TouchMoveControlTrack(
 
     DrawTicks(clockRadiusDp)
 
+    Log.e("startTime", "${startTimeValue.hour}")
+    Log.e("endTime", "${endTimeValue.hour}")
+
     Canvas(modifier = Modifier
       .size(300.dp)
       .pointerInput(Unit) {
@@ -213,7 +216,11 @@ private fun TouchMoveControlTrack(
               startAngle =
                 calculateTheStartAngle(isStart, endTimeValue, startTimeValue, newStartAngle)
               haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+              Log.e("startTime", "${startTimeValue.hour}")
+              Log.e("endTime", "${endTimeValue.hour}")
+
               change.consumeAllChanges()
+
             })
         }
       }, onDraw = {
@@ -250,12 +257,22 @@ private fun TouchMoveControlTrack(
       Modifier
         .size(300.dp)
     ) {
-      KnobIcon(reduceOffsetIcon, shapeCenter, true, startAngle, radius) {
-        sweepAngleForKnob.value = it.toFloat()
-      }
-      KnobIcon(reduceOffsetIcon, shapeCenter, false, startAngle + sweepAngleForKnob.value, radius) {
-        sweepAngleForKnob.value = it.toFloat()
-      }
+      KnobIcon(
+        reduceOffsetIcon,
+        shapeCenter,
+        true,
+        startAngle,
+        radius,
+
+        )
+      KnobIcon(
+        reduceOffsetIcon,
+        shapeCenter,
+        false,
+        startAngle + sweepAngleForKnob.value,
+        radius,
+
+        )
     }
   }
 
@@ -355,25 +372,15 @@ private fun KnobIcon(
   shapeCenter: Offset,
   isStart: Boolean,
   angleKnob: Float,
-  radius: Float,
-  sweepAngleUpdate: (Double) -> Unit
+  radius: Float
 ) {
   // start icon offset
   val iconX = (shapeCenter.x + cos(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
   val iconY = (shapeCenter.y + sin(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
   val iconOffset = Offset(iconX, iconY)
 
-  val constraintsScope = rememberCoroutineScope()
   SleepBedTimeIcon(isStart,
     Modifier
-      .pointerInput(Unit) {
-        constraintsScope.launch {
-          detectDragGestures(onDrag = { change, dragAmount ->
-            sweepAngleUpdate.invoke(getRotationAngle(change.position, shapeCenter))
-            change.consumeAllChanges()
-          })
-        }
-      }
       .offset {
         IconOffset(iconOffset, reduceOffsetIcon)
       })
