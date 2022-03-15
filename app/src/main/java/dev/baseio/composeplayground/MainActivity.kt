@@ -20,6 +20,7 @@ import dev.baseio.composeplayground.ui.animations.LogoAnimation
 import dev.baseio.composeplayground.ui.animations.MenuToClose
 import dev.baseio.composeplayground.ui.animations.PinterestLogoProgressAnim
 import dev.baseio.composeplayground.ui.animations.PullToRefreshOne
+import dev.baseio.composeplayground.ui.animations.SyncingLoader
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                   .weight(1f)
                   .fillMaxWidth(),
-                count = 6, state = pagerState,
+                count = 7, state = pagerState,
               ) { page ->
                 // Our page content
                 when (page) {
@@ -68,6 +69,12 @@ class MainActivity : ComponentActivity() {
                   5 -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                       LogoAnimation()
+                      ShubhamSingh()
+                    }
+                  }
+                  6 -> {
+                    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {
+                      SyncingLoader()
                       ShubhamSingh()
                     }
                   }
