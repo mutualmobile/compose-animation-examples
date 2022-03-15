@@ -212,7 +212,7 @@ private fun TouchMoveControlTrack(
       drawRotatingKnob(startAngle, knobStrokeWidth, sweepAngleForKnob.value)
     })
 
-    DrawHandleForKnob(clockRadiusDp, knobTrackStrokeWidth, sweepAngleForKnob.value)
+    DrawHandleForKnob(clockRadiusDp, knobTrackStrokeWidth, sweepAngleForKnob.value,startAngle)
 
     Box(
       Modifier
@@ -235,10 +235,11 @@ private fun TouchMoveControlTrack(
 private fun BoxScope.DrawHandleForKnob(
   clockSize: Dp,
   knobTrackStrokeWidth: Float,
-  sweepAngleForKnob: Float
+  sweepAngleForKnob: Float,
+  startAngle: Float
 ) {
   Box(
-    modifier = Modifier
+    modifier = Modifier.rotate(startAngle)
       .align(Alignment.Center)
       .size(clockSize.plus(knobTrackStrokeWidth.div(2).dp))
   ) {
