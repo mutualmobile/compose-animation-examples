@@ -29,7 +29,6 @@ import dev.baseio.composeplayground.ui.animations.LikeAnimation
 import dev.baseio.composeplayground.ui.animations.LogoAnimation
 import dev.baseio.composeplayground.ui.animations.MenuToClose
 import dev.baseio.composeplayground.ui.animations.PinterestLogoProgressAnim
-import dev.baseio.composeplayground.ui.animations.PullToRefreshOne
 import dev.baseio.composeplayground.ui.animations.SyncingLoader
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
 
@@ -134,13 +133,13 @@ class MainActivity : ComponentActivity() {
                     }
                   }
                 }
+                HorizontalPagerIndicator(
+                  pagerState = pagerState,
+                  modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+                )
               }
-              HorizontalPagerIndicator(
-                pagerState = pagerState,
-                modifier = Modifier
-                  .align(Alignment.CenterHorizontally)
-                  .padding(16.dp),
-              )
             }
           }
         }
