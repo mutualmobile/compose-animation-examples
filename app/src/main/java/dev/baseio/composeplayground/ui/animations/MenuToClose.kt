@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import dev.baseio.composeplayground.contributors.AnmolVerma
+import dev.baseio.composeplayground.contributors.ShubhamSingh
 
 
 /**
@@ -106,7 +106,7 @@ fun MenuToClose(modifier: Modifier) {
           .fillMaxWidth()
           .height(200.dp).background(MaterialTheme.colors.background)
       ) {
-        AnmolVerma(Modifier.align(Alignment.Center))
+        ShubhamSingh(Modifier.align(Alignment.Center))
       }
     }
   }
