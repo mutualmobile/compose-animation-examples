@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import dev.baseio.composeplayground.contributors.ShubhamSingh
+import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
 
 /**
@@ -143,7 +143,7 @@ fun ChatMessageReactions(modifier: Modifier) {
           .fillMaxWidth()
           .height(200.dp).background(MaterialTheme.colors.background)
       ) {
-        ShubhamSingh(Modifier.align(Alignment.Center))
+        AnmolVerma(Modifier.align(Alignment.Center))
       }
     }
   }

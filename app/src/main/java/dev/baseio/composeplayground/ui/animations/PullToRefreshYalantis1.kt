@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.R
-import dev.baseio.composeplayground.contributors.ShubhamSingh
+import dev.baseio.composeplayground.contributors.AnmolVerma
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -259,7 +259,7 @@ private fun CloudList(
         .height(200.dp)
         .background(MaterialTheme.colors.background)
     ) {
-      ShubhamSingh(Modifier.align(Alignment.Center))
+      AnmolVerma(Modifier.align(Alignment.Center))
     }
 
     RandomCard(yellow)
