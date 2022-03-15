@@ -43,7 +43,7 @@ import kotlin.math.sin
 
 val offGray = Color(45, 44, 46)
 val textSecondary = Color(157, 156, 167)
-
+const val handleLinesCount = 60
 
 @Preview
 @Composable
@@ -144,7 +144,7 @@ private fun TouchMoveControlTrack(
     LocalConfiguration.current.screenWidthDp.div(3.5).dp.toPx()
   }
 
-  val clockSize = LocalConfiguration.current.screenWidthDp.div(3.5).dp
+  val clockRadiusDp = LocalConfiguration.current.screenWidthDp.div(3.5).dp
 
   val knobTrackStrokeWidth = with(LocalDensity.current) {
     LocalConfiguration.current.screenWidthDp.div(6).dp.toPx()
@@ -184,10 +184,13 @@ private fun TouchMoveControlTrack(
       drawClockCircle(clockRadius, shapeCenter)
     })
 
-    DrawTicks(clockSize)
+
+
+    DrawTicks(clockRadiusDp)
 
     Canvas(modifier = Modifier
-      .size(300.dp).rotate(270f)
+      .size(300.dp)
+      .rotate(270f)
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures { change, dragAmount ->
@@ -207,10 +210,15 @@ private fun TouchMoveControlTrack(
       endTime(convertAngleToHour(startAngle + sweepAngleForKnob.value))
 
       drawRotatingKnob(startAngle, knobStrokeWidth, sweepAngleForKnob.value)
-
     })
 
-    Box(Modifier.size(300.dp).rotate(270f)) {
+    DrawHandleForKnob(clockRadiusDp, knobTrackStrokeWidth, sweepAngleForKnob.value)
+
+    Box(
+      Modifier
+        .size(300.dp)
+        .rotate(270f)
+    ) {
       KnobIcon(reduceOffsetIcon, shapeCenter, true, startAngle, radius) {
         sweepAngleForKnob.value = it.toFloat()
       }
@@ -220,6 +228,26 @@ private fun TouchMoveControlTrack(
     }
   }
 
+}
+
+
+@Composable
+private fun BoxScope.DrawHandleForKnob(
+  clockSize: Dp,
+  knobTrackStrokeWidth: Float,
+  sweepAngleForKnob: Float
+) {
+  Box(
+    modifier = Modifier
+      .align(Alignment.Center)
+      .size(clockSize.plus(knobTrackStrokeWidth.div(2).dp))
+  ) {
+    repeat(handleLinesCount) {
+      if (it > 3 && it < handleLinesCount.minus(3)) {
+        Handle(it, sweepAngleForKnob)
+      }
+    }
+  }
 }
 
 @Composable
@@ -233,6 +261,22 @@ private fun BoxScope.DrawTicks(clockSize: Dp) {
       Tick(it)
     }
   }
+}
+
+@Composable
+fun BoxScope.Handle(handle: Int, startAngle: Float) {
+  val angle = startAngle / handleLinesCount * handle
+
+  Box(
+    modifier = Modifier
+      .align(Alignment.Center)
+      .width(3.dp)
+      .height(14.dp)
+      .rotate(angle)
+      .offset(0.dp, (-150).dp)
+      .background(Color(1, 0, 0).copy(alpha = 0.6f))
+  )
+
 }
 
 @Composable
@@ -259,7 +303,7 @@ private fun KnobIcon(
   isStart: Boolean,
   angleKnob: Float,
   radius: Float,
-  angle: (Double) -> Unit
+  sweepAngleUpdate: (Double) -> Unit
 ) {
   // start icon offset
   val startIconX = (shapeCenter.x + cos(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
@@ -272,7 +316,7 @@ private fun KnobIcon(
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures(onDrag = { change, dragAmount ->
-            angle.invoke(getRotationAngle(change.position, shapeCenter))
+            sweepAngleUpdate.invoke(getRotationAngle(change.position, shapeCenter))
             change.consumeAllChanges()
           })
         }
