@@ -2,6 +2,7 @@ package dev.baseio.composeplayground.ui.animations
 
 import android.graphics.Paint
 import android.graphics.Rect
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -162,6 +163,8 @@ private fun TouchMoveControlTrack(
     mutableStateOf(0f)
   }
 
+  var isStart: Boolean? = null
+
   val sweepAngleForKnob = remember {
     mutableStateOf(convertHourToAngle(sTime, enTime))
   }
@@ -193,11 +196,31 @@ private fun TouchMoveControlTrack(
       .rotate(270f)
       .pointerInput(Unit) {
         constraintsScope.launch {
-          detectDragGestures { change, dragAmount ->
-            startAngle = getRotationAngle(change.position, shapeCenter).toFloat()
-            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-            change.consumeAllChanges()
-          }
+          detectDragGestures(
+            onDragEnd = { isStart = null },
+            onDragCancel = { isStart = null },
+            onDragStart = { offset ->
+              val angleFromStartOffset = getRotationAngle(offset, shapeCenter).toFloat()
+              val time = convertAngleToHour(angleFromStartOffset)
+              isStart = sTime.hour == time.hour
+              Log.e("is start clicked", "${time} ${sTime.hour} ${isStart}")
+            },
+            onDrag = { change, _ ->
+              val newStartAngle = getRotationAngle(change.position, shapeCenter).toFloat()
+              if (isStart == false) {
+                val knobSweepedAngle = newStartAngle - convertHourToAngle(enTime, sTime)
+                Log.e("convertHourToAngle","${newStartAngle} - ${convertHourToAngle(enTime, sTime)}")
+                Log.e("knobSweepedAngle", "$knobSweepedAngle")
+                startAngle = knobSweepedAngle
+
+              } else {
+                startAngle = newStartAngle
+              }
+
+
+              haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+              change.consumeAllChanges()
+            })
         }
       }, onDraw = {
       shapeCenter = center
@@ -212,7 +235,7 @@ private fun TouchMoveControlTrack(
       drawRotatingKnob(startAngle, knobStrokeWidth, sweepAngleForKnob.value)
     })
 
-    DrawHandleForKnob(clockRadiusDp, knobTrackStrokeWidth, sweepAngleForKnob.value,startAngle)
+    DrawHandleForKnob(clockRadiusDp, knobTrackStrokeWidth, sweepAngleForKnob.value, startAngle)
 
     Box(
       Modifier
@@ -239,7 +262,8 @@ private fun BoxScope.DrawHandleForKnob(
   startAngle: Float
 ) {
   Box(
-    modifier = Modifier.rotate(startAngle)
+    modifier = Modifier
+      .rotate(startAngle)
       .align(Alignment.Center)
       .size(clockSize.plus(knobTrackStrokeWidth.div(2).dp))
   ) {
@@ -307,9 +331,9 @@ private fun KnobIcon(
   sweepAngleUpdate: (Double) -> Unit
 ) {
   // start icon offset
-  val startIconX = (shapeCenter.x + cos(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
-  val startIconY = (shapeCenter.y + sin(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
-  val startIconOffset = Offset(startIconX, startIconY)
+  val iconX = (shapeCenter.x + cos(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
+  val iconY = (shapeCenter.y + sin(Math.toRadians(angleKnob.toDouble())) * radius).toFloat()
+  val iconOffset = Offset(iconX, iconY)
 
   val constraintsScope = rememberCoroutineScope()
   SleepBedTimeIcon(isStart,
@@ -317,24 +341,29 @@ private fun KnobIcon(
       .pointerInput(Unit) {
         constraintsScope.launch {
           detectDragGestures(onDrag = { change, dragAmount ->
-            sweepAngleUpdate.invoke(getRotationAngle(change.position, shapeCenter))
+            sweepAngleUpdate.invoke(angleKnob + getRotationAngle(change.position, shapeCenter))
             change.consumeAllChanges()
           })
         }
       }
       .offset {
-        IntOffset(
-          startIconOffset.x
-            .toInt()
-            .minus(reduceOffsetIcon / 2)
-            .toInt(),
-          startIconOffset.y
-            .toInt()
-            .minus(reduceOffsetIcon / 2)
-            .toInt()
-        )
+        IconOffset(iconOffset, reduceOffsetIcon)
       })
 }
+
+private fun IconOffset(
+  startIconOffset: Offset,
+  reduceOffsetIcon: Float
+) = IntOffset(
+  startIconOffset.x
+    .toInt()
+    .minus(reduceOffsetIcon / 2)
+    .toInt(),
+  startIconOffset.y
+    .toInt()
+    .minus(reduceOffsetIcon / 2)
+    .toInt()
+)
 
 private fun DrawScope.drawClockCircle(clockRadius: Float, shapeCenter: Offset) {
   drawCircle(color = offGray, radius = clockRadius)
