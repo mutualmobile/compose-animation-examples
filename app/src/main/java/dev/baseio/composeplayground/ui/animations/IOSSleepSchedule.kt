@@ -1,5 +1,7 @@
 package dev.baseio.composeplayground.ui.animations
 
+import android.R.attr.angle
+import android.R.attr.min
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.Log
@@ -15,9 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
@@ -33,7 +38,9 @@ import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
 import kotlinx.coroutines.launch
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -114,8 +121,8 @@ fun IOSSleepSchedule() {
 }
 
 fun convertHourToAngle(startTime: LocalDateTime, endTime: LocalDateTime): Float {
-  val angle = startTime.hour.times(15f)
-  val endAngle = endTime.hour.times(15f)
+  val angle = startTime.hour.times(15f) + startTime.minute.times(11/7)
+  val endAngle = endTime.hour.times(15f)+ endTime.minute.times(11/7)
   return endAngle.minus(angle)
 }
 
@@ -124,8 +131,14 @@ fun convertAngleToHour(startAngle: Float): LocalDateTime {
   while (startAngle > 360) {
     startAngle = startAngle.minus(360f)
   }
-  val hour = (startAngle / 15).toInt()
-  return LocalDateTime.of(LocalDate.now(), LocalTime.of(hour, 0))
+
+  var decimalValue = startAngle.div(15)
+  if (decimalValue < 0) decimalValue += 12.0f
+  var hours = decimalValue.toInt()
+  if (hours == 0) hours = 12
+  val minutes = (decimalValue * 60).toInt() % 60
+  Log.e("time","${hours}:${minutes}")
+  return LocalDateTime.of(LocalDate.now(), LocalTime.of(hours, minutes))
 
 }
 
@@ -200,29 +213,30 @@ private fun TouchMoveControlTrack(
     Canvas(modifier = Modifier
       .size(300.dp)
       .pointerInput(Unit) {
-        var isStart: Boolean? = null
-        var isEnd: Boolean? = null
+        var isStartIconTapped: Boolean? = null
+        var isEndIconTapped: Boolean? = null
         var canMove = true;
-        var timeAtTouchScroll: LocalDateTime = LocalDateTime.now()
+        var timeAtTouchScroll: LocalDateTime? = null
+        var angleFromStartOffset: Float? = null
         constraintsScope.launch {
           detectDragGestures(
             onDragEnd = {
-              isStart = null
+              isStartIconTapped = null
             },
             onDragCancel = {
-              isStart = null
+              isStartIconTapped = null
             },
             onDragStart = { offset ->
-              val angleFromStartOffset =
+              angleFromStartOffset =
                 getRotationAngle(offset, shapeCenter)
                   .toFloat()
                   .fixArcThreeOClock()
-              timeAtTouchScroll = convertAngleToHour(angleFromStartOffset)
+              timeAtTouchScroll = convertAngleToHour(angleFromStartOffset!!)
               canMove =
-                timeAtTouchScroll.hour >= startTimeValue.hour || timeAtTouchScroll.hour <= endTimeValue.hour
-              isStart = timeAtTouchScroll.hour == startTimeValue.hour
-              isEnd = timeAtTouchScroll.hour == endTimeValue.hour
-              Log.e("which end ", "${isStart} ${isEnd}")
+                timeAtTouchScroll!!.hour >= startTimeValue.hour || timeAtTouchScroll!!.hour <= endTimeValue.hour
+              isStartIconTapped = timeAtTouchScroll!!.hour == startTimeValue.hour
+              isEndIconTapped = timeAtTouchScroll!!.hour == endTimeValue.hour
+              Log.e("which end ", "${isStartIconTapped} ${isEndIconTapped}")
               haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
 
             },
@@ -235,19 +249,28 @@ private fun TouchMoveControlTrack(
                 getRotationAngle(change.position, shapeCenter)
                   .toFloat()
                   .fixArcThreeOClock()
-              if(newStartAngle > 360){
-                newStartAngle = newStartAngle.minus(360)
-              }
 
-              knobStartAngle = if (isEnd == true) {
-                var startAngle = newStartAngle.minus(sweepAngleForKnob.value)
-                if(startAngle<0){
-                  startAngle = 360.plus(startAngle)
+              // adjust the angle
+              newStartAngle = newStartAngle.adjustWithin360()
+              val angleSweepedAfterTouch = convertHourToAngle(startTimeValue, timeAtTouchScroll!!)
+              Log.e("angleSweepedAfterTouch", "$angleSweepedAfterTouch")
+              //TODO since we can touch anywhere we want, the start angle needs to be adjusted with the newStartAngle
+
+              when {
+                isEndIconTapped == true && isStartIconTapped == false -> {// when end icon is clicked and used to drag
+                  var startAngle = newStartAngle.minus(sweepAngleForKnob.value)
+                  startAngle = startAngle.adjustWhenLess360()
+                  knobStartAngle = startAngle
                 }
-                startAngle
-              } else {
-                // the user clicked on bed icon
-                newStartAngle
+                isEndIconTapped == false && isStartIconTapped == true -> { // when start icon is clicked and used to drag
+                  // the user clicked on bed icon
+                  knobStartAngle = newStartAngle
+                }
+                else -> {
+                  // here the user has pressed somewhere within the handle
+                  // we need to calculate the start angle,
+                  knobStartAngle = newStartAngle
+                }
               }
 
               haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -306,6 +329,24 @@ private fun TouchMoveControlTrack(
 
         )
     }
+  }
+
+}
+
+private fun Float.adjustWhenLess360(): Float {
+  return if (this < 0) {
+    360.plus(this)
+  } else {
+    this
+  }
+}
+
+private fun Float.adjustWithin360(): Float {
+  // adjust the angle
+  if (this > 360) {
+    return this.minus(360)
+  } else {
+    return this
   }
 
 }
