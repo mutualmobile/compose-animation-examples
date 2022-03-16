@@ -45,5 +45,7 @@ Apple Alarm Clock UI Control
 
 https://user-images.githubusercontent.com/32521663/158137867-cc49b4fe-e0c1-43f8-933e-24f67f746d70.mp4
 
+SpringWave animation by Prateek Sharma
 
+https://user-images.githubusercontent.com/47804278/158535596-0c368cdb-ee53-4267-8d92-1dea537ee1d7.mov
 
