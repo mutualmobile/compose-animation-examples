@@ -42,6 +42,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -120,15 +122,19 @@ fun IOSSleepSchedule() {
   }
 }
 
+
 fun convertHourToAngle(startTime: LocalDateTime, endTime: LocalDateTime): Float {
-  val angle = startTime.hour.times(15f) + startTime.minute.times(11/7)
-  val endAngle = endTime.hour.times(15f)+ endTime.minute.times(11/7)
+  val angle = startTime.hour.times(15f)
+  val endAngle = endTime.hour.times(15f)
   return endAngle.minus(angle)
 }
 
+//https://en.wikipedia.org/wiki/Clock_angle_problem
 fun convertAngleToHour(startAngle: Float): LocalDateTime {
   var startAngle = startAngle
   while (startAngle > 360) {
+    Log.e("angle fixed", "true")
+
     startAngle = startAngle.minus(360f)
   }
 
@@ -137,7 +143,7 @@ fun convertAngleToHour(startAngle: Float): LocalDateTime {
   var hours = decimalValue.toInt()
   if (hours == 0) hours = 12
   val minutes = (decimalValue * 60).toInt() % 60
-  Log.e("time","${hours}:${minutes}")
+  Log.e("time", "${hours}:${minutes}")
   return LocalDateTime.of(LocalDate.now(), LocalTime.of(hours, minutes))
 
 }
@@ -189,6 +195,10 @@ private fun TouchMoveControlTrack(
   }
 
   var knobStartAngle by remember {
+    mutableStateOf(0f)
+  }
+
+  var angleSweepedAfterTouch by remember {
     mutableStateOf(0f)
   }
 
@@ -252,13 +262,24 @@ private fun TouchMoveControlTrack(
 
               // adjust the angle
               newStartAngle = newStartAngle.adjustWithin360()
-              val angleSweepedAfterTouch = convertHourToAngle(startTimeValue, timeAtTouchScroll!!)
-              Log.e("angleSweepedAfterTouch", "$angleSweepedAfterTouch")
+
+
+              // check how much angle sweeped after initial touch
+              angleSweepedAfterTouch = 360.minus(angleFromStartOffset!!.minus(newStartAngle))
+              Log.e("rotate", "$angleSweepedAfterTouch")
+
               //TODO since we can touch anywhere we want, the start angle needs to be adjusted with the newStartAngle
 
               when {
-                isEndIconTapped == true && isStartIconTapped == false -> {// when end icon is clicked and used to drag
-                  var startAngle = newStartAngle.minus(sweepAngleForKnob.value)
+                isEndIconTapped == true && isStartIconTapped == false -> {
+                  // when end icon is clicked and used to drag
+                  // TODO fix when should we reduce/increase the sweepAngleForKnob from start angle based on the rotation
+                  var startAngle = if (newStartAngle > knobStartAngle) {
+                    newStartAngle.minus(sweepAngleForKnob.value)
+                  } else {
+                    newStartAngle.plus(sweepAngleForKnob.value)
+                  }
+
                   startAngle = startAngle.adjustWhenLess360()
                   knobStartAngle = startAngle
                 }
@@ -292,7 +313,7 @@ private fun TouchMoveControlTrack(
       startTimeValue = startTimeCalc
 
 
-      val endTimeAngle = startTimeAngle + sweepAngleForKnob.value
+      val endTimeAngle = startTimeAngle + (sweepAngleForKnob.value)
       val endTimeCalc = convertAngleToHour(endTimeAngle)
 
       endTime.invoke(endTimeCalc)
