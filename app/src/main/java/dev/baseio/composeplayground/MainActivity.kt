@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 10, state = pagerState,
+                  count = 11, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -104,6 +104,11 @@ class MainActivity : ComponentActivity() {
                     5 -> {
                       Box(Modifier.fillMaxSize()) {
                         BellAnimation(Modifier.align(Alignment.Center))
+                      }
+                    }
+                    10 -> {
+                      Box(modifier = Modifier.fillMaxSize()) {
+                        Pacman(Modifier.align(Alignment.Center))
                       }
                     }
                   }
