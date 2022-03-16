@@ -1,10 +1,7 @@
 package dev.baseio.composeplayground.ui.animations
 
-import android.R.attr.angle
-import android.R.attr.min
 import android.graphics.Paint
 import android.graphics.Rect
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -38,12 +35,8 @@ import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.*
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -97,7 +90,7 @@ fun IOSSleepSchedule() {
 
 
       Text(
-        text = "12 hr",
+        text = "${Duration.between(startTime,endTime).toHours()} hr",
         style = Typography.h5.copy(color = Color.White)
       )
 
@@ -123,29 +116,28 @@ fun IOSSleepSchedule() {
 }
 
 
-fun convertHourToAngle(startTime: LocalDateTime, endTime: LocalDateTime): Float {
-  val angle = startTime.hour.times(15f)
-  val endAngle = endTime.hour.times(15f)
+fun differenceBetweenTimesInAngle(startTime: LocalDateTime, endTime: LocalDateTime): Float {
+  val angle = startTime.hour.times(15f) + startTime.minute.div(15)
+  val endAngle = endTime.hour.times(15f) + endTime.minute.div(15)
   return endAngle.minus(angle)
 }
 
+fun localDateTimeToAngle(startTime: LocalDateTime): Float {
+  return startTime.hour.times(15f) + startTime.minute.div(15)
+}
+
 //https://en.wikipedia.org/wiki/Clock_angle_problem
-fun convertAngleToHour(startAngle: Float): LocalDateTime {
+fun convertAngleToLocalDateTime(startAngle: Float): LocalDateTime {
   var startAngle = startAngle
   while (startAngle > 360) {
-    Log.e("angle fixed", "true")
-
     startAngle = startAngle.minus(360f)
   }
 
   var decimalValue = startAngle.div(15)
   if (decimalValue < 0) decimalValue += 12.0f
-  var hours = decimalValue.toInt()
-  if (hours == 0) hours = 12
+  val hours = decimalValue.toInt()
   val minutes = (decimalValue * 60).toInt() % 60
-  Log.e("time", "${hours}:${minutes}")
   return LocalDateTime.of(LocalDate.now(), LocalTime.of(hours, minutes))
-
 }
 
 @Composable
@@ -191,21 +183,16 @@ private fun TouchMoveControlTrack(
 
 
   val sweepAngleForKnob = remember {
-    mutableStateOf(convertHourToAngle(startTimeValue, endTimeValue))
+    mutableStateOf(differenceBetweenTimesInAngle(startTimeValue, endTimeValue))
   }
 
   var knobStartAngle by remember {
     mutableStateOf(0f)
   }
 
-  var angleSweepedAfterTouch by remember {
-    mutableStateOf(0f)
-  }
-
   val reduceOffsetIcon = with(LocalDensity.current) {
     24.dp.toPx()
   }
-
 
   val haptic = LocalHapticFeedback.current
 
@@ -239,49 +226,28 @@ private fun TouchMoveControlTrack(
             onDragStart = { offset ->
               angleFromStartOffset =
                 getRotationAngle(offset, shapeCenter)
-                  .toFloat()
-                  .fixArcThreeOClock()
-              timeAtTouchScroll = convertAngleToHour(angleFromStartOffset!!)
+
+              timeAtTouchScroll = convertAngleToLocalDateTime(angleFromStartOffset!!)
               canMove =
                 timeAtTouchScroll!!.hour >= startTimeValue.hour || timeAtTouchScroll!!.hour <= endTimeValue.hour
               isStartIconTapped = timeAtTouchScroll!!.hour == startTimeValue.hour
               isEndIconTapped = timeAtTouchScroll!!.hour == endTimeValue.hour
-              Log.e("which end ", "${isStartIconTapped} ${isEndIconTapped}")
-              haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-
             },
             onDrag = { change, _ ->
               if (!canMove) {
                 change.consumeAllChanges()
                 return@detectDragGestures
               }
-              var newStartAngle =
-                getRotationAngle(change.position, shapeCenter)
-                  .toFloat()
-                  .fixArcThreeOClock()
-
-              // adjust the angle
+              var newStartAngle = getRotationAngle(change.position, shapeCenter)
               newStartAngle = newStartAngle.adjustWithin360()
-
-
-              // check how much angle sweeped after initial touch
-              angleSweepedAfterTouch = 360.minus(angleFromStartOffset!!.minus(newStartAngle))
-              Log.e("rotate", "$angleSweepedAfterTouch")
+              val differenceInSweep = localDateTimeToAngle(startTimeValue)
 
               //TODO since we can touch anywhere we want, the start angle needs to be adjusted with the newStartAngle
-
               when {
                 isEndIconTapped == true && isStartIconTapped == false -> {
                   // when end icon is clicked and used to drag
-                  // TODO fix when should we reduce/increase the sweepAngleForKnob from start angle based on the rotation
-                  var startAngle = if (newStartAngle > knobStartAngle) {
-                    newStartAngle.minus(sweepAngleForKnob.value)
-                  } else {
-                    newStartAngle.plus(sweepAngleForKnob.value)
-                  }
-
-                  startAngle = startAngle.adjustWhenLess360()
-                  knobStartAngle = startAngle
+                  // TODO fix when should we reduce/increase the sweepAngleForKnob from start angle
+                  knobStartAngle = newStartAngle
                 }
                 isEndIconTapped == false && isStartIconTapped == true -> { // when start icon is clicked and used to drag
                   // the user clicked on bed icon
@@ -307,14 +273,14 @@ private fun TouchMoveControlTrack(
 
       // start and end time
       val startTimeAngle = knobStartAngle
-      val startTimeCalc = convertAngleToHour(startTimeAngle)
+      val startTimeCalc = convertAngleToLocalDateTime(startTimeAngle)
 
       startTime.invoke(startTimeCalc)
       startTimeValue = startTimeCalc
 
 
       val endTimeAngle = startTimeAngle + (sweepAngleForKnob.value)
-      val endTimeCalc = convertAngleToHour(endTimeAngle)
+      val endTimeCalc = convertAngleToLocalDateTime(endTimeAngle)
 
       endTime.invoke(endTimeCalc)
       endTimeValue = endTimeCalc
@@ -354,7 +320,7 @@ private fun TouchMoveControlTrack(
 
 }
 
-private fun Float.adjustWhenLess360(): Float {
+private fun Float.adjustWhenLessThanZero(): Float {
   return if (this < 0) {
     360.plus(this)
   } else {
@@ -627,7 +593,7 @@ private fun SleepBedTimeIcon(isStart: Boolean, modifier: Modifier = Modifier) {
 private fun painterResource(isStart: Boolean) =
   if (isStart) painterResource(id = R.drawable.ic_bed) else painterResource(id = R.drawable.ic_alarm)
 
-private fun getRotationAngle(currentPosition: Offset, center: Offset): Double {
+private fun getRotationAngle(currentPosition: Offset, center: Offset): Float {
   val theta = radians(currentPosition, center)
 
   var angle = Math.toDegrees(theta)
@@ -635,7 +601,7 @@ private fun getRotationAngle(currentPosition: Offset, center: Offset): Double {
   if (angle < 0) {
     angle += 360.0
   }
-  return angle
+  return angle.toFloat().fixArcThreeOClock()
 }
 
 private fun radians(
