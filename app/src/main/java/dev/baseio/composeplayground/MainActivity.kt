@@ -23,6 +23,7 @@ import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.ui.animations.*
 import dev.baseio.composeplayground.ui.animations.planetarysystem.PlanetarySystem
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.PullToRefreshOne
+import dev.baseio.composeplayground.ui.animations.springwave.SpringWaveAnimation
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
 
 class MainActivity : ComponentActivity() {
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 10, state = pagerState,
+                  count = 11, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -105,6 +106,9 @@ class MainActivity : ComponentActivity() {
                       Box(Modifier.fillMaxSize()) {
                         BellAnimation(Modifier.align(Alignment.Center))
                       }
+                    }
+                    10 -> {
+                      SpringWaveAnimation()
                     }
                   }
                 }
