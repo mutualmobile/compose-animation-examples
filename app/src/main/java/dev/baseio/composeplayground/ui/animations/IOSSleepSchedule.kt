@@ -220,10 +220,6 @@ private fun TouchMoveControlTrack(
               timeAtTouchScroll = convertAngleToHour(angleFromStartOffset)
               canMove =
                 timeAtTouchScroll.hour >= startTimeValue.hour || timeAtTouchScroll.hour <= endTimeValue.hour
-              Log.e(
-                "times",
-                "${timeAtTouchScroll.hour} ${startTimeValue.hour} ${endTimeValue.hour}"
-              )
               isStart = timeAtTouchScroll.hour == startTimeValue.hour
               isEnd = timeAtTouchScroll.hour == endTimeValue.hour
               Log.e("which end ", "${isStart} ${isEnd}")
@@ -235,22 +231,25 @@ private fun TouchMoveControlTrack(
                 change.consumeAllChanges()
                 return@detectDragGestures
               }
-              val newStartAngle =
+              var newStartAngle =
                 getRotationAngle(change.position, shapeCenter)
                   .toFloat()
                   .fixArcThreeOClock()
+              if(newStartAngle > 360){
+                newStartAngle = newStartAngle.minus(360)
+              }
+
               knobStartAngle = if (isEnd == true) {
                 var startAngle = newStartAngle.minus(sweepAngleForKnob.value)
-                if (startAngle < 0) {
-                  // TODO fix this logic for calculating the angle
-                  newStartAngle.plus(sweepAngleForKnob.value)
-                } else {
-                  startAngle
+                if(startAngle<0){
+                  startAngle = 360.plus(startAngle)
                 }
+                startAngle
               } else {
                 // the user clicked on bed icon
                 newStartAngle
               }
+
               haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
               change.consumeAllChanges()
 
