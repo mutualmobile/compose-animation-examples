@@ -7,20 +7,30 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
-import com.google.accompanist.insets.*
+import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import dev.baseio.composeplayground.ui.animations.*
+import dev.baseio.composeplayground.ui.animations.BellAnimation
+import dev.baseio.composeplayground.ui.animations.ChatMessageReactions
+import dev.baseio.composeplayground.ui.animations.GlowingRingLoader
+import dev.baseio.composeplayground.ui.animations.IOSSleepSchedule
+import dev.baseio.composeplayground.ui.animations.LikeAnimation
+import dev.baseio.composeplayground.ui.animations.MenuToClose
+import dev.baseio.composeplayground.ui.animations.ScalingRotatingLoader
+import dev.baseio.composeplayground.ui.animations.YahooWeatherAndSun
+import dev.baseio.composeplayground.ui.animations.pacman.Pacman
 import dev.baseio.composeplayground.ui.animations.planetarysystem.PlanetarySystem
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.PullToRefreshOne
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
@@ -54,7 +64,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 10, state = pagerState,
+                  count = 11, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -104,6 +114,11 @@ class MainActivity : ComponentActivity() {
                     5 -> {
                       Box(Modifier.fillMaxSize()) {
                         BellAnimation(Modifier.align(Alignment.Center))
+                      }
+                    }
+                    10 -> {
+                      Box(modifier = Modifier.fillMaxSize()) {
+                        Pacman(Modifier.align(Alignment.Center))
                       }
                     }
                   }
