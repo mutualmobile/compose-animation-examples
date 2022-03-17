@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
       clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
       addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        decorView.systemUiVisibility =
+          View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
       }
       statusBarColor = Color.TRANSPARENT
     }
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 10, state = pagerState,
+                  count = 11, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -71,9 +72,14 @@ class MainActivity : ComponentActivity() {
                         YahooWeatherAndSun(Modifier.align(Alignment.Center))
                       }
                     }
-                    0 -> {
+                    10 -> {
                       Box(modifier = Modifier.fillMaxSize()) {
                         IOSSleepSchedule()
+                      }
+                    }
+                    0 -> {
+                      Box(modifier = Modifier.fillMaxSize()) {
+                        Github404(Modifier)
                       }
                     }
                     9 -> {
