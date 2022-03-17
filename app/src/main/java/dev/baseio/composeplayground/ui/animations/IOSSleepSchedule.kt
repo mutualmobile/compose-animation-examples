@@ -120,6 +120,8 @@ fun IOSSleepSchedule() {
 
 const val DEGREE_IN_HOUR = 15f
 const val MINUTES_IN_HOUR = 60
+
+
 fun convertHourToAngle(startTime: LocalDateTime, endTime: LocalDateTime): Float {
   val angle =
     startTime.hour.times(DEGREE_IN_HOUR) + startTime.minute.times(DEGREE_IN_HOUR / MINUTES_IN_HOUR)
@@ -162,6 +164,10 @@ private fun TouchMoveControlTrack(
 
   var endTimeValue by remember {
     mutableStateOf(enTime)
+  }
+
+  val sweepAngleForKnob = remember {
+    mutableStateOf(convertHourToAngle(startTimeValue, endTimeValue))
   }
 
   var startIconAngle by remember {
@@ -219,27 +225,60 @@ private fun TouchMoveControlTrack(
       .pointerInput(Unit) {
         var timeAtTouchScroll: LocalDateTime? = null
         var angleFromStartOffset: Float? = null
+        var isStartWithStartIcon: Boolean? = null
+        var isStartWithEndIcon: Boolean? = null
         constraintsScope.launch {
           detectDragGestures(
             onDragStart = { offset ->
               angleFromStartOffset = getRotationAngleWithfixArcThreeOClock(offset, shapeCenter)
               timeAtTouchScroll = convertAngleToLocalDateTime(angleFromStartOffset!!)
+              isStartWithStartIcon =
+                Duration.between(timeAtTouchScroll!!,startTimeValue).toMinutes() in -30..30
+             val endTimeValue = correctEndTimeNotConcerningDay(timeAtTouchScroll, endTimeValue)
+              Log.e("time between","$timeAtTouchScroll $endTimeValue")
+
+              Log.e("Is end icon","${Duration.between(timeAtTouchScroll!!,endTimeValue).toMinutes()}")
+              isStartWithEndIcon =
+                Duration.between(timeAtTouchScroll!!,endTimeValue).toMinutes() in -30..30
             },
             onDrag = { change, _ ->
-              val newStartAngle = getRotationAngleWithfixArcThreeOClock(
+              var newStartAngle = getRotationAngleWithfixArcThreeOClock(
                 change.position,
                 shapeCenter
               ).adjustWithin360()
 
+              var endingAngle = newStartAngle
+                .plus(sweepAngleForKnob.value)
+                .adjustWhenLessThanZero()
+
+
+              when {
+                isStartWithStartIcon == true -> {
+                  // user touched the start icon.
+                  Log.e("touch start", "user touched the start icon.")
+                  endingAngle = convertTimeToAngle(enTime)
+                }
+                isStartWithEndIcon == true -> {
+                  Log.e("touch end", "user touched the end icon.")
+                  endingAngle = newStartAngle
+                  newStartAngle = convertTimeToAngle(sTime)
+
+                }
+                else -> {
+                  Log.e("touch between", "user touched somewhere in between")
+                }
+              }
               val startTime = convertAngleToLocalDateTime(newStartAngle)
-              val endingAngle = convertTimeToAngle(enTime)
+
+              Log.e("endingAngle", "$endingAngle")
               var endTimeCalc = convertAngleToLocalDateTime(endingAngle)
+
               val amPmEndTime = endTimeCalc.format(DateTimeFormatter.ofPattern("a"))
               val amPmStartTime = startTime.format(DateTimeFormatter.ofPattern("a"))
 
-              if(amPmEndTime.equals("am",ignoreCase = true)){
-                if(!amPmStartTime.equals("am",ignoreCase = true)){
-                  endTimeCalc =  endTimeCalc.plusDays(1)
+              if (amPmEndTime.equals("am", ignoreCase = true)) {
+                if (!amPmStartTime.equals("am", ignoreCase = true)) {
+                  endTimeCalc = endTimeCalc.plusDays(1)
                 }
               }
               startTimeValue = startTime
@@ -307,6 +346,15 @@ private fun TouchMoveControlTrack(
     }
   }
 
+}
+
+private fun correctEndTimeNotConcerningDay(
+  timeAtTouchScroll: LocalDateTime?,
+  endTimeValue: LocalDateTime
+) = if (timeAtTouchScroll!!.toLocalDate().isBefore(endTimeValue.toLocalDate())) {
+  endTimeValue.minusDays(1)
+} else {
+  endTimeValue
 }
 
 private fun getSweepAngle(
