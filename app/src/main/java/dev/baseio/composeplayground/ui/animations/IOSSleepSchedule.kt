@@ -158,23 +158,23 @@ private fun TouchMoveControlTrack(
   endTimeUpdateInvoker: (LocalDateTime) -> Unit
 ) {
 
-  var startTimeValue by remember {
+  var updatedStartTime by remember {
     mutableStateOf(sTime)
   }
 
-  var endTimeValue by remember {
+  var updatedEndTime by remember {
     mutableStateOf(enTime)
   }
 
   val sweepAngleForKnob = remember {
-    mutableStateOf(convertHourToAngle(startTimeValue, endTimeValue))
+    mutableStateOf(convertHourToAngle(updatedStartTime, updatedEndTime))
   }
 
   var startIconAngle by remember {
-    mutableStateOf(convertTimeToAngle(startTimeValue))
+    mutableStateOf(convertTimeToAngle(updatedStartTime))
   }
   var endIconAngle by remember {
-    mutableStateOf(convertTimeToAngle(endTimeValue))
+    mutableStateOf(convertTimeToAngle(updatedEndTime))
   }
 
 
@@ -224,70 +224,79 @@ private fun TouchMoveControlTrack(
       .size(300.dp)
       .pointerInput(Unit) {
         var timeAtTouchScroll: LocalDateTime? = null
-        var angleFromStartOffset: Float? = null
+        var angleOnTouchWhenStarted: Float? = null
         var isStartWithStartIcon: Boolean? = null
         var isStartWithEndIcon: Boolean? = null
         constraintsScope.launch {
           detectDragGestures(
+            onDragEnd = {
+              timeAtTouchScroll = null
+            },
             onDragStart = { offset ->
-              angleFromStartOffset = getRotationAngleWithfixArcThreeOClock(offset, shapeCenter)
-              timeAtTouchScroll = convertAngleToLocalDateTime(angleFromStartOffset!!)
+              angleOnTouchWhenStarted = getRotationAngleWithfixArcThreeOClock(offset, shapeCenter)
+              timeAtTouchScroll = convertAngleToLocalDateTime(angleOnTouchWhenStarted!!)
               isStartWithStartIcon =
-                Duration.between(timeAtTouchScroll!!,startTimeValue).toMinutes() in -30..30
-             val endTimeValue = correctEndTimeNotConcerningDay(timeAtTouchScroll, endTimeValue)
-              Log.e("time between","$timeAtTouchScroll $endTimeValue")
-
-              Log.e("Is end icon","${Duration.between(timeAtTouchScroll!!,endTimeValue).toMinutes()}")
+                Duration
+                  .between(timeAtTouchScroll!!, updatedStartTime)
+                  .toMinutes() in -30..30
               isStartWithEndIcon =
-                Duration.between(timeAtTouchScroll!!,endTimeValue).toMinutes() in -30..30
+                Duration
+                  .between(
+                    timeAtTouchScroll!!,
+                    correctEndTimeNotConcerningDay(timeAtTouchScroll, updatedEndTime)
+                  )
+                  .toMinutes() in -30..30
             },
             onDrag = { change, _ ->
-              var newStartAngle = getRotationAngleWithfixArcThreeOClock(
+              var startAngleKnob = getRotationAngleWithfixArcThreeOClock(
                 change.position,
                 shapeCenter
               ).adjustWithin360()
 
-              var endingAngle = newStartAngle
-                .plus(sweepAngleForKnob.value)
-                .adjustWhenLessThanZero()
-
+              val endingAngle: Float
 
               when {
                 isStartWithStartIcon == true -> {
                   // user touched the start icon.
                   Log.e("touch start", "user touched the start icon.")
-                  endingAngle = convertTimeToAngle(enTime)
+                  endingAngle = convertTimeToAngle(updatedEndTime)
                 }
                 isStartWithEndIcon == true -> {
                   Log.e("touch end", "user touched the end icon.")
-                  endingAngle = newStartAngle
-                  newStartAngle = convertTimeToAngle(sTime)
+                  endingAngle = startAngleKnob
+                  startAngleKnob = convertTimeToAngle(updatedStartTime)
 
                 }
                 else -> {
+                  val angleTouchStarted = convertTimeToAngle(timeAtTouchScroll!!)
+                  val angleSweepedAfterMove = startAngleKnob.minus(angleTouchStarted).times(0.5f)
+                  Log.e("angleSweepedAfterMove","$angleSweepedAfterMove")
+                  // TODO fix this check so we can calculate the correct startAngle for knob
+                  startAngleKnob = (convertTimeToAngle(updatedStartTime) + angleSweepedAfterMove)
+                  endingAngle = startAngleKnob
+                    .plus(convertHourToAngle(updatedStartTime, updatedEndTime))
+                    .adjustWhenLessThanZero()
                   Log.e("touch between", "user touched somewhere in between")
                 }
               }
-              val startTime = convertAngleToLocalDateTime(newStartAngle)
-
-              Log.e("endingAngle", "$endingAngle")
+              val startTimeCalc = convertAngleToLocalDateTime(startAngleKnob)
               var endTimeCalc = convertAngleToLocalDateTime(endingAngle)
+              updatedStartTime = startTimeCalc
 
               val amPmEndTime = endTimeCalc.format(DateTimeFormatter.ofPattern("a"))
-              val amPmStartTime = startTime.format(DateTimeFormatter.ofPattern("a"))
+              val amPmStartTime = startTimeCalc.format(DateTimeFormatter.ofPattern("a"))
 
               if (amPmEndTime.equals("am", ignoreCase = true)) {
                 if (!amPmStartTime.equals("am", ignoreCase = true)) {
                   endTimeCalc = endTimeCalc.plusDays(1)
                 }
               }
-              startTimeValue = startTime
-              endTimeValue = endTimeCalc
+              updatedEndTime = endTimeCalc
 
-              startTimeUpdateInvoker.invoke(startTimeValue)
-              endTimeUpdateInvoker.invoke(endTimeValue)
+              startTimeUpdateInvoker.invoke(updatedStartTime)
+              endTimeUpdateInvoker.invoke(updatedEndTime)
 
-              Log.e("on Move", "$startTime $endTimeCalc")
+              Log.e("on Move", "$startTimeCalc $endTimeCalc")
 
               haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
               change.consumeAllChanges()
@@ -303,9 +312,7 @@ private fun TouchMoveControlTrack(
       startIconAngle = convertTimeToAngle(sTime)
       endIconAngle = convertTimeToAngle(enTime)
 
-      val sweepAngle = getSweepAngle(startTimeValue, endTimeValue, endIconAngle, startIconAngle)
-
-      Log.e("on draw", "$startIconAngle $endIconAngle")
+      val sweepAngle = getSweepAngle(updatedStartTime, updatedEndTime, endIconAngle, startIconAngle)
 
       drawRotatingKnob(
         startIconAngle,
@@ -314,7 +321,7 @@ private fun TouchMoveControlTrack(
       )
     })
 
-    val sweepAngle = getSweepAngle(startTimeValue, endTimeValue, endIconAngle, startIconAngle)
+    val sweepAngle = getSweepAngle(updatedStartTime, updatedEndTime, endIconAngle, startIconAngle)
 
     DrawHandleLinesOnTheKnob(
       clockRadiusDp,
