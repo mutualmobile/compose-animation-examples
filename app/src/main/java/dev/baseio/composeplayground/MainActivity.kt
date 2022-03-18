@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 11, state = pagerState,
+                  count = 12, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -78,6 +78,9 @@ class MainActivity : ComponentActivity() {
                       }
                     }
                     0 -> {
+                      TwitterSplashAnimation()
+                    }
+                    11 -> {
                       Box(modifier = Modifier.fillMaxSize()) {
                         Github404(Modifier)
                       }
