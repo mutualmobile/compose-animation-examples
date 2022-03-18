@@ -5,10 +5,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -31,8 +31,8 @@ fun Github404(modifier: Modifier) {
   )
 
   val bgImageScaleFactor by infiniteTransition.animateFloat(
-    initialValue = 1f,
-    targetValue = 1.1f,
+    initialValue = 1.3f,
+    targetValue = 1.5f,
     animationSpec = infiniteRepeatable(
       animation = tween(durationMillis = 2000, delayMillis = 500, easing = LinearEasing),
       repeatMode = RepeatMode.Reverse
@@ -55,37 +55,33 @@ fun Github404(modifier: Modifier) {
     Animatable(height.div(2))
   }
 
-
-  Surface(
+  Box(
     modifier
       .background(MaterialTheme.colors.background)
   ) {
 
     Box(Modifier.fillMaxSize()) {
+      BackgroundImageGithub(bgImageScaleFactor)
+      Looking404(githubAvatarX.value, githubAvatarY.value.plus(yFactor))
+      HomeTwo(githubAvatarX.value.plus(680), githubAvatarY.value.minus(220))
+      HomeOne(githubAvatarX.value.plus(190), githubAvatarY.value.minus(180))
+      SpaceShipShadow(
+        githubAvatarX.value.plus(80),
+        githubAvatarY.value.plus(180).minus(yFactor),
+        yFactor
+      )
+      SpaceShip(githubAvatarX.value.plus(80), githubAvatarY.value.plus(30).minus(yFactor))
+      AvatarShadow(githubAvatarX.value.minus(180), githubAvatarY.value.plus(210), yFactor)
+      GithubAvatar(githubAvatarX.value.minus(180), githubAvatarY.value.minus(yFactor))
+    }
 
-      Box {
-        BackgroundImageGithub(bgImageScaleFactor)
-        Looking404(githubAvatarX.value, githubAvatarY.value.plus(yFactor))
-        HomeTwo(githubAvatarX.value.plus(680), githubAvatarY.value.minus(220))
-        HomeOne(githubAvatarX.value.plus(190), githubAvatarY.value.minus(180))
-        SpaceShipShadow(
-          githubAvatarX.value.plus(80),
-          githubAvatarY.value.plus(180).minus(yFactor),
-          yFactor
-        )
-        SpaceShip(githubAvatarX.value.plus(80), githubAvatarY.value.plus(30).minus(yFactor))
-        AvatarShadow(githubAvatarX.value.minus(180), githubAvatarY.value.plus(210), yFactor)
-        GithubAvatar(githubAvatarX.value.minus(180), githubAvatarY.value.minus(yFactor))
-      }
-
-      Box(
-        modifier = Modifier
-          .scale(0.6f)
-          .align(Alignment.BottomEnd)
-          .background(MaterialTheme.colors.background)
-      ) {
-        AnmolVerma(Modifier.align(Alignment.Center))
-      }
+    Box(
+      modifier = Modifier
+        .scale(0.6f)
+        .align(Alignment.BottomEnd)
+        .background(MaterialTheme.colors.background.copy(alpha = 0.4f))
+    ) {
+      AnmolVerma(Modifier.align(Alignment.Center))
     }
   }
 }
