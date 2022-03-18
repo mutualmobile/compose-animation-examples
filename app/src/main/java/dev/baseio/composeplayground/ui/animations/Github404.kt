@@ -6,9 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -22,7 +20,6 @@ import dev.baseio.composeplayground.contributors.AnmolVerma
 
 @Composable
 fun Github404(modifier: Modifier) {
-
   val infiniteTransition = rememberInfiniteTransition()
   val yFactor by infiniteTransition.animateFloat(
     initialValue = 0f,
@@ -35,9 +32,9 @@ fun Github404(modifier: Modifier) {
 
   val bgImageScaleFactor by infiniteTransition.animateFloat(
     initialValue = 1f,
-    targetValue = 1.5f,
+    targetValue = 1.1f,
     animationSpec = infiniteRepeatable(
-      animation = tween(durationMillis = 2000, delayMillis = 1000, easing = LinearEasing),
+      animation = tween(durationMillis = 2000, delayMillis = 500, easing = LinearEasing),
       repeatMode = RepeatMode.Reverse
     )
   )
@@ -68,12 +65,17 @@ fun Github404(modifier: Modifier) {
 
       Box {
         BackgroundImageGithub(bgImageScaleFactor)
-        Looking404(githubAvatarX.value, githubAvatarY.value)
-        HomeTwo(githubAvatarX.value.plus(480), githubAvatarY.value.minus(220))
-        HomeOne(githubAvatarX.value.plus(80), githubAvatarY.value.minus(180))
-        SpaceShip(githubAvatarX.value.plus(10), githubAvatarY.value.plus(30).minus(yFactor))
-        AvatarShadow(githubAvatarX.value.minus(150), githubAvatarY.value.plus(210).minus(yFactor))
-        GithubAvatar(githubAvatarX.value.minus(160), githubAvatarY.value.minus(yFactor))
+        Looking404(githubAvatarX.value, githubAvatarY.value.plus(yFactor))
+        HomeTwo(githubAvatarX.value.plus(680), githubAvatarY.value.minus(220))
+        HomeOne(githubAvatarX.value.plus(190), githubAvatarY.value.minus(180))
+        SpaceShipShadow(
+          githubAvatarX.value.plus(80),
+          githubAvatarY.value.plus(180).minus(yFactor),
+          yFactor
+        )
+        SpaceShip(githubAvatarX.value.plus(80), githubAvatarY.value.plus(30).minus(yFactor))
+        AvatarShadow(githubAvatarX.value.minus(180), githubAvatarY.value.plus(210), yFactor)
+        GithubAvatar(githubAvatarX.value.minus(180), githubAvatarY.value.minus(yFactor))
       }
 
       Box(
@@ -149,6 +151,27 @@ private fun SpaceShip(
 }
 
 @Composable
+private fun SpaceShipShadow(
+  githubAvatarX: Float,
+  githubAvatarY: Float,
+  yFactor: Float
+) {
+  Image(
+    painter = androidx.compose.ui.res.painterResource(id = R.drawable.spshipshadow),
+    contentDescription = null, modifier = Modifier
+      .offset {
+        IntOffset(
+          githubAvatarX
+            .toInt(),
+          githubAvatarY
+            .toInt()
+        )
+      }
+      .scale(1.8f + yFactor.times(0.02f))
+  )
+}
+
+@Composable
 private fun Looking404(
   githubAvatarX: Float,
   githubAvatarY: Float
@@ -192,7 +215,8 @@ private fun GithubAvatar(
 @Composable
 private fun AvatarShadow(
   githubAvatarX: Float,
-  githubAvatarY: Float
+  githubAvatarY: Float,
+  yFactor: Float
 ) {
   Image(
     painter = androidx.compose.ui.res.painterResource(id = R.drawable.avatarshadow),
@@ -204,7 +228,7 @@ private fun AvatarShadow(
           githubAvatarY.toInt()
         )
       }
-      .scale(1.8f)
+      .scale(1.8f + yFactor.times(0.02f))
   )
 }
 
@@ -214,6 +238,8 @@ private fun BackgroundImageGithub(bgImageScaleFactor: Float) {
     painter = androidx.compose.ui.res.painterResource(id = R.drawable.background),
     contentDescription = null,
     contentScale = ContentScale.Crop,
-    modifier = Modifier.fillMaxSize().scale(bgImageScaleFactor)
+    modifier = Modifier
+      .fillMaxSize()
+      .scale(bgImageScaleFactor)
   )
 }
