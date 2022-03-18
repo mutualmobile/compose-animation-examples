@@ -50,4 +50,8 @@ GitHub 404 Animation - Anmol Verma
 https://user-images.githubusercontent.com/32521663/158949510-1bcec867-bf71-4f79-9469-d78bf16aedf2.mp4
 
 
+Twitter Splash Animation - Anmol Verma
+
+https://user-images.githubusercontent.com/32521663/158961033-205137ae-213a-4dd3-8ef6-b393b8befed3.mp4
+
 
