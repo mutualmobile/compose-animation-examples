@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -61,7 +63,7 @@ fun AndroidMadSkills() {
   }
 
   val ovalSizePx = with(LocalDensity.current) {
-    100.dp.toPx()
+    200.dp.toPx()
   }
 
   val firstOvalX = remember {
@@ -71,24 +73,24 @@ fun AndroidMadSkills() {
     Animatable(heightPX.div(2).minus(ovalSizePx.div(2)))
   }
 
-  val ovalScaleX = remember {
+  val ovalWidth = remember {
     Animatable(ovalSizePx.times(2))
   }
-  val ovalScaleY = remember {
+  val ovalHeight = remember {
     Animatable(ovalSizePx)
   }
 
   val cornerRadiusX = remember {
-    Animatable(200f)
+    Animatable(400f)
   }
 
   val cornerRadiusY = remember {
-    Animatable(180f)
+    Animatable(360f)
   }
 
 
   val secondOvalX = remember {
-    Animatable(widthPX.plus(ovalSizePx.times(2)))
+    Animatable(widthPX)
   }
   val secondOvalY = remember {
     Animatable(heightPX.div(2).minus(ovalSizePx.div(2)))
@@ -104,7 +106,7 @@ fun AndroidMadSkills() {
 
   // frame 2
   val madTextX = remember {
-    Animatable(-widthPX)
+    Animatable((widthPX.times(0.01f)))
   }
 
   val madTextY = remember {
@@ -119,7 +121,7 @@ fun AndroidMadSkills() {
     Animatable(heightPX.plus(100f))
   }
 
-  val alphaColumn= remember {
+  val alphaLTADColumn = remember {
     Animatable(0f)
   }
 
@@ -129,16 +131,21 @@ fun AndroidMadSkills() {
 
   val animationScope = rememberCoroutineScope()
 
+  val showCreator = remember {
+    mutableStateOf(false)
+  }
+
 
   LaunchedEffect(key1 = true, block = {
+    delay(5000)
     firstFrameFirstJob(
       widthPX,
       ovalSizePx,
       animationScope,
       firstOvalX,
       secondOvalX,
-      ovalScaleX,
-      ovalScaleY, cornerRadiusX, cornerRadiusY
+      ovalWidth,
+      ovalHeight, cornerRadiusX, cornerRadiusY
     )
     delay(200)
     firstFrameSecondJob(
@@ -147,8 +154,8 @@ fun AndroidMadSkills() {
       ovalSizePx,
       secondOvalX,
       widthPX,
-      ovalScaleX,
-      ovalScaleY, cornerRadiusX, cornerRadiusY
+      ovalWidth,
+      ovalHeight, cornerRadiusX, cornerRadiusY
     ) {
       secondFrameJob(
         madTextX,
@@ -162,7 +169,18 @@ fun AndroidMadSkills() {
         makeMadAlpha,
         ltadY,
         heightPX.div(2.8f),
-        alphaColumn
+        alphaLTADColumn,
+
+        )
+
+      secondFrameCirclesJob(
+        firstOvalX,
+        firstOvalY,
+        secondOvalX,
+        secondOvalY,
+        ovalHeight,
+        ovalWidth,
+        ovalSizePx, widthPX, heightPX, animationScope,showCreator
       )
     }
 
@@ -174,18 +192,6 @@ fun AndroidMadSkills() {
       .fillMaxSize()
       .background(bgColor)
   ) {
-
-    FrameOne(
-      firstOvalX,
-      firstOvalY,
-      cornerRadiusX,
-      cornerRadiusY,
-      ovalScaleX,
-      ovalScaleY,
-      secondOvalX,
-      secondOvalY
-    )
-
     FrameTwo(
       textX = madTextX,
       textY = madTextY,
@@ -193,8 +199,62 @@ fun AndroidMadSkills() {
       ltadY,
       madTextScale,
       makeMad.value,
-      makeMadAlpha.value,alphaColumn
+      makeMadAlpha, alphaLTADColumn
     )
+    FrameOne(
+      firstOvalX,
+      firstOvalY,
+      cornerRadiusX,
+      cornerRadiusY,
+      ovalWidth,
+      ovalHeight,
+      secondOvalX,
+      secondOvalY
+    )
+
+    if (showCreator.value) {
+      Box(
+        modifier = Modifier
+          .align(Alignment.TopEnd)
+      ) {
+        AnmolVerma(Modifier.padding(24.dp).align(Alignment.Center))
+      }
+    }
+  }
+}
+
+fun secondFrameCirclesJob(
+  firstOvalX: Animatable<Float, AnimationVector1D>,
+  firstOvalY: Animatable<Float, AnimationVector1D>,
+  secondOvalX: Animatable<Float, AnimationVector1D>,
+  secondOvalY: Animatable<Float, AnimationVector1D>,
+  ovalHeight: Animatable<Float, AnimationVector1D>,
+  ovalWidth: Animatable<Float, AnimationVector1D>,
+  ovalSizePx: Float,
+  widthPX: Float,
+  heightPX: Float,
+  animationScope: CoroutineScope,
+  showCreator: MutableState<Boolean>,
+) {
+  animationScope.launch {
+    animationScope.launch {
+      firstOvalX.snapTo(widthPX.times(2.2f))
+      firstOvalY.snapTo(heightPX.times(-0.2f))
+      secondOvalX.snapTo(widthPX.times(-0.6f))
+      secondOvalY.snapTo(heightPX.times(-0.8f))
+      delay(500)
+      firstOvalX.animateTo(widthPX.times(0.8f))
+      firstOvalY.animateTo(heightPX.times(0.2f))
+      secondOvalX.animateTo(widthPX.times(0.6f))
+      secondOvalY.animateTo(heightPX.times(0.8f))
+      animationScope.launch {
+        ovalHeight.animateTo(ovalSizePx.times(2))
+        ovalWidth.animateTo(ovalSizePx)
+        secondOvalY.animateTo(heightPX.times(0.4f), tween(durationMillis = 500, delayMillis = 400))
+        showCreator.value = true
+      }
+    }
+
   }
 }
 
@@ -211,27 +271,29 @@ fun secondFrameJob(
   ltadY: Animatable<Float, AnimationVector1D>,
   ltadYEnd: Float,
   alphaColumn: Animatable<Float, AnimationVector1D>,
-) {
+
+  ) {
   animationScope.launch {
-    makeMadAlpha.animateTo(1f)
-    madTextX.animateTo(endXText, tween(durationMillis = 1500))
+    makeMadAlpha.animateTo(1f, tween(durationMillis = 300))
+    madTextX.animateTo(towardsCenter, tween(durationMillis = 1000))
     delay(200)
-    madTextX.animateTo(towardsCenter, tween(durationMillis = 1500))
-    delay(200)
-    madTextX.animateTo(endXText)
     makeMad.value = true
+    madTextX.animateTo(endXText)
     animationScope.launch {
-      makeMadAlpha.animateTo(0f, tween(1500))
+      makeMadAlpha.animateTo(0f, tween(1000))
     }
-    madTextScale.animateTo(1.2f, tween(1500))
-    madTextY.animateTo(endY, tween(1500))
+    madTextScale.animateTo(1.2f, tween(1000))
+    madTextY.animateTo(endY, tween(1000))
     // we make the text MAD and then append Skills to it.
     delay(200)
-    alphaColumn.animateTo(1f, tween(800))
-    ltadY.animateTo(ltadYEnd, tween(800))
+    animationScope.launch {
+      alphaColumn.animateTo(1f, tween(800))
+    }
+    ltadY.animateTo(ltadYEnd, tween(200))
     delay(400)
-    alphaColumn.animateTo(0.4f, tween(800))
+    alphaColumn.animateTo(0.2f, tween(800))
   }
+
 }
 
 @Composable
@@ -242,7 +304,7 @@ private fun FrameTwo(
   ltadY: Animatable<Float, AnimationVector1D>,
   madTextScale: Animatable<Float, AnimationVector1D>,
   makeMad: Boolean,
-  makeMadAlpha: Float,
+  makeMadAlpha: Animatable<Float, AnimationVector1D>,
   alphaColumn: Animatable<Float, AnimationVector1D>
 ) {
   Text(
@@ -289,7 +351,7 @@ private fun FrameTwo(
     modifier = Modifier
       .offset { IntOffset(x = textX.value.toInt(), y = textY.value.toInt()) }
       .scale(madTextScale.value)
-      .alpha(makeMadAlpha)
+      .alpha(makeMadAlpha.value)
   )
 
   AnimatedVisibility(visible = makeMad) {
@@ -305,7 +367,7 @@ private fun FrameTwo(
         .scale(madTextScale.value)
     )
   }
-  LTADColumn(ltadX.value, ltadY.value,alphaColumn.value)
+  LTADColumn(ltadX.value, ltadY.value, alphaColumn.value)
 
 }
 
@@ -317,33 +379,46 @@ fun LTADColumn(ltadX: Float, ltadY: Float, alpha: Float) {
       Icon(
         imageVector = Icons.Default.ShoppingCart,
         contentDescription = null,
-        tint = greenAndroidColor
+        tint = greenAndroidColor,
+        modifier = Modifier.size(36.dp)
       )
     }, text = {
       Text(
         text = "Language",
         style = Typography.h5.copy(fontWeight = FontWeight.Bold)
       )
-    },modifier = Modifier.alpha(alpha))
+    }, modifier = Modifier.alpha(alpha))
     Spacer(modifier = Modifier.height(8.dp))
     ListItem(icon = {
-      Icon(imageVector = Icons.Default.Face, contentDescription = null, tint = blueColor)
+      Icon(
+        imageVector = Icons.Default.Face, contentDescription = null, tint = blueColor,
+        modifier = Modifier.size(36.dp)
+      )
     }, text = {
-      Text(text = "Tools", style = Typography.h5.copy(fontWeight = FontWeight.Bold),
-        )
-    },modifier = Modifier.alpha(alpha))
+      Text(
+        text = "Tools", style = Typography.h5.copy(fontWeight = FontWeight.Bold),
+      )
+    }, modifier = Modifier.alpha(alpha))
     Spacer(modifier = Modifier.height(8.dp))
     ListItem(icon = {
-      Icon(imageVector = Icons.Default.Home, contentDescription = null, tint = greenAndroidColor)
+      Icon(
+        imageVector = Icons.Default.Home,
+        contentDescription = null,
+        tint = greenAndroidColor,
+        modifier = Modifier.size(36.dp)
+      )
     }, text = {
       Text(text = "APIs", style = Typography.h5.copy(fontWeight = FontWeight.Bold))
     })
     Spacer(modifier = Modifier.height(8.dp))
     ListItem(icon = {
-      Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = null, tint = blueColor)
+      Icon(
+        imageVector = Icons.Default.FavoriteBorder, contentDescription = null, tint = blueColor,
+        modifier = Modifier.size(36.dp)
+      )
     }, text = {
       Text(text = "Distribution", style = Typography.h5.copy(fontWeight = FontWeight.Bold))
-    },modifier = Modifier.alpha(alpha))
+    }, modifier = Modifier.alpha(alpha))
   }
 }
 
@@ -400,32 +475,32 @@ private suspend fun firstFrameFirstJob(
     // bring first oval to center
     firstOvalX.animateTo(
       firstOvalWhenCenter,
-      tween(durationMillis = 1500, easing = FastOutLinearInEasing)
+      tween(durationMillis = 1000, easing = FastOutLinearInEasing)
     )
   }
   val firstFrameJob2 = animationScope.launch {
     // bring first oval to center
     secondOvalX.animateTo(
       secondOvalWhenCenter,
-      tween(durationMillis = 1500, easing = FastOutLinearInEasing)
+      tween(durationMillis = 1000, easing = FastOutLinearInEasing)
     )
   }
   val firstFrameJob3 = animationScope.launch {
     // make these ovals as circle
-    ovalScaleX.animateTo(ovalSizePx, tween(durationMillis = 1500, easing = FastOutLinearInEasing))
+    ovalScaleX.animateTo(ovalSizePx, tween(durationMillis = 1000, easing = FastOutLinearInEasing))
   }
   val firstFrameJob4 = animationScope.launch {
     // make these ovals as circle
-    ovalScaleY.animateTo(ovalSizePx, tween(durationMillis = 1500, easing = FastOutLinearInEasing))
+    ovalScaleY.animateTo(ovalSizePx, tween(durationMillis = 1000, easing = FastOutLinearInEasing))
   }
 
   val cornerRadiusXJob = animationScope.launch {
     // make these ovals as circle
-    cornerRadiusX.animateTo(200f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
+    cornerRadiusX.animateTo(400f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
   }
   val cornerRadiusYJob = animationScope.launch {
     // make these ovals as circle
-    cornerRadiusY.animateTo(200f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
+    cornerRadiusY.animateTo(400f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
   }
 
   joinAll(
@@ -451,21 +526,21 @@ private suspend fun firstFrameSecondJob(
   aboutToFinish: () -> Unit
 ) {
   animationScope.launch {
-    delay(1400)
+    delay(800)
     aboutToFinish.invoke()
   }
   val secondFrameJob1 = animationScope.launch {
     // bring first oval to center
     firstOvalX.animateTo(
-      0f.minus(ovalSizePx.times(4)),
-      tween(durationMillis = 1500, easing = FastOutLinearInEasing)
+      0f.minus(ovalSizePx.times(2)),
+      tween(durationMillis = 1000, easing = FastOutLinearInEasing)
     )
   }
   val secondFrameJob2 = animationScope.launch {
     // bring first oval to center
     secondOvalX.animateTo(
-      widthPX.plus(ovalSizePx.times(4)),
-      tween(durationMillis = 1500, easing = FastOutLinearInEasing)
+      widthPX.plus(ovalSizePx.times(2)),
+      tween(durationMillis = 1000, easing = FastOutLinearInEasing)
     )
   }
   val secondFrameJob3 = animationScope.launch {
@@ -482,11 +557,11 @@ private suspend fun firstFrameSecondJob(
 
   val cornerRadiusXJob = animationScope.launch {
     // make these ovals as circle
-    cornerRadiusX.animateTo(200f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
+    cornerRadiusX.animateTo(400f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
   }
   val cornerRadiusYJob = animationScope.launch {
     // make these ovals as circle
-    cornerRadiusY.animateTo(180f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
+    cornerRadiusY.animateTo(360f, tween(durationMillis = 800, easing = FastOutLinearInEasing))
   }
 
   joinAll(
