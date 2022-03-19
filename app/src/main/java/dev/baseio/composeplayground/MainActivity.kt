@@ -46,16 +46,13 @@ class MainActivity : ComponentActivity() {
           ProvideWindowInsets() {
             Surface(color = MaterialTheme.colors.background) {
               val pagerState = rememberPagerState()
-              Column(
+              Box(
                 modifier = Modifier
                   .fillMaxSize()
-
               ) {
                 HorizontalPager(
-                  modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                  count = 12, state = pagerState,
+                  modifier = Modifier.fillMaxSize(),
+                  count = 13, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -77,8 +74,11 @@ class MainActivity : ComponentActivity() {
                         IOSSleepSchedule()
                       }
                     }
-                    0 -> {
+                    12 -> {
                       TwitterSplashAnimation()
+                    }
+                    0 -> {
+                      AndroidMadSkills()
                     }
                     11 -> {
                       Box(modifier = Modifier.fillMaxSize()) {
@@ -120,8 +120,8 @@ class MainActivity : ComponentActivity() {
                 HorizontalPagerIndicator(
                   pagerState = pagerState,
                   modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
                 )
               }
             }
