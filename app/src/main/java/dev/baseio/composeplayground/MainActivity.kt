@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
               ) {
                 HorizontalPager(
                   modifier = Modifier.fillMaxSize(),
-                  count = 13, state = pagerState,
+                  count = 14, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -77,8 +77,11 @@ class MainActivity : ComponentActivity() {
                     12 -> {
                       TwitterSplashAnimation()
                     }
-                    0 -> {
+                    13 -> {
                       AndroidMadSkills()
+                    }
+                    0 -> {
+                      NetflixIntroAnimation()
                     }
                     11 -> {
                       Box(modifier = Modifier.fillMaxSize()) {
