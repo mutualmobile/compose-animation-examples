@@ -1,14 +1,11 @@
 package dev.baseio.composeplayground.ui.animations
 
-import androidx.compose.animation.Animatable
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import dev.baseio.composeplayground.contributors.AnmolVerma
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -44,10 +42,19 @@ fun NetflixIntroAnimation() {
         .fillMaxWidth()
     )
     {
-
       DrawNetflix()
-
     }
+
+    Box(
+      modifier = Modifier
+        .align(Alignment.BottomEnd)
+    ) {
+      AnmolVerma(
+        Modifier
+          .padding(24.dp)
+          .align(Alignment.Center))
+    }
+
   }
 }
 
@@ -74,11 +81,11 @@ fun BoxScope.DrawNetflix() {
   LaunchedEffect(key1 = true, block = {
     delay(500)
     launch {
-      scaleNetflix.animateTo(3f, tween(durationMillis = 2800))
+      scaleNetflix.animateTo(3f, tween(durationMillis = 3900))
     }
-    colorSecondN.animateTo(0f, tween(durationMillis = 800))
+    colorSecondN.animateTo(0f, tween(durationMillis = 1000))
     colorMiddleN.animateTo(0f, tween(durationMillis = 800))
-    colorFirstN.animateTo(0f, tween(durationMillis = 800))
+    colorFirstN.animateTo(0f, tween(durationMillis = 600))
   })
 
   Canvas(modifier = Modifier
@@ -124,7 +131,6 @@ private fun DrawScope.drawN(
   }
 
 
-
   // Now Draw middle \
   var initialOfMiddle = initialX
   rotate(
@@ -140,7 +146,7 @@ private fun DrawScope.drawN(
           ), startY = 0f, endY = netflixHeight.times(colorFirstN)
         ),
         start = Offset(initialOfMiddle, 0f),
-        end = Offset(initialOfMiddle, netflixHeight.times(colorFirstN).plus(5))
+        end = Offset(initialOfMiddle, netflixHeight.times(colorFirstN))
       )
       initialOfMiddle += lineSpacing
     }
