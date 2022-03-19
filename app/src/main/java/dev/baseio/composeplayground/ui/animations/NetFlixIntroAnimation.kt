@@ -79,9 +79,9 @@ fun BoxScope.DrawNetflix() {
   }
 
   LaunchedEffect(key1 = true, block = {
-    delay(500)
+    delay(3500)
     launch {
-      scaleNetflix.animateTo(3f, tween(durationMillis = 3900))
+      scaleNetflix.animateTo(5f, tween(durationMillis = 3900))
     }
     colorSecondN.animateTo(0f, tween(durationMillis = 1000))
     colorMiddleN.animateTo(0f, tween(durationMillis = 800))
