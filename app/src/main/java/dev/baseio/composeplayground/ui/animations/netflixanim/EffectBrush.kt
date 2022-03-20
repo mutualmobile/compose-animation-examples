@@ -60,10 +60,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
     BrushFurModel(
       left = 0f, width = 3.8f,
       background = Brush.linearGradient(
-        Pair(0f, baseColor),
-        Pair(15f, baseColor),
-        Pair(81f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+        Pair(0f / 100, baseColor),
+        Pair(15f / 100, baseColor),
+        Pair(81f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -71,11 +71,11 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 3.8f, width = 2.8f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(10f, baseColor),
-        Pair(62f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(10f / 100, baseColor),
+        Pair(62f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -83,10 +83,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 6.6f, width = 4.8f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(37f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(37f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -94,10 +94,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 11.4f, width = 4f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(23f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(23f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -105,11 +105,11 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 15.4f, width = 4f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(15f, baseColor),
-        Pair(86f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(15f / 100, baseColor),
+        Pair(86f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -117,11 +117,11 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 19.4f, width = 2.5f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(27f, baseColor),
-        Pair(89f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(27f / 100, baseColor),
+        Pair(89f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -129,10 +129,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 21.9f, width = 4f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(20f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(20f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -140,10 +140,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 25.9f, width = 2f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(30f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(30f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -151,11 +151,11 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 27.9f, width = 4f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(35f, baseColor),
-        Pair(95f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(35f / 100, baseColor),
+        Pair(95f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -163,11 +163,11 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 31.9f, width = 3.5f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(39f, baseColor),
-        Pair(95f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(39f / 100, baseColor),
+        Pair(95f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -175,11 +175,11 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 35.4f, width = 2f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(34f, baseColor),
-        Pair(95f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(34f / 100, baseColor),
+        Pair(95f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -187,11 +187,11 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 37.4f, width = 2.6f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(22f, baseColor),
-        Pair(95f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(22f / 100, baseColor),
+        Pair(95f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -199,10 +199,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 40f, width = 6f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(47f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(47f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -210,10 +210,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 46f, width = 2f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(36f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(36f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -221,10 +221,10 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 48f, width = 5.5f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(29f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(29f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -232,41 +232,41 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 53.5f, width = 3f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(39f, baseColor),
-        Pair(95f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(39f / 100, baseColor),
+        Pair(95f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 56.5f, width = 4.1f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(45f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(45f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 60.6f, width = 2.4f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(34f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(34f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 63f, width = 4f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(47f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(47f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
@@ -274,122 +274,122 @@ val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
   add(
     BrushFurModel(
       left = 67f, width = 1.5f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(27f, baseColor),
-        Pair(95f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(27f / 100, baseColor),
+        Pair(95f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 68.5f, width = 2.8f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(37f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(37f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 71.3f, width = 2.3f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(9f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(9f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 73.6f, width = 2.2f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(28f, baseColor),
-        Pair(92f, Color(0, 0, 0, 0)),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(28f / 100, baseColor),
+        Pair(92f / 100, Color(0, 0, 0, 0)),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 75.8f, width = 1f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(37f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(37f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 76.8f, width = 2.1f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(28f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(28f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 78.9f, width = 4.1f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(21f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(21f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 83f, width = 2.5f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(21f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(21f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 85.5f, width = 4.5f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(39f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(39f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 90f, width = 2.8f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(30f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(30f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 92.8f, width = 3.5f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(19f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(19f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )
   add(
     BrushFurModel(
       left = 96.3f, width = 3.7f,
-      background = Brush.verticalGradient(
-        Pair(0f, baseColor),
-        Pair(37f, baseColor),
-        Pair(100f, Color(0, 0, 0, 0))
+      background = Brush.linearGradient(
+        Pair(0f / 100, baseColor),
+        Pair(37f / 100, baseColor),
+        Pair(100f / 100, Color(0, 0, 0, 0))
       )
     )
   )

@@ -93,11 +93,11 @@ fun NetflixIntro(modifier: Modifier) {
 
   LaunchedEffect(key1 = true, block = {
     launch {
-      zoomInNetflixBox.animateTo(7f, animationSpec = keyframes {
+      zoomInNetflixBox.animateTo(15f, animationSpec = keyframes {
         durationMillis = 3500
         delayMillis = 500
         1f at 0 with LinearEasing
-        7f at 3500 with LinearEasing
+        15f at 3500 with LinearEasing
       })
     }
     launch {
@@ -164,7 +164,7 @@ fun NetflixIntro(modifier: Modifier) {
       .height(nHeight)
       .graphicsLayer(
         scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
-        )
+      )
   ) {
     EffectBrushOne(
       modifier = Modifier
@@ -182,16 +182,14 @@ fun NetflixIntro(modifier: Modifier) {
         .fillMaxWidth(0.19f)
         .fillMaxHeight()
         .offset(x = (57.8 / 100).times(nWidth), y = 0.dp)
-        .rotate(180f)
-        .background(fadingLumieresBox.value), brushMovingbrush2
+        .rotate(180f), brushMovingbrush2
     )
     EffectBrushThree(
       modifier = Modifier
         .fillMaxWidth(0.19f)
         .fillMaxHeight(1.5f)
         .offset(x = (40.5 / 100).times(nWidth), y = (-25 / 100).times(nHeight))
-        .rotate(-19.5f)
-        .background(fadingLumieresBox.value), brushMovingbrush3
+        .rotate(-19.5f), brushMovingbrush3
     )
   }
 
