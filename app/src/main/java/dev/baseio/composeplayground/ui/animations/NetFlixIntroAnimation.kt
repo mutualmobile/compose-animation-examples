@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.times
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.animations.netflixanim.EffectBrush
 import dev.baseio.composeplayground.ui.animations.netflixanim.EffectLumieres
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 val baseColor = Color(0xffe40913)
@@ -92,6 +93,7 @@ fun NetflixIntro(modifier: Modifier) {
   }
 
   LaunchedEffect(key1 = true, block = {
+    delay(5000)
     launch {
       zoomInNetflixBox.animateTo(15f, animationSpec = keyframes {
         durationMillis = 3500
