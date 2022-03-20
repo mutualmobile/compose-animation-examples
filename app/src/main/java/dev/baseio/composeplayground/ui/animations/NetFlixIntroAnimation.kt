@@ -1,25 +1,31 @@
 package dev.baseio.composeplayground.ui.animations
 
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import dev.baseio.composeplayground.contributors.AnmolVerma
-import kotlinx.coroutines.delay
+import dev.baseio.composeplayground.ui.animations.netflixanim.EffectBrush
+import dev.baseio.composeplayground.ui.animations.netflixanim.EffectLumieres
 import kotlinx.coroutines.launch
 
 val baseColor = Color(0xffe40913)
@@ -31,19 +37,25 @@ val baseColor = Color(0xffe40913)
 @Composable
 fun NetflixIntroAnimation() {
 
+  // body
   Box(
     modifier = Modifier
       .fillMaxSize()
       .background(Color.Black)
   ) {
-    Box(
+    //container
+    Column(
       modifier = Modifier
-        .align(Alignment.Center)
-        .fillMaxWidth()
+        .fillMaxSize()
+        .background(Color.Black),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-      DrawNetflix()
+      //netflix intro
+      NetflixIntro(Modifier)
     }
+
 
     Box(
       modifier = Modifier
@@ -52,51 +64,205 @@ fun NetflixIntroAnimation() {
       AnmolVerma(
         Modifier
           .padding(24.dp)
-          .align(Alignment.Center))
+          .align(Alignment.Center)
+      )
     }
 
   }
 }
 
 @Composable
-fun BoxScope.DrawNetflix() {
-  val netflixHeight = with(LocalDensity.current) {
-    125.dp.toPx()
-  }
-
-  val colorFirstN = remember {
-    Animatable(1f)
-  }
-  val colorSecondN = remember {
-    Animatable(1f)
-  }
-  val colorMiddleN = remember {
+fun NetflixIntro(modifier: Modifier) {
+  val zoomInNetflixBox = remember {
     Animatable(1f)
   }
 
-  val scaleNetflix = remember {
+  val fadingLumieresBox = remember {
+    Animatable(baseColor.copy(alpha = 0.5f))
+  }
+
+
+  val showingLumieres = remember {
     Animatable(1f)
   }
+
+  val brushMovingHelper1 = remember {
+    Animatable(0f)
+  }
+
+  val brushMovingHelper3 = remember {
+    Animatable(0f)
+  }
+
+  val brushMovingHelper2 = remember {
+    Animatable(0f)
+  }
+
+  val fadingOut by animateFloatAsState(targetValue = 1f, animationSpec = keyframes {
+    durationMillis = 2500
+    delayMillis = 1200
+    1f at 0 with LinearEasing
+    0f at 2500 with LinearEasing
+  })
+
+
 
   LaunchedEffect(key1 = true, block = {
-    delay(3500)
     launch {
-      scaleNetflix.animateTo(5f, tween(durationMillis = 3900))
+      zoomInNetflixBox.animateTo(15f, animationSpec = keyframes {
+        durationMillis = 3500
+        delayMillis = 500
+        1f at 0 with LinearEasing
+        15f at 3500 with LinearEasing
+      })
     }
-    colorSecondN.animateTo(0f, tween(durationMillis = 1000))
-    colorMiddleN.animateTo(0f, tween(durationMillis = 800))
-    colorFirstN.animateTo(0f, tween(durationMillis = 600))
+    launch {
+      fadingLumieresBox.animateTo(
+        targetValue = baseColor.copy(alpha = 0f),
+        animationSpec = keyframes {
+          durationMillis = 2000
+          delayMillis = 600
+          baseColor.copy(alpha = 0.5f) at 0 with LinearEasing
+          baseColor.copy(alpha = 0f) at 2500 with LinearEasing
+        })
+    }
+    launch {
+      brushMovingHelper1.animateTo(targetValue = -100f, animationSpec = keyframes {
+        durationMillis = 2500
+        delayMillis = 1200
+        0f at 0 with LinearEasing
+        -100f at 2500 with LinearEasing
+      })
+    }
+
+    launch {
+      brushMovingHelper3.animateTo(targetValue = -100f, animationSpec = keyframes {
+        durationMillis = 2000
+        delayMillis = 800
+        0f at 0 with LinearEasing
+        -100f at 2000 with LinearEasing
+      })
+    }
+
+    launch {
+      brushMovingHelper2.animateTo(targetValue = -100f, animationSpec = keyframes {
+        durationMillis = 2000
+        delayMillis = 500
+        0f at 0 with LinearEasing
+        -100f at 2000 with LinearEasing
+      })
+    }
+
+    launch {
+      showingLumieres.animateTo(1f, keyframes {
+        durationMillis = 2000
+        delayMillis = 1600
+        0f at 0 with LinearEasing
+        1f at 2500 with LinearEasing
+      })
+    }
   })
 
-  Canvas(modifier = Modifier
-    .scale(scaleNetflix.value)
-    .align(Alignment.Center), onDraw = {
-    translate(left = -100f, top = -netflixHeight / 2) {
-      drawN(netflixHeight, colorFirstN.value, colorMiddleN.value, colorSecondN.value)
-    }
+  // netflix intro
 
-  })
+  val width = with(LocalDensity.current) {
+    300f.toDp()
+  }
+
+  val height = with(LocalDensity.current) {
+    300f.toDp()
+  }
+
+  //letter N
+  Box(
+    modifier = modifier
+      .width(width)
+      .height(height)
+      .graphicsLayer(
+       scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
+        transformOrigin = TransformOrigin.Center.copy(
+          pivotFractionX = 0.5f,
+          pivotFractionY = 0.3f
+        )
+      )
+  ) {
+    val helperOneWidth = 19.5f.div(100).times(width)
+    val helperOneHeight = 1.times(height)
+    HelperOne(
+      modifier = Modifier
+        .width(helperOneWidth)
+        .fillMaxHeight()
+        .offset(x = (22.4 / 100).times(width), y = 0.dp)
+        .rotate(180f)
+        .background(fadingLumieresBox.value)
+        .shadow(elevation = 4.dp), brushMovingHelper1, showingLumieres, helperOneWidth,helperOneHeight
+    )
+    val helperTwoWidth = 19f.div(100).times(width)
+
+    HelperTwo(
+      modifier = Modifier
+        .fillMaxWidth(0.19f)
+        .fillMaxHeight()
+        .offset(x = (57.8 / 100).times(width), y = 0.dp)
+        .rotate(180f)
+        .background(fadingLumieresBox.value)
+        .shadow(elevation = 4.dp), brushMovingHelper2, helperTwoWidth,helperOneHeight
+    )
+    val helperThreeHeight = 1.5.times(height)
+
+    HelperThree(
+      modifier = Modifier
+        .fillMaxWidth(0.19f)
+        .fillMaxHeight(1.5f)
+        .offset(x = (40.5 / 100).times(width), y = (-25 / 100).times(height))
+        .rotate(-19.5f)
+        .background(fadingLumieresBox.value)
+        .shadow(elevation = 4.dp), brushMovingHelper3, helperTwoWidth,helperThreeHeight
+    )
+  }
+
+
 }
+
+@Composable
+fun HelperTwo(
+  modifier: Modifier,
+  brushMovingHelper3: Animatable<Float, AnimationVector1D>,
+  helperTwoWidth: Dp,
+  helperOneHeight: Dp
+) {
+  Box(modifier = modifier) {
+    EffectBrush(brushMovingHelper3, helperTwoWidth,helperOneHeight)
+  }
+}
+
+
+@Composable
+fun HelperThree(
+  modifier: Modifier,
+  brushMoving: Animatable<Float, AnimationVector1D>,
+  helperTwoWidth: Dp,
+  helperThreeHeight: Dp
+) {
+  Box(modifier = modifier) {
+    EffectBrush(brushMoving, helperTwoWidth,helperThreeHeight)
+  }
+}
+
+@Composable
+fun HelperOne(
+  modifier: Modifier = Modifier,
+  brushMoving: Animatable<Float, AnimationVector1D>,
+  showingLumieres: Animatable<Float, AnimationVector1D>,
+  helperOneWidth: Dp,
+  helperOneHeight: Dp
+) {
+  Box(modifier = modifier) {
+    EffectBrush(brushMoving, helperOneWidth, helperOneHeight)
+    EffectLumieres(showingLumieres, helperOneWidth)
+  }
+}
+
 
 private fun DrawScope.drawN(
   netflixHeight: Float,
