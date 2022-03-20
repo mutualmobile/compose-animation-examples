@@ -77,7 +77,7 @@ fun NetflixIntro(modifier: Modifier) {
 
 
   val showingLumieres = remember {
-    Animatable(1f)
+    Animatable(0f)
   }
 
   val brushMovingbrush1 = remember {
@@ -138,14 +138,14 @@ fun NetflixIntro(modifier: Modifier) {
       })
     }
 
-    /*launch {
+    launch {
       showingLumieres.animateTo(1f, keyframes {
         durationMillis = 2000
         delayMillis = 1600
         0f at 0 with LinearEasing
         1f at 2500 with LinearEasing
       })
-    }*/
+    }
   })
 
   // netflix intro
@@ -164,7 +164,7 @@ fun NetflixIntro(modifier: Modifier) {
       .width(nWidth)
       .height(nHeight)
       .graphicsLayer(
-       // scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
+       scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
       )
   ) {
     EffectBrushOne(
