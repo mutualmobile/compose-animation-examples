@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.times
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.animations.netflixanim.EffectBrush
 import dev.baseio.composeplayground.ui.animations.netflixanim.EffectLumieres
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 val baseColor = Color(0xffe40913)
@@ -164,7 +163,7 @@ fun NetflixIntro(modifier: Modifier) {
       .width(nWidth)
       .height(nHeight)
       .graphicsLayer(
-       scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
+        scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
       )
   ) {
     EffectBrushOne(
@@ -175,7 +174,7 @@ fun NetflixIntro(modifier: Modifier) {
         .rotate(180f)
         .background(fadingLumieresBox.value),
       brushMovingbrush1,
-      showingLumieres
+      showingLumieres,nWidth
     )
 
     EffectBrushTwo(
@@ -218,12 +217,16 @@ fun EffectBrushThree(
 fun EffectBrushOne(
   modifier: Modifier = Modifier,
   brushMoving: Animatable<Float, AnimationVector1D>,
-  showingLumieres: Animatable<Float, AnimationVector1D>
+  showingLumieres: Animatable<Float, AnimationVector1D>,
+  nWidth: Dp
 ) {
   EffectBrush(brushMoving, modifier)
 
-  EffectLumieres(
-    showingLumieres,
-  )
+    EffectLumieres(
+      showingLumieres,Modifier
+        .fillMaxWidth(0.195f)
+        .fillMaxHeight()
+        .offset(x = (22.4 / 100).times(nWidth), y = 0.dp)
+    )
 }
 

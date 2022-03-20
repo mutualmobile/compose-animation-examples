@@ -7,12 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import kotlin.random.Random
@@ -20,13 +21,13 @@ import kotlin.random.Random
 @Composable
 fun EffectLumieres(
   showingLumieres: Animatable<Float, AnimationVector1D>,
+  modifier: Modifier,
 ) {
 
   val width = LocalConfiguration.current.screenWidthDp
   Box(
-    modifier = Modifier
-      .fillMaxSize()
-      .graphicsLayer(alpha = showingLumieres.value, transformOrigin = TransformOrigin(0.9f, 1f))
+    modifier = modifier
+      .graphicsLayer(alpha = showingLumieres.value)
   ) {
 
     repeat(lamps.size) {
@@ -37,12 +38,13 @@ fun EffectLumieres(
       }
       LampComposable(
         Modifier
-          .width(LocalDensity.current.run { lamp.width.toDp() })
-          .fillMaxHeight()
-          .background(lamp.color)
           .offset {
             IntOffset(x = offsetX.toInt(), y = 0)
           }
+          .width(LocalDensity.current.run { lamp.width.toDp() })
+          .fillMaxHeight()
+          .background(lamp.color)
+
           .zIndex(lamp.z), animName, lamp
       )
     }
@@ -115,6 +117,7 @@ fun LampComposable(
         scaleX = lumiereMovingScale.value,
         scaleY = lumiereMovingScale.value
       )
+      .blur(4.dp)
   )
 }
 
