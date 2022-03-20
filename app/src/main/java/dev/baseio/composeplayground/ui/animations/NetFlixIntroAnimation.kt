@@ -6,18 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -83,37 +76,28 @@ fun NetflixIntro(modifier: Modifier) {
 
 
   val showingLumieres = remember {
-    Animatable(1f)
-  }
-
-  val brushMovingHelper1 = remember {
     Animatable(0f)
   }
 
-  val brushMovingHelper3 = remember {
+  val brushMovingbrush1 = remember {
     Animatable(0f)
   }
 
-  val brushMovingHelper2 = remember {
+  val brushMovingbrush3 = remember {
     Animatable(0f)
   }
 
-  val fadingOut by animateFloatAsState(targetValue = 1f, animationSpec = keyframes {
-    durationMillis = 2500
-    delayMillis = 1200
-    1f at 0 with LinearEasing
-    0f at 2500 with LinearEasing
-  })
-
-
+  val brushMovingbrush2 = remember {
+    Animatable(0f)
+  }
 
   LaunchedEffect(key1 = true, block = {
     launch {
-      zoomInNetflixBox.animateTo(15f, animationSpec = keyframes {
+      zoomInNetflixBox.animateTo(7f, animationSpec = keyframes {
         durationMillis = 3500
         delayMillis = 500
         1f at 0 with LinearEasing
-        15f at 3500 with LinearEasing
+        7f at 3500 with LinearEasing
       })
     }
     launch {
@@ -127,7 +111,7 @@ fun NetflixIntro(modifier: Modifier) {
         })
     }
     launch {
-      brushMovingHelper1.animateTo(targetValue = -100f, animationSpec = keyframes {
+      brushMovingbrush1.animateTo(targetValue = -100f, animationSpec = keyframes {
         durationMillis = 2500
         delayMillis = 1200
         0f at 0 with LinearEasing
@@ -136,7 +120,7 @@ fun NetflixIntro(modifier: Modifier) {
     }
 
     launch {
-      brushMovingHelper3.animateTo(targetValue = -100f, animationSpec = keyframes {
+      brushMovingbrush3.animateTo(targetValue = -100f, animationSpec = keyframes {
         durationMillis = 2000
         delayMillis = 800
         0f at 0 with LinearEasing
@@ -145,7 +129,7 @@ fun NetflixIntro(modifier: Modifier) {
     }
 
     launch {
-      brushMovingHelper2.animateTo(targetValue = -100f, animationSpec = keyframes {
+      brushMovingbrush2.animateTo(targetValue = -100f, animationSpec = keyframes {
         durationMillis = 2000
         delayMillis = 500
         0f at 0 with LinearEasing
@@ -165,59 +149,49 @@ fun NetflixIntro(modifier: Modifier) {
 
   // netflix intro
 
-  val width = with(LocalDensity.current) {
+  val nWidth = with(LocalDensity.current) {
     300f.toDp()
   }
 
-  val height = with(LocalDensity.current) {
+  val nHeight = with(LocalDensity.current) {
     300f.toDp()
   }
 
   //letter N
   Box(
     modifier = modifier
-      .width(width)
-      .height(height)
+      .width(nWidth)
+      .height(nHeight)
       .graphicsLayer(
-       scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
-        transformOrigin = TransformOrigin.Center.copy(
-          pivotFractionX = 0.5f,
-          pivotFractionY = 0.3f
+        scaleX = zoomInNetflixBox.value, scaleY = zoomInNetflixBox.value,
         )
-      )
   ) {
-    val helperOneWidth = 19.5f.div(100).times(width)
-    val helperOneHeight = 1.times(height)
-    HelperOne(
+    EffectBrushOne(
       modifier = Modifier
-        .width(helperOneWidth)
+        .fillMaxWidth(0.195f)
         .fillMaxHeight()
-        .offset(x = (22.4 / 100).times(width), y = 0.dp)
+        .offset(x = (22.4 / 100).times(nWidth), y = 0.dp)
         .rotate(180f)
-        .background(fadingLumieresBox.value)
-        .shadow(elevation = 4.dp), brushMovingHelper1, showingLumieres, helperOneWidth,helperOneHeight
+        .background(fadingLumieresBox.value),
+      brushMovingbrush1,
+      showingLumieres
     )
-    val helperTwoWidth = 19f.div(100).times(width)
 
-    HelperTwo(
+    EffectBrushTwo(
       modifier = Modifier
         .fillMaxWidth(0.19f)
         .fillMaxHeight()
-        .offset(x = (57.8 / 100).times(width), y = 0.dp)
+        .offset(x = (57.8 / 100).times(nWidth), y = 0.dp)
         .rotate(180f)
-        .background(fadingLumieresBox.value)
-        .shadow(elevation = 4.dp), brushMovingHelper2, helperTwoWidth,helperOneHeight
+        .background(fadingLumieresBox.value), brushMovingbrush2
     )
-    val helperThreeHeight = 1.5.times(height)
-
-    HelperThree(
+    EffectBrushThree(
       modifier = Modifier
         .fillMaxWidth(0.19f)
         .fillMaxHeight(1.5f)
-        .offset(x = (40.5 / 100).times(width), y = (-25 / 100).times(height))
+        .offset(x = (40.5 / 100).times(nWidth), y = (-25 / 100).times(nHeight))
         .rotate(-19.5f)
-        .background(fadingLumieresBox.value)
-        .shadow(elevation = 4.dp), brushMovingHelper3, helperTwoWidth,helperThreeHeight
+        .background(fadingLumieresBox.value), brushMovingbrush3
     )
   }
 
@@ -225,111 +199,32 @@ fun NetflixIntro(modifier: Modifier) {
 }
 
 @Composable
-fun HelperTwo(
+fun EffectBrushTwo(
   modifier: Modifier,
-  brushMovingHelper3: Animatable<Float, AnimationVector1D>,
-  helperTwoWidth: Dp,
-  helperOneHeight: Dp
+  brushMovingbrush: Animatable<Float, AnimationVector1D>
 ) {
-  Box(modifier = modifier) {
-    EffectBrush(brushMovingHelper3, helperTwoWidth,helperOneHeight)
-  }
+  EffectBrush(brushMovingbrush, modifier)
 }
 
 
 @Composable
-fun HelperThree(
+fun EffectBrushThree(
   modifier: Modifier,
-  brushMoving: Animatable<Float, AnimationVector1D>,
-  helperTwoWidth: Dp,
-  helperThreeHeight: Dp
+  brushMoving: Animatable<Float, AnimationVector1D>
 ) {
-  Box(modifier = modifier) {
-    EffectBrush(brushMoving, helperTwoWidth,helperThreeHeight)
-  }
+  EffectBrush(brushMoving, modifier)
 }
 
 @Composable
-fun HelperOne(
+fun EffectBrushOne(
   modifier: Modifier = Modifier,
   brushMoving: Animatable<Float, AnimationVector1D>,
-  showingLumieres: Animatable<Float, AnimationVector1D>,
-  helperOneWidth: Dp,
-  helperOneHeight: Dp
+  showingLumieres: Animatable<Float, AnimationVector1D>
 ) {
-  Box(modifier = modifier) {
-    EffectBrush(brushMoving, helperOneWidth, helperOneHeight)
-    EffectLumieres(showingLumieres, helperOneWidth)
-  }
-}
+  EffectBrush(brushMoving, modifier)
 
-
-private fun DrawScope.drawN(
-  netflixHeight: Float,
-  colorFirstN: Float,
-  colorMiddleN: Float,
-  colorSecondN: Float
-) {
-  // draw N
-  // First Draw last |
-  var initialX = 0f
-  val lineSpacing = 1f
-  val totalLines = 75
-  val nRotation = -25f
-
-  val centerOfNRotation = center.copy(
-    x = center.x.plus(totalLines.times(1.5f)),
-    y = lineSpacing.times(totalLines.times(2.5f))
+  EffectLumieres(
+    showingLumieres,
   )
-
-  repeat(totalLines) {
-    drawLine(
-      brush = Brush.verticalGradient(
-        listOf(
-          Color.Black,
-          baseColor.copy(alpha = colorFirstN),
-        ), startY = 0f, endY = netflixHeight.times(colorFirstN)
-      ),
-      start = Offset(initialX, 0f),
-      end = Offset(initialX, netflixHeight.times(colorFirstN))
-    )
-    initialX += lineSpacing
-  }
-
-
-  // Now Draw middle \
-  var initialOfMiddle = initialX
-  rotate(
-    nRotation,
-    centerOfNRotation
-  ) {
-    repeat(totalLines) {
-      drawLine(
-        brush = Brush.verticalGradient(
-          listOf(
-            Color.Black,
-            baseColor.copy(alpha = colorMiddleN),
-          ), startY = 0f, endY = netflixHeight.times(colorFirstN)
-        ),
-        start = Offset(initialOfMiddle, 0f),
-        end = Offset(initialOfMiddle, netflixHeight.times(colorFirstN))
-      )
-      initialOfMiddle += lineSpacing
-    }
-  }
-
-  var initialOfFirst = initialOfMiddle
-  repeat(totalLines) {
-    drawLine(
-      brush = Brush.verticalGradient(
-        listOf(
-          Color.Black,
-          baseColor.copy(alpha = colorSecondN),
-        ), startY = 0f, endY = netflixHeight.times(colorFirstN)
-      ),
-      start = Offset(initialOfFirst, 0f),
-      end = Offset(initialOfFirst, netflixHeight.times(colorFirstN))
-    )
-    initialOfFirst += lineSpacing
-  }
 }
+

@@ -2,10 +2,12 @@ package dev.baseio.composeplayground.ui.animations.netflixanim
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -17,41 +19,34 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import dev.baseio.composeplayground.ui.animations.baseColor
+import kotlin.random.Random
 
 
 @Composable
 fun EffectBrush(
   brushMoving: Animatable<Float, AnimationVector1D>,
-  helperOneWidth: Dp,
-  helperOneHeight: Dp
+  modifier: Modifier
 ) {
-  val widthPx = with(LocalDensity.current) {
-    helperOneWidth.toPx()
+
+  val brushList by remember {
+    mutableStateOf(brushFurList.reversed())
   }
 
-  Box(
-    modifier = Modifier
-      .graphicsLayer(translationY = brushMoving.value)
-      .fillMaxWidth(1f)
-      .fillMaxHeight(3f)
-  ) {
+  val height = LocalDensity.current.run { LocalConfiguration.current.screenHeightDp.dp.toPx() }
 
-    repeat(brushFurList.size) {
-      val brushFur = brushFurList[it]
+  Box(
+    modifier = modifier
+      .graphicsLayer(translationY = brushMoving.value)
+  ) {
+    repeat(brushList.size) {
+      val brushFur = brushList[it]
+
       Box(
         modifier = Modifier
-          .width((brushFur.width.div(100)).times(helperOneWidth))
-          .height(0.3f.times(helperOneHeight))
-          .graphicsLayer(translationY = brushMoving.value)
+          .fillMaxWidth()
+          .fillMaxHeight()
+          .graphicsLayer(translationY = brushMoving.value.times(height.div(100)))
           .background(brushFur.background)
-          .offset {
-            IntOffset(
-              ((brushFur.left.div(100))
-                .times(widthPx)
-                .toInt()),
-              0
-            )
-          }
       )
     }
 
@@ -59,12 +54,12 @@ fun EffectBrush(
 }
 
 
-val brushFurList = mutableListOf<BrushFurModel>().apply {
+val brushFurList: List<BrushFurModel> = mutableListOf<BrushFurModel>().apply {
 
   add(
     BrushFurModel(
       left = 0f, width = 3.8f,
-      background = Brush.verticalGradient(
+      background = Brush.linearGradient(
         Pair(0f, baseColor),
         Pair(15f, baseColor),
         Pair(81f, Color(0, 0, 0, 0)),
@@ -398,5 +393,4 @@ val brushFurList = mutableListOf<BrushFurModel>().apply {
       )
     )
   )
-  reverse()
 }

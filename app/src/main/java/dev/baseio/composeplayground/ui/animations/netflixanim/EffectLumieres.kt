@@ -5,49 +5,45 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.zIndex
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @Composable
-fun EffectLumieres(showingLumieres: Animatable<Float, AnimationVector1D>, helperOneWidth: Dp) {
+fun EffectLumieres(
+  showingLumieres: Animatable<Float, AnimationVector1D>,
+) {
 
-  val widthPx = with(LocalDensity.current) {
-    LocalConfiguration.current.screenWidthDp.dp.toPx()
-  }
+  val coroutineScope = rememberCoroutineScope()
 
+  val width = LocalConfiguration.current.screenWidthDp
   Box(
     modifier = Modifier
+      .fillMaxSize()
       .graphicsLayer(alpha = showingLumieres.value)
-      .fillMaxWidth(1f)
-      .fillMaxHeight(3f)
   ) {
+
     repeat(lamps.size) {
       val lamp = lamps[it]
+      val animName = if (it % 2 == 0) LUMIERE_RIGHT else LUMIERE_LEFT
+
       LampComposable(
         Modifier
-          .width((lamp.width.div(100)).times(helperOneWidth))
+          .width(LocalDensity.current.run { lamp.width.toDp() })
           .fillMaxHeight()
-          .background(lamp.color)
           .zIndex(lamp.z)
-          .offset {
-            IntOffset(
-              ((lamp.left.div(100))
-                .times(widthPx)
-                .toInt()),
-              0
-            )
-          }, if (it % 2 == 0) LUMIERE_RIGHT else LUMIERE_LEFT,lamp
+          .background(lamp.color)
+          .offset(x = LocalDensity.current.run {
+            width.times(lamp.left.toDp())
+          }), animName, lamp, coroutineScope
       )
     }
 
@@ -58,20 +54,17 @@ const val LUMIERE_LEFT = "left"
 const val LUMIERE_RIGHT = "right"
 
 @Composable
-fun LampComposable(modifier: Modifier, animName: String, lamp: Lamp) {
+fun LampComposable(
+  modifier: Modifier,
+  animName: String,
+  lamp: Lamp,
+  coroutineScope: CoroutineScope
+) {
 
-  val lumiereMovingTranslate = remember {
-    Animatable(0f)
-  }
-
-  val lumiereMovingScale = remember {
-    Animatable(1f)
-  }
-
-  LaunchedEffect(key1 = true, block = {
+  LaunchedEffect(key1 = lamp, block = {
     if (animName == LUMIERE_LEFT) {
-      launch {
-        lumiereMovingTranslate.animateTo(120f, keyframes {
+      coroutineScope.launch {
+        lamp.lumiereMovingTranslate.animateTo(120f, keyframes {
           durationMillis = 2500
           delayMillis = lamp.animDelay.toInt()
           0f at 0 with LinearEasing
@@ -80,8 +73,8 @@ fun LampComposable(modifier: Modifier, animName: String, lamp: Lamp) {
           120f at 2500 with LinearEasing
         })
       }
-      launch {
-        lumiereMovingScale.animateTo(3f, keyframes {
+      coroutineScope.launch {
+        lamp.lumiereMovingScale.animateTo(3f, keyframes {
           durationMillis = 2500
           delayMillis = lamp.animDelay.toInt()
           1f at 1000 with LinearEasing
@@ -89,8 +82,8 @@ fun LampComposable(modifier: Modifier, animName: String, lamp: Lamp) {
         })
       }
     } else {
-      launch {
-        lumiereMovingTranslate.animateTo(-120f, keyframes {
+      coroutineScope.launch {
+        lamp.lumiereMovingTranslate.animateTo(-120f, keyframes {
           durationMillis = 2500
           delayMillis = lamp.animDelay.toInt()
           0f at 0 with LinearEasing
@@ -99,8 +92,8 @@ fun LampComposable(modifier: Modifier, animName: String, lamp: Lamp) {
           -120f at 2500 with LinearEasing
         })
       }
-      launch {
-        lumiereMovingScale.animateTo(3f, keyframes {
+      coroutineScope.launch {
+        lamp.lumiereMovingScale.animateTo(3f, keyframes {
           durationMillis = 2500
           delayMillis = lamp.animDelay.toInt()
           1f at 1000 with LinearEasing
@@ -109,14 +102,13 @@ fun LampComposable(modifier: Modifier, animName: String, lamp: Lamp) {
       }
     }
   })
-
   Box(
     modifier = modifier
       .graphicsLayer(
-        translationX = lumiereMovingTranslate.value,
-        translationY = lumiereMovingTranslate.value,
-        scaleX = lumiereMovingScale.value,
-        scaleY = lumiereMovingScale.value
+        translationX = lamp.lumiereMovingTranslate.value,
+        translationY = lamp.lumiereMovingTranslate.value,
+        scaleX = lamp.lumiereMovingScale.value,
+        scaleY = lamp.lumiereMovingScale.value
       )
   )
 }
@@ -130,7 +122,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 6f,
       left = 0.7f,
       width = 1f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -138,7 +130,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xffffde01),
       left = 2.2f,
       width = 1.4f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -146,7 +138,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xffff00cc),
       left = 5.8f,
       width = 2.1f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -154,7 +146,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xff04fd8f),
       left = 10.1f,
       width = 2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -162,7 +154,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xffff0100),
       left = 12.9f,
       width = 1.4f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -170,7 +162,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xffff9600),
       left = 15.3f,
       width = 2.8f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -178,7 +170,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xff0084ff),
       left = 21.2f,
       width = 2.5f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -186,7 +178,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xfff84006),
       left = 25f,
       width = 2.5f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -194,7 +186,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xffffc601),
       left = 30.5f,
       width = 3f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -202,7 +194,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xffff4800),
       left = 36.3f,
       width = 3f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -210,7 +202,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xfffd0100),
       left = 41f,
       width = 2.2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -218,7 +210,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xff01ffff),
       left = 44.2f,
       width = 2.6f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -226,7 +218,7 @@ val lamps = mutableListOf<Lamp>().apply {
       Color(0xffffc601),
       left = 51.7f,
       width = 0.5f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -235,7 +227,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 52.1f,
       width = 1.8f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -244,7 +236,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 53.5f,
       width = 2.3f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -253,7 +245,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 57.2f,
       width = 2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -262,7 +254,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 62.3f,
       width = 2.9f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -271,7 +263,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 65.8f,
       width = 1.7f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -280,7 +272,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 72.8f,
       width = 0.8f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -289,7 +281,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 74.3f,
       width = 2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -298,7 +290,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 79.8f,
       width = 2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -307,7 +299,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 78.2f,
       width = 2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -316,7 +308,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 78.5f,
       width = 2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -325,7 +317,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 85.3f,
       width = 1.1f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -334,7 +326,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 86.9f,
       width = 1.1f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -343,7 +335,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 88.8f,
       width = 2f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -352,7 +344,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 92.4f,
       width = 2.4f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
   add(
@@ -361,7 +353,7 @@ val lamps = mutableListOf<Lamp>().apply {
       z = 1f,
       left = 96.2f,
       width = 2.1f,
-      animDelay = (random.nextFloat().div(100)) / size
+      animDelay = (random.nextFloat().div(100)) + size
     )
   )
 
@@ -373,4 +365,8 @@ data class Lamp(
   val left: Float,
   val width: Float,
   val animDelay: Float
-)
+) {
+  val lumiereMovingTranslate = Animatable(0f)
+
+  val lumiereMovingScale = Animatable(1f)
+}
