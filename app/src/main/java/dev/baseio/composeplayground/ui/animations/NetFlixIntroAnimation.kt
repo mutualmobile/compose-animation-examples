@@ -93,7 +93,6 @@ fun NetflixIntro(modifier: Modifier) {
   }
 
   LaunchedEffect(key1 = true, block = {
-    delay(5000)
     launch {
       zoomInNetflixBox.animateTo(15f, animationSpec = keyframes {
         durationMillis = 3500

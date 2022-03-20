@@ -3,9 +3,7 @@ package dev.baseio.composeplayground.ui.animations.netflixanim
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -25,6 +23,58 @@ fun EffectLumieres(
   val coroutineScope = rememberCoroutineScope()
 
   val width = LocalConfiguration.current.screenWidthDp
+
+  val lamps by remember {
+    mutableStateOf(theLamps)
+  }
+
+  LaunchedEffect(key1 = true, block = {
+    lamps.forEachIndexed { index, lamp ->
+      val animName = if (index % 2 == 0) LUMIERE_RIGHT else LUMIERE_LEFT
+
+      if (animName == LUMIERE_LEFT) {
+        coroutineScope.launch {
+          lamp.lumiereMovingTranslate.animateTo(120f, keyframes {
+            durationMillis = 2500
+            delayMillis = lamp.animDelay.toInt()
+            0f at 0 with LinearEasing
+            10f at 1000 with LinearEasing
+            60f at 1250 with LinearEasing
+            120f at 2500 with LinearEasing
+          })
+        }
+        coroutineScope.launch {
+          lamp.lumiereMovingScale.animateTo(3f, keyframes {
+            durationMillis = 2500
+            delayMillis = lamp.animDelay.toInt()
+            1f at 1000 with LinearEasing
+            3f at 2500 with LinearEasing
+          })
+        }
+      } else {
+        coroutineScope.launch {
+          lamp.lumiereMovingTranslate.animateTo(-120f, keyframes {
+            durationMillis = 2500
+            delayMillis = lamp.animDelay.toInt()
+            0f at 0 with LinearEasing
+            -10f at 1000 with LinearEasing
+            -60f at 1250 with LinearEasing
+            -120f at 2500 with LinearEasing
+          })
+        }
+        coroutineScope.launch {
+          lamp.lumiereMovingScale.animateTo(3f, keyframes {
+            durationMillis = 2500
+            delayMillis = lamp.animDelay.toInt()
+            1f at 1000 with LinearEasing
+            3f at 2500 with LinearEasing
+          })
+        }
+      }
+    }
+  })
+
+
   Box(
     modifier = Modifier
       .fillMaxSize()
@@ -34,16 +84,16 @@ fun EffectLumieres(
     repeat(lamps.size) {
       val lamp = lamps[it]
       val animName = if (it % 2 == 0) LUMIERE_RIGHT else LUMIERE_LEFT
-
+      val offsetX = LocalDensity.current.run {
+        width.times(lamp.left.div(100).toDp())
+      }
       LampComposable(
         Modifier
           .width(LocalDensity.current.run { lamp.width.toDp() })
           .fillMaxHeight()
           .zIndex(lamp.z)
           .background(lamp.color)
-          .offset(x = LocalDensity.current.run {
-            width.times(lamp.left.toDp())
-          }), animName, lamp, coroutineScope
+          .offset(x = offsetX), animName, lamp, coroutineScope
       )
     }
 
@@ -60,48 +110,6 @@ fun LampComposable(
   lamp: Lamp,
   coroutineScope: CoroutineScope
 ) {
-
-  LaunchedEffect(key1 = lamp, block = {
-    if (animName == LUMIERE_LEFT) {
-      coroutineScope.launch {
-        lamp.lumiereMovingTranslate.animateTo(120f, keyframes {
-          durationMillis = 2500
-          delayMillis = lamp.animDelay.toInt()
-          0f at 0 with LinearEasing
-          10f at 1000 with LinearEasing
-          60f at 1250 with LinearEasing
-          120f at 2500 with LinearEasing
-        })
-      }
-      coroutineScope.launch {
-        lamp.lumiereMovingScale.animateTo(3f, keyframes {
-          durationMillis = 2500
-          delayMillis = lamp.animDelay.toInt()
-          1f at 1000 with LinearEasing
-          3f at 2500 with LinearEasing
-        })
-      }
-    } else {
-      coroutineScope.launch {
-        lamp.lumiereMovingTranslate.animateTo(-120f, keyframes {
-          durationMillis = 2500
-          delayMillis = lamp.animDelay.toInt()
-          0f at 0 with LinearEasing
-          -10f at 1000 with LinearEasing
-          -60f at 1250 with LinearEasing
-          -120f at 2500 with LinearEasing
-        })
-      }
-      coroutineScope.launch {
-        lamp.lumiereMovingScale.animateTo(3f, keyframes {
-          durationMillis = 2500
-          delayMillis = lamp.animDelay.toInt()
-          1f at 1000 with LinearEasing
-          3f at 2500 with LinearEasing
-        })
-      }
-    }
-  })
   Box(
     modifier = modifier
       .graphicsLayer(
@@ -113,9 +121,9 @@ fun LampComposable(
   )
 }
 
-val random = Random(200)
+val random = Random(500)
 
-val lamps = mutableListOf<Lamp>().apply {
+val theLamps: List<Lamp> = mutableListOf<Lamp>().apply {
   add(
     Lamp(
       Color(0xffff0100),
