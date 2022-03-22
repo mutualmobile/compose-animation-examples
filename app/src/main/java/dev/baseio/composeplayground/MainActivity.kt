@@ -7,14 +7,12 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -52,7 +50,7 @@ class MainActivity : ComponentActivity() {
               ) {
                 HorizontalPager(
                   modifier = Modifier.fillMaxSize(),
-                  count = 14, state = pagerState,
+                  count = 15, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -81,6 +79,9 @@ class MainActivity : ComponentActivity() {
                       AndroidMadSkills()
                     }
                     0 -> {
+                      ShootingStarsAnimation()
+                    }
+                    14 -> {
                       NetflixIntroAnimation()
                     }
                     11 -> {
