@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -43,95 +44,101 @@ class MainActivity : ComponentActivity() {
         MaterialTheme() {
           ProvideWindowInsets() {
             Surface(color = MaterialTheme.colors.background) {
-              val pagerState = rememberPagerState()
-              Box(
-                modifier = Modifier
-                  .fillMaxSize()
-              ) {
-                HorizontalPager(
-                  modifier = Modifier.fillMaxSize(),
-                  count = 15, state = pagerState,
-                ) { page ->
-                  // Our page content
-                  when (page) {
-                    4 -> {
-                      PullToRefreshOne()
-                    }
-                    7 -> {
-                      Box(Modifier.fillMaxSize()) {
-                        GlowingRingLoader(Modifier.align(Alignment.Center))
-                      }
-                    }
-                    6 -> {
-                      Box(Modifier.fillMaxSize()) {
-                        YahooWeatherAndSun(Modifier.align(Alignment.Center))
-                      }
-                    }
-                    10 -> {
-                      Box(modifier = Modifier.fillMaxSize()) {
-                        IOSSleepSchedule()
-                      }
-                    }
-                    12 -> {
-                      TwitterSplashAnimation()
-                    }
-                    13 -> {
-                      AndroidMadSkills()
-                    }
-                    0 -> {
-                      ShootingStarsAnimation()
-                    }
-                    14 -> {
-                      NetflixIntroAnimation()
-                    }
-                    11 -> {
-                      Box(modifier = Modifier.fillMaxSize()) {
-                        Github404(Modifier)
-                      }
-                    }
-                    9 -> {
-                      Box(modifier = Modifier.fillMaxSize()) {
-                        ScalingRotatingLoader()
-                      }
-                    }
-                    8 -> {
-                      Box(Modifier.fillMaxSize()) {
-                        PlanetarySystem(Modifier.align(Alignment.Center))
-                      }
-                    }
-                    1 -> {
-                      Box(Modifier.fillMaxSize()) {
-                        LikeAnimation(Modifier.align(Alignment.Center))
-                      }
-                    }
-                    2 -> {
-                      Box(Modifier.fillMaxSize()) {
-                        ChatMessageReactions(Modifier.align(Alignment.Center))
-                      }
-                    }
-                    3 -> {
-                      Box(Modifier.fillMaxSize()) {
-                        MenuToClose(Modifier.align(Alignment.Center))
-                      }
-                    }
-                    5 -> {
-                      Box(Modifier.fillMaxSize()) {
-                        BellAnimation(Modifier.align(Alignment.Center))
-                      }
-                    }
-                  }
-                }
-                HorizontalPagerIndicator(
-                  pagerState = pagerState,
-                  modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-                )
-              }
+              AnimationsPager()
             }
           }
         }
       }
+    }
+  }
+
+  @OptIn(ExperimentalPagerApi::class)
+  @Composable
+  private fun AnimationsPager() {
+    val pagerState = rememberPagerState()
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+    ) {
+      HorizontalPager(
+        modifier = Modifier.fillMaxSize(),
+        count = 15, state = pagerState,
+      ) { page ->
+        // Our page content
+        when (page) {
+          4 -> {
+            PullToRefreshOne()
+          }
+          7 -> {
+            Box(Modifier.fillMaxSize()) {
+              GlowingRingLoader(Modifier.align(Alignment.Center))
+            }
+          }
+          0 -> {
+            Box(Modifier.fillMaxSize()) {
+              YahooWeatherAndSun(Modifier.align(Alignment.Center))
+            }
+          }
+          10 -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+              IOSSleepSchedule()
+            }
+          }
+          12 -> {
+            TwitterSplashAnimation()
+          }
+          13 -> {
+            AndroidMadSkills()
+          }
+          14 -> {
+            ShootingStarsAnimation()
+          }
+          6 -> {
+            NetflixIntroAnimation()
+          }
+          11 -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+              Github404(Modifier)
+            }
+          }
+          9 -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+              ScalingRotatingLoader()
+            }
+          }
+          8 -> {
+            Box(Modifier.fillMaxSize()) {
+              PlanetarySystem(Modifier.align(Alignment.Center))
+            }
+          }
+          1 -> {
+            Box(Modifier.fillMaxSize()) {
+              LikeAnimation(Modifier.align(Alignment.Center))
+            }
+          }
+          2 -> {
+            Box(Modifier.fillMaxSize()) {
+              ChatMessageReactions(Modifier.align(Alignment.Center))
+            }
+          }
+          3 -> {
+            Box(Modifier.fillMaxSize()) {
+              MenuToClose(Modifier.align(Alignment.Center))
+            }
+          }
+          5 -> {
+            Box(Modifier.fillMaxSize()) {
+              BellAnimation(Modifier.align(Alignment.Center))
+            }
+          }
+        }
+      }
+      HorizontalPagerIndicator(
+        pagerState = pagerState,
+        modifier = Modifier
+          .align(Alignment.BottomCenter)
+          .padding(16.dp)
+      )
     }
   }
 }
