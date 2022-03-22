@@ -1,5 +1,7 @@
 package dev.baseio.composeplayground.ui.animations
 
+import android.graphics.Paint
+import android.graphics.Rect
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -12,17 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.theme.Typography
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * https://github.com/amosgyamfi/swiftui-animation-library#yahoo-weather-sun--moon
@@ -41,8 +45,7 @@ fun YahooWeatherAndSun(modifier: Modifier) {
   )
 
 
-  val infiniteTransition2 = rememberInfiniteTransition()
-  val scaleRect by infiniteTransition2.animateFloat(
+  val scaleRect by infiniteTransition.animateFloat(
     initialValue = 0f,
     targetValue = 0.9f,
     animationSpec = infiniteRepeatable(
@@ -50,6 +53,23 @@ fun YahooWeatherAndSun(modifier: Modifier) {
       repeatMode = RepeatMode.Reverse
     )
   )
+
+  val radian by infiniteTransition.animateFloat(
+    initialValue = -3f,
+    targetValue = -1f,
+    animationSpec = infiniteRepeatable(
+      animation = tween(durationMillis = 5000, delayMillis = 2000, easing = LinearEasing),
+      repeatMode = RepeatMode.Reverse
+    )
+  )
+
+  var iconX by remember {
+    mutableStateOf(0f)
+  }
+
+  var iconY by remember {
+    mutableStateOf(0f)
+  }
 
 
   Box(
@@ -65,47 +85,22 @@ fun YahooWeatherAndSun(modifier: Modifier) {
       verticalArrangement = Arrangement.SpaceAround,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      Box() {
-        Text(
-          text = stringResource(id = R.string.sun_moon),
-          style = Typography.h5.copy(color = Color.White),
-        )
-        Text(
-          text = "5:44 AM",
-          style = Typography.caption.copy(color = Color.White),
-          modifier = Modifier.offset(y = 280.dp, x = (-120).dp)
-        )
-        Text(
-          text = "20:01 PM",
-          style = Typography.caption.copy(color = Color.White),
-          modifier = Modifier.offset(y = 280.dp, x = (190).dp)
-        )
 
-        Box(
-          Modifier
-            .offset(x = (-100).dp, y = 262.dp)
-            .clip(CircleShape)
-            .size(10.dp)
-            .background(Color(0xfff9d71c))
-        )
-
-        Box(
-          Modifier
-            .offset(x = (220).dp, y = 262.dp)
-            .clip(CircleShape)
-            .size(10.dp)
-            .background(Color(0xfff9d71c))
-        )
-      }
-
+      Text(
+        text = stringResource(id = R.string.sun_moon),
+        style = Typography.h5.copy(color = Color.White),
+      )
       Box {
-        PathArcCanvas(Modifier.align(Alignment.Center))
+        PathArcCanvas(Modifier.align(Alignment.Center), scaleRect, radian) { x, y ->
+          iconX = x
+          iconY = y
+        }
 
         Icon(
           painter = painterResource(id = R.drawable.ic_sun),
           contentDescription = null,
           modifier = Modifier
-            .offset(x = 30.dp, y = 106.dp)
+            .offset { IntOffset(iconX.toInt(), iconY.toInt()) }
             .rotate(angleRotation),
           tint = Color(0xfff9d71c)
         )
@@ -118,17 +113,6 @@ fun YahooWeatherAndSun(modifier: Modifier) {
         ) {
           ContainedCanvas(scaleRect)
         }
-
-        Box(
-          Modifier
-            .fillMaxWidth(fraction = 0.98f)
-            .align(Alignment.Center)
-            .height(1.dp)
-            .background(Color.White.copy(0.5f))
-            .offset(y = 160.dp)
-        )
-
-
       }
 
       Box(
@@ -141,6 +125,7 @@ fun YahooWeatherAndSun(modifier: Modifier) {
     }
   }
 }
+
 
 @Composable
 private fun ContainedCanvas(scaleRect: Float) {
@@ -157,8 +142,39 @@ private fun ContainedCanvas(scaleRect: Float) {
 }
 
 @Composable
-private fun PathArcCanvas(modifier: Modifier) {
+private fun PathArcCanvas(
+  modifier: Modifier,
+  scaleRect: Float,
+  radian: Float,
+  updatedPosition: (Float, Float) -> Unit,
+) {
+  val circleRadius = LocalDensity.current.run { 8.dp.toPx() }
+  val widthOfCircle = LocalDensity.current.run { 320.dp.toPx() }
+
+  var centerPoint by remember {
+    mutableStateOf(Offset.Zero)
+  }
+
+  var x by remember {
+    mutableStateOf(0f)
+  }
+
+  var y by remember {
+    mutableStateOf(0f)
+  }
+
+
+  LaunchedEffect(key1 = scaleRect, block = {
+    val orbitRadius = widthOfCircle.div(2)
+    x = (centerPoint.x + cos(radian) * orbitRadius.plus(circleRadius.times(2)))
+    y = (centerPoint.y + sin(radian) * orbitRadius.plus(circleRadius.times(2)))
+    updatedPosition(x, y)
+  })
+
   Canvas(modifier = modifier.size(320.dp), onDraw = {
+    centerPoint = this.center
+    val firstCircle = centerPoint.copy(x = centerPoint.x.minus(widthOfCircle / 2))
+    val secondCircle = centerPoint.copy(x = centerPoint.x.plus(widthOfCircle / 2))
     drawArc(
       color = Color(0xfff9d71c),
       style = Stroke(
@@ -168,5 +184,55 @@ private fun PathArcCanvas(modifier: Modifier) {
       startAngle = 180f,
       sweepAngle = 180f
     )
+
+
+    drawLine(
+      Color.White.copy(0.5f),
+      start = firstCircle.copy(x = firstCircle.x.minus(80f)),
+      secondCircle.copy(x = secondCircle.x.plus(80f)),
+      4f
+    )
+
+    drawCircle(
+      Color(0xfff9d71c),
+      radius = circleRadius,
+      center = firstCircle
+    )
+
+    drawCircle(
+      Color(0xfff9d71c),
+      radius = circleRadius,
+      center = secondCircle
+    )
+
+    val paint1 = textpaint()
+    val rect1 = Rect()
+    paint1.getTextBounds(firstTime, 0, firstTime.length, rect1);
+
+    drawContext.canvas.nativeCanvas.drawText(
+      firstTime,
+      firstCircle.x.minus(rect1.width() / 2),
+      firstCircle.y.plus(rect1.height().times(4)),
+      paint1
+    )
+    val paint2 = textpaint()
+    val rect2 = Rect()
+    paint2.getTextBounds(secondTime, 0, secondTime.length, rect2);
+
+    drawContext.canvas.nativeCanvas.drawText(
+      secondTime,
+      secondCircle.x.minus(rect2.width() / 2),
+      secondCircle.y.plus(rect2.height().times(4)),
+      paint2
+    )
   })
+}
+
+const val firstTime = "5:44 AM"
+const val secondTime = "7:00 PM"
+private fun textpaint(): Paint {
+  return Paint().apply {
+    this.color = android.graphics.Color.WHITE
+    this.textSize = 32f
+  }
 }
