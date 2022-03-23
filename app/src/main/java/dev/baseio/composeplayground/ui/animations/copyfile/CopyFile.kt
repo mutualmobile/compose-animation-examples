@@ -37,6 +37,7 @@ import dev.baseio.composeplayground.contributors.PushpalRoy
 import dev.baseio.composeplayground.ui.theme.Typography
 import java.util.EnumSet
 
+// Inspiration: https://github.com/amosgyamfi/swiftui-animation-library/blob/master/C/copying_files.gif
 @OptIn(ExperimentalMotionApi::class)
 @Preview(group = "Copy File")
 @Composable
