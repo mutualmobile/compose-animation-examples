@@ -25,7 +25,8 @@ import kotlin.random.Random
 @Composable
 fun EffectBrush(
   brushMoving: Animatable<Float, AnimationVector1D>,
-  modifier: Modifier
+  modifier: Modifier,
+  nWidth: Dp
 ) {
 
   val brushList by remember {
@@ -40,10 +41,12 @@ fun EffectBrush(
   ) {
     repeat(brushList.size) {
       val brushFur = brushList[it]
-
+      val xOffset =
+        (brushFur.left / 100).times(LocalDensity.current.run { nWidth.toPx().times(0.19f) })
       Box(
         modifier = Modifier
-          .fillMaxWidth()
+          .width(LocalDensity.current.run { brushFur.width.toDp() })
+          .offset { IntOffset(xOffset.toInt(), 0) }
           .fillMaxHeight()
           .graphicsLayer(translationY = brushMoving.value.times(height.div(100)))
           .background(brushFur.background)

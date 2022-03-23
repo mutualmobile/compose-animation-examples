@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
               GlowingRingLoader(Modifier.align(Alignment.Center))
             }
           }
-          0 -> {
+          6 -> {
             Box(Modifier.fillMaxSize()) {
               YahooWeatherAndSun(Modifier.align(Alignment.Center))
             }
@@ -93,7 +93,7 @@ class MainActivity : ComponentActivity() {
           14 -> {
             ShootingStarsAnimation()
           }
-          6 -> {
+          0 -> {
             NetflixIntroAnimation()
           }
           11 -> {

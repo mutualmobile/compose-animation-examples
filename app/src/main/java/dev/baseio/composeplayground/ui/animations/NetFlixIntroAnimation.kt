@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.times
 import dev.baseio.composeplayground.contributors.AnmolVerma
 import dev.baseio.composeplayground.ui.animations.netflixanim.EffectBrush
 import dev.baseio.composeplayground.ui.animations.netflixanim.EffectLumieres
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 val baseColor = Color(0xffe40913)
@@ -177,7 +176,7 @@ fun NetflixIntro(modifier: Modifier) {
         .rotate(180f)
         .background(fadingLumieresBox.value),
       brushMovingbrush1,
-      showingLumieres,nWidth
+      showingLumieres, nWidth
     )
 
     EffectBrushTwo(
@@ -185,14 +184,14 @@ fun NetflixIntro(modifier: Modifier) {
         .fillMaxWidth(0.19f)
         .fillMaxHeight()
         .offset(x = (57.8 / 100).times(nWidth), y = 0.dp)
-        .rotate(180f), brushMovingbrush2
+        .rotate(180f), brushMovingbrush2,nWidth
     )
     EffectBrushThree(
       modifier = Modifier
         .fillMaxWidth(0.19f)
         .fillMaxHeight(1.5f)
         .offset(x = (40.5 / 100).times(nWidth), y = (-25 / 100).times(nHeight))
-        .rotate(-19.5f), brushMovingbrush3
+        .rotate(-19.5f), brushMovingbrush3,nWidth
     )
   }
 
@@ -202,18 +201,20 @@ fun NetflixIntro(modifier: Modifier) {
 @Composable
 fun EffectBrushTwo(
   modifier: Modifier,
-  brushMovingbrush: Animatable<Float, AnimationVector1D>
+  brushMovingbrush: Animatable<Float, AnimationVector1D>,
+  nWidth: Dp
 ) {
-  EffectBrush(brushMovingbrush, modifier)
+  EffectBrush(brushMovingbrush, modifier, nWidth)
 }
 
 
 @Composable
 fun EffectBrushThree(
   modifier: Modifier,
-  brushMoving: Animatable<Float, AnimationVector1D>
+  brushMoving: Animatable<Float, AnimationVector1D>,
+  nWidth: Dp
 ) {
-  EffectBrush(brushMoving, modifier)
+  EffectBrush(brushMoving, modifier,nWidth)
 }
 
 @Composable
@@ -223,13 +224,13 @@ fun EffectBrushOne(
   showingLumieres: Animatable<Float, AnimationVector1D>,
   nWidth: Dp
 ) {
-  EffectBrush(brushMoving, modifier)
+  EffectBrush(brushMoving, modifier, nWidth)
 
-    EffectLumieres(
-      showingLumieres,Modifier
-        .fillMaxWidth(0.195f)
-        .fillMaxHeight()
-        .offset(x = (22.4 / 100).times(nWidth), y = 0.dp)
-    )
+  EffectLumieres(
+    showingLumieres, Modifier
+      .fillMaxWidth(0.195f)
+      .fillMaxHeight()
+      .offset(x = (22.4 / 100).times(nWidth), y = 0.dp)
+  )
 }
 
