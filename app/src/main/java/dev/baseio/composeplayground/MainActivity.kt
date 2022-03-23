@@ -7,19 +7,35 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.*
+import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import dev.baseio.composeplayground.ui.animations.*
+import dev.baseio.composeplayground.ui.animations.AndroidMadSkills
+import dev.baseio.composeplayground.ui.animations.BellAnimation
+import dev.baseio.composeplayground.ui.animations.ChatMessageReactions
+import dev.baseio.composeplayground.ui.animations.Github404
+import dev.baseio.composeplayground.ui.animations.GlowingRingLoader
+import dev.baseio.composeplayground.ui.animations.IOSSleepSchedule
+import dev.baseio.composeplayground.ui.animations.LikeAnimation
+import dev.baseio.composeplayground.ui.animations.MenuToClose
+import dev.baseio.composeplayground.ui.animations.NetflixIntroAnimation
+import dev.baseio.composeplayground.ui.animations.ScalingRotatingLoader
+import dev.baseio.composeplayground.ui.animations.ShootingStarsAnimation
+import dev.baseio.composeplayground.ui.animations.TwitterSplashAnimation
+import dev.baseio.composeplayground.ui.animations.YahooWeatherAndSun
+import dev.baseio.composeplayground.ui.animations.copyfile.CopyFile
+import dev.baseio.composeplayground.ui.animations.copyfile.CopyFile2
 import dev.baseio.composeplayground.ui.animations.planetarysystem.PlanetarySystem
 import dev.baseio.composeplayground.ui.animations.pulltorefresh.PullToRefreshOne
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
@@ -62,7 +78,7 @@ class MainActivity : ComponentActivity() {
     ) {
       HorizontalPager(
         modifier = Modifier.fillMaxSize(),
-        count = 15, state = pagerState,
+        count = 17, state = pagerState,
       ) { page ->
         // Our page content
         when (page) {
@@ -92,6 +108,16 @@ class MainActivity : ComponentActivity() {
           }
           14 -> {
             ShootingStarsAnimation()
+          }
+          15 -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+              CopyFile()
+            }
+          }
+          16 -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+              CopyFile2()
+            }
           }
           6 -> {
             NetflixIntroAnimation()
