@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Surface
@@ -32,6 +33,7 @@ import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionLayoutDebugFlags
 import androidx.constraintlayout.compose.MotionScene
 import dev.baseio.composeplayground.R.drawable
+import dev.baseio.composeplayground.contributors.PushpalRoy
 import dev.baseio.composeplayground.ui.theme.Typography
 import java.util.EnumSet
 
@@ -100,6 +102,7 @@ fun CopyFile() {
     Surface(
       modifier = Modifier
         .wrapContentSize()
+        .padding(bottom = 150.dp)
     ) {
       MotionLayout(
         modifier = Modifier
@@ -325,5 +328,6 @@ fun CopyFile() {
         )
       }
     }
+    PushpalRoy()
   }
 }
