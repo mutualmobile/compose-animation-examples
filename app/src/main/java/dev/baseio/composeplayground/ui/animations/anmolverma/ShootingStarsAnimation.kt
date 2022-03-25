@@ -1,12 +1,10 @@
-package dev.baseio.composeplayground.ui.animations
+package dev.baseio.composeplayground.ui.animations.anmolverma
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -16,8 +14,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import dev.baseio.composeplayground.ui.animations.netflixanim.random
-import kotlinx.coroutines.launch
+import dev.baseio.composeplayground.ui.animations.anmolverma.netflixanim.random
 
 const val shootingTime = 3000
 

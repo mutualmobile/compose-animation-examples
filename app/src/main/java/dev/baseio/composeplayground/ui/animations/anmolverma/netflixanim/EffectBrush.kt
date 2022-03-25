@@ -1,4 +1,4 @@
-package dev.baseio.composeplayground.ui.animations.netflixanim
+package dev.baseio.composeplayground.ui.animations.anmolverma.netflixanim
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -17,9 +17,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import dev.baseio.composeplayground.ui.animations.baseColor
-import kotlin.random.Random
 
 
 @Composable

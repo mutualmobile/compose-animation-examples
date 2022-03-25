@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import dev.baseio.composeplayground.contributors.AnmolVerma
-import dev.baseio.composeplayground.ui.animations.netflixanim.EffectBrush
-import dev.baseio.composeplayground.ui.animations.netflixanim.EffectLumieres
+import dev.baseio.composeplayground.ui.animations.anmolverma.netflixanim.EffectBrush
+import dev.baseio.composeplayground.ui.animations.anmolverma.netflixanim.EffectLumieres
 import kotlinx.coroutines.launch
 
 val baseColor = Color(0xffe40913)

@@ -1,4 +1,4 @@
-package dev.baseio.composeplayground.ui.animations.netflixanim
+package dev.baseio.composeplayground.ui.animations.anmolverma.netflixanim
 
 import androidx.compose.ui.graphics.Brush
 

@@ -20,8 +20,10 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.ui.animations.*
-import dev.baseio.composeplayground.ui.animations.planetarysystem.PlanetarySystem
-import dev.baseio.composeplayground.ui.animations.pulltorefresh.PullToRefreshOne
+import dev.baseio.composeplayground.ui.animations.anmolverma.BellAnimation
+import dev.baseio.composeplayground.ui.animations.anmolverma.ShootingStarsAnimation
+import dev.baseio.composeplayground.ui.animations.anmolverma.planetarysystem.PlanetarySystem
+import dev.baseio.composeplayground.ui.animations.anmolverma.pulltorefresh.PullToRefreshOne
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
 
 class MainActivity : ComponentActivity() {

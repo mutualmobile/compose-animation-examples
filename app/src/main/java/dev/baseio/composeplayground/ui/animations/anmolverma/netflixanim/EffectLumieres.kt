@@ -1,4 +1,4 @@
-package dev.baseio.composeplayground.ui.animations.netflixanim
+package dev.baseio.composeplayground.ui.animations.anmolverma.netflixanim
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
