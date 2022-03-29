@@ -133,6 +133,21 @@ class MainActivity : ComponentActivity() {
               BellAnimation(Modifier.align(Alignment.Center))
             }
           }
+          15 -> {
+            Box(Modifier.fillMaxSize()) {
+              PlayPauseAnimation(Modifier.align(Alignment.Center))
+            }
+          }
+          16 -> {
+            Box(Modifier.fillMaxSize()) {
+              RunDinoRun(Modifier.align(Alignment.Center))
+            }
+          }
+          17 -> {
+            Box(Modifier.fillMaxSize()) {
+              MultiRingsLoader(Modifier.align(Alignment.Center))
+            }
+          }
         }
       }
       HorizontalPagerIndicator(
