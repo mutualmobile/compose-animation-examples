@@ -32,14 +32,35 @@ Planetary System - Anmol Verma
 https://user-images.githubusercontent.com/4393101/158027145-955ff386-d04d-4f70-920e-44d33c279730.mp4
 
 
-Yahoo Sun and moon animation.
+Yahoo Sun and moon animation. - Anmol Verma 
 
 https://user-images.githubusercontent.com/32521663/157847448-81663201-25c7-44d6-9f77-15dfb5f1c590.mp4
 
 
-Scaling Rotating Loader.
-
+Scaling Rotating Loader. - Anmol Verma 
 
 https://user-images.githubusercontent.com/4393101/158059803-4511f9f4-43a7-45e3-bbb8-778cc4115596.mp4
+
+Apple Alarm Clock UI Control - Anmol Verma 
+
+https://user-images.githubusercontent.com/32521663/158831088-889db247-5a68-4257-8e46-fb8505ce210c.mp4
+
+GitHub 404 Animation - Anmol Verma 
+
+https://user-images.githubusercontent.com/32521663/158949510-1bcec867-bf71-4f79-9469-d78bf16aedf2.mp4
+
+
+Twitter Splash Animation - Anmol Verma
+
+https://user-images.githubusercontent.com/32521663/158961033-205137ae-213a-4dd3-8ef6-b393b8befed3.mp4
+
+Android Dev MadSkills - Anmol Verma
+
+https://user-images.githubusercontent.com/32521663/159110243-b18ff462-febc-48b4-a00e-d77d63a9dc2c.mp4
+
+
+Netflix Animation - Anmol Verma
+
+https://user-images.githubusercontent.com/32521663/159171539-8bc5955a-9aa3-4fb3-9ddd-da0c1eb2f850.mp4
 
 

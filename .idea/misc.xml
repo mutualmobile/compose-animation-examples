@@ -10,8 +10,13 @@
         <entry key="../../../../../../layout/compose-model-1647200418689.xml" value="0.9806295399515739" />
         <entry key="../../../../../../layout/compose-model-1647201258898.xml" value="0.9806295399515739" />
         <entry key="../../../../../../layout/compose-model-1647202318978.xml" value="0.375" />
+        <entry key="../../../../layout/compose-model-1647247038092.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1647252963668.xml" value="0.25" />
+        <entry key="app/src/main/res/drawable/ic_alarm.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_bed.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_notification_bell.xml" value="0.2075" />
         <entry key="app/src/main/res/drawable/ic_sun.xml" value="0.1635" />
+        <entry key="app/src/main/res/drawable/twitter_icon.xml" value="0.1" />
       </map>
     </option>
   </component>
