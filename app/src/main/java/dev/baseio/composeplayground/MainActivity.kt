@@ -55,10 +55,13 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 12, state = pagerState,
+                  count = 13, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
+                    12 -> {
+                      MicAnimation()
+                    }
                     4 -> {
                       PullToRefreshOne()
                     }
