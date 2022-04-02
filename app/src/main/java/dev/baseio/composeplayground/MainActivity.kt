@@ -20,7 +20,9 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.ui.animations.*
+import dev.baseio.composeplayground.ui.animations.adityabhawsar.BreatheAnimation
 import dev.baseio.composeplayground.ui.animations.adityabhawsar.CircleSquareAnimation
+import dev.baseio.composeplayground.ui.animations.adityabhawsar.MicAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.BellAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.ShootingStarsAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.planetarysystem.PlanetarySystem

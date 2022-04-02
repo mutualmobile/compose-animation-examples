@@ -1,4 +1,4 @@
-package dev.baseio.composeplayground.ui.animations
+package dev.baseio.composeplayground.ui.animations.adityabhawsar
 
 import dev.baseio.composeplayground.contributors.AdityaBhawsar
 import androidx.compose.animation.core.*
