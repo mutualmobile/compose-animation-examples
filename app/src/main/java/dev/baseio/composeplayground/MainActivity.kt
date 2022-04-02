@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
     ) {
       HorizontalPager(
         modifier = Modifier.fillMaxSize(),
-        count = 15, state = pagerState,
+        count = 17, state = pagerState,
       ) { page ->
         // Our page content
         when (page) {
@@ -94,6 +94,12 @@ class MainActivity : ComponentActivity() {
           }
           14 -> {
             ShootingStarsAnimation()
+          }
+          15 -> {
+            BreatheAnimation()
+          }
+          16 -> {
+            MicAnimation()
           }
           0 -> {
             NetflixIntroAnimation()
