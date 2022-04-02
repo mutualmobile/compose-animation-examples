@@ -80,10 +80,10 @@ class MainActivity : ComponentActivity() {
                         IOSSleepSchedule()
                       }
                     }
-                    0 -> {
+                    13-> {
                       CircleSquareAnimation()
                     }
-                    13 -> {
+                    0 -> {
                       TwitterSplashAnimation()
                     }
                     11 -> {
