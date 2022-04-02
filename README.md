@@ -54,4 +54,13 @@ Twitter Splash Animation - Anmol Verma
 
 https://user-images.githubusercontent.com/32521663/158961033-205137ae-213a-4dd3-8ef6-b393b8befed3.mp4
 
+Android Dev MadSkills - Anmol Verma
+
+https://user-images.githubusercontent.com/32521663/159110243-b18ff462-febc-48b4-a00e-d77d63a9dc2c.mp4
+
+
+Netflix Animation - Anmol Verma
+
+https://user-images.githubusercontent.com/32521663/159171539-8bc5955a-9aa3-4fb3-9ddd-da0c1eb2f850.mp4
+
 
