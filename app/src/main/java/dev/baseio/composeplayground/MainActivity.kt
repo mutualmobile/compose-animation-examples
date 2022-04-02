@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 13, state = pagerState,
+                  count = 14, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -81,6 +81,9 @@ class MainActivity : ComponentActivity() {
                       }
                     }
                     0 -> {
+                      CircleSquareAnimation()
+                    }
+                    13 -> {
                       TwitterSplashAnimation()
                     }
                     11 -> {
