@@ -20,6 +20,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.ui.animations.*
+import dev.baseio.composeplayground.ui.animations.adityabhawsar.CircleSquareAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.BellAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.ShootingStarsAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.planetarysystem.PlanetarySystem
@@ -64,7 +65,7 @@ class MainActivity : ComponentActivity() {
     ) {
       HorizontalPager(
         modifier = Modifier.fillMaxSize(),
-        count = 17, state = pagerState,
+        count = 18, state = pagerState,
       ) { page ->
         // Our page content
         when (page) {
@@ -100,6 +101,9 @@ class MainActivity : ComponentActivity() {
           }
           16 -> {
             MicAnimation()
+          }
+          17 -> {
+            CircleSquareAnimation()
           }
           0 -> {
             NetflixIntroAnimation()
