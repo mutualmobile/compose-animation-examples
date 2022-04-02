@@ -55,10 +55,13 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 13, state = pagerState,
+                  count = 14, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
+                    0 -> {
+                      BreatheAnimation()
+                    }
                     12 -> {
                       MicAnimation()
                     }
@@ -80,7 +83,7 @@ class MainActivity : ComponentActivity() {
                         IOSSleepSchedule()
                       }
                     }
-                    0 -> {
+                    13 -> {
                       TwitterSplashAnimation()
                     }
                     11 -> {
