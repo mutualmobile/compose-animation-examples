@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 13, state = pagerState,
+                  count = 14, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -128,6 +128,12 @@ class MainActivity : ComponentActivity() {
                     12 -> {
                       Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly) {
                         SyncingLoader()
+                        ShubhamSingh()
+                      }
+                    }
+                    13 -> {
+                      Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                        JumpingDotsLoadingAnimation()
                         ShubhamSingh()
                       }
                     }
