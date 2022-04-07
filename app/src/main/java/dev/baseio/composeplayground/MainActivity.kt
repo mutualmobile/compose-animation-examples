@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
         MaterialTheme() {
           ProvideWindowInsets() {
             Surface(color = MaterialTheme.colors.background) {
-              val pagerState = rememberPagerState()
+              val pagerState = rememberPagerState(initialPage = 15)
               Column(
                 modifier = Modifier
                   .fillMaxSize()
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                   modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                  count = 14, state = pagerState,
+                  count = 15, state = pagerState,
                 ) { page ->
                   // Our page content
                   when (page) {
@@ -135,6 +135,12 @@ class MainActivity : ComponentActivity() {
                       Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                         JumpingDotsLoadingAnimation()
                         ShubhamSingh()
+                      }
+                    }
+                    14 -> {
+                      Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        BottleLoadingAnimation()
+                        ShubhamSingh(modifier = Modifier.align(Alignment.BottomCenter))
                       }
                     }
                   }
