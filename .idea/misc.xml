@@ -9,23 +9,7 @@
         <entry key="app/src/main/res/drawable/ic_bed.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_notification_bell.xml" value="0.2075" />
         <entry key="app/src/main/res/drawable/ic_sun.xml" value="0.1635" />
-        <entry key="../../../../layout/compose-model-1647232067311.xml" value="0.2981418918918919" />
-        <entry key="../../../../layout/compose-model-1647243468385.xml" value="0.28631756756756754" />
-        <entry key="../../../../layout/compose-model-1647315634881.xml" value="0.15582770270270271" />
-        <entry key="../../../../layout/compose-model-1647315870503.xml" value="0.28547297297297297" />
-        <entry key="../../../../layout/compose-model-1647317464295.xml" value="0.28547297297297297" />
-        <entry key="../../../../layout/compose-model-1647318314235.xml" value="0.28547297297297297" />
-        <entry key="../../../../layout/compose-model-1647326796073.xml" value="0.28547297297297297" />
-        <entry key="../../../../layout/compose-model-1647327099217.xml" value="0.325" />
-        <entry key="../../../../layout/compose-model-1647327643466.xml" value="2.0" />
-        <entry key="../../../../layout/compose-model-1647331102471.xml" value="1.0" />
-        <entry key="../../../../layout/compose-model-1647331153830.xml" value="0.7102272727272727" />
-        <entry key="../../../../layout/compose-model-1647331276088.xml" value="0.7102272727272727" />
-        <entry key="../../../../layout/compose-model-1647341861159.xml" value="0.2175925925925926" />
-        <entry key="../../../../layout/compose-model-1647341871989.xml" value="3.0" />
-        <entry key="../../../../layout/compose-model-1647342895084.xml" value="0.28547297297297297" />
-        <entry key="app/src/main/res/drawable/ic_screenshot_2022_03_15_at_4_20_14_pm.xml" value="0.1175" />
-        <entry key="app/src/main/res/drawable/ic_streamlogo.xml" value="0.1795" />
+        <entry key="app/src/main/res/drawable/twitter_icon.xml" value="0.1" />
       </map>
     </option>
   </component>
