@@ -32,18 +32,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+const val initialTopTriangleAngle = -33f
+const val initialBottomTriangleAngle = 200f
+const val finalTopTriangleAngle = 33f
+const val finalBottomTriangleAngle = 160f
+const val secondArrowRotationAngle = 45f
+const val thirdArrowRotationAngle = 90f
+const val fourthArrowRotationAngle = 135f
+const val fifthArrowRotationAngle = 180f
+const val sixthArrowRotationAngle = 225f
+const val seventhArrowRotationAngle = 270f
+const val eighthArrowRotationAngle = 315f
+
 @Composable
 fun AnimatedLoader() {
     val offsetX = remember { Animatable(0f) }
-    val offsetY = remember { Animatable(0f) }
-    val rotateTopTriangle = remember { Animatable(-33f) }
-    val rotateBottomTriangle = remember { Animatable(200f) }
+    val rotateTopTriangle = remember { Animatable(initialTopTriangleAngle) }
+    val rotateBottomTriangle = remember { Animatable(initialBottomTriangleAngle) }
 
     LaunchedEffect(key1 = true) {
         runAnimation(
             coroutineScope = this,
             offsetX = offsetX,
-            offsetY = offsetY,
             rotateTopTriangle = rotateTopTriangle,
             rotateBottomTriangle = rotateBottomTriangle
         )
@@ -54,53 +64,55 @@ fun AnimatedLoader() {
             modifier = Modifier.size(width = 400.dp, height = 400.dp),
             contentAlignment = Alignment.Center
         ) {
-            AnimatedSquare(offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle, Modifier)
+            AnimatedSquare(offsetX, rotateBottomTriangle, rotateTopTriangle, Modifier)
             AnimatedSquare(
-                offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
+                offsetX, rotateBottomTriangle, rotateTopTriangle,
                 Modifier
                     .offset(x = 34.dp, y = 14.dp)
-                    .rotate(45f)
+                    .rotate(secondArrowRotationAngle)
             )
             AnimatedSquare(
-                offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
+                offsetX, rotateBottomTriangle, rotateTopTriangle,
                 Modifier
                     .offset(x = 48.dp, y = 48.dp)
-                    .rotate(90f)
+                    .rotate(thirdArrowRotationAngle)
             )
             AnimatedSquare(
-                offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
+                offsetX, rotateBottomTriangle, rotateTopTriangle,
                 Modifier
                     .offset(x = 34.dp, y = 82.dp)
-                    .rotate(135f)
+                    .rotate(fourthArrowRotationAngle)
             )
             AnimatedSquare(
-                offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
+                offsetX, rotateBottomTriangle, rotateTopTriangle,
                 Modifier
                     .offset(x = 0.dp, y = 96.dp)
-                    .rotate(180f)
+                    .rotate(fifthArrowRotationAngle)
             )
             AnimatedSquare(
-                offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
+                offsetX, rotateBottomTriangle, rotateTopTriangle,
                 Modifier
                     .offset(x = (-34).dp, y = 82.dp)
-                    .rotate(225f)
+                    .rotate(sixthArrowRotationAngle)
             )
             AnimatedSquare(
-                offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
+                offsetX, rotateBottomTriangle, rotateTopTriangle,
                 Modifier
                     .offset(x = (-48).dp, y = 48.dp)
-                    .rotate(270f)
+                    .rotate(seventhArrowRotationAngle)
             )
             AnimatedSquare(
-                offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
+                offsetX, rotateBottomTriangle, rotateTopTriangle,
                 Modifier
                     .offset(x = (-34).dp, y = 14.dp)
-                    .rotate(315f)
+                    .rotate(eighthArrowRotationAngle)
             )
         }
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+        ) {
             Subir(Modifier.align(Alignment.Center))
         }
     }
@@ -109,7 +121,6 @@ fun AnimatedLoader() {
 @Composable
 fun AnimatedSquare(
     offsetX: Animatable<Float, AnimationVector1D>,
-    offsetY: Animatable<Float, AnimationVector1D>,
     rotateBottomTriangle: Animatable<Float, AnimationVector1D>,
     rotateTopTriangle: Animatable<Float, AnimationVector1D>,
     modifier: Modifier
@@ -117,7 +128,7 @@ fun AnimatedSquare(
     Box(
         modifier = modifier
             .size(width = 40.dp, height = 40.dp)
-            .offset { IntOffset(x = offsetX.value.toInt(), y = offsetY.value.toInt()) },
+            .offset { IntOffset(x = offsetX.value.toInt(), y = 0) },
     ) {
         Triangle(
             Modifier.rotate(rotateTopTriangle.value)
@@ -132,15 +143,15 @@ fun AnimatedSquare(
 fun Triangle(
     modifier: Modifier,
     width: Dp = 40.dp,
-    color: Color = Color.White
+    color: Color = Color.Black
 ) {
     Canvas(
         modifier = modifier.size(width = width, height = width / 2),
         onDraw = {
             val trianglePath = Path()
             trianglePath.moveTo(x = 0.dp.toPx(), y = 0.dp.toPx()) // top left
-            trianglePath.lineTo(x = size.width / 2, y = size.width / 2) //
-            trianglePath.lineTo(x = width.toPx(), y = 0.dp.toPx())
+            trianglePath.lineTo(x = size.width / 2, y = size.width / 2) // bottom center
+            trianglePath.lineTo(x = width.toPx(), y = 0.dp.toPx()) // top right
             trianglePath.close()
             clipPath(
                 path = trianglePath,
@@ -158,59 +169,66 @@ fun Triangle(
 fun runAnimation(
     coroutineScope: CoroutineScope,
     offsetX: Animatable<Float, AnimationVector1D>,
-    offsetY: Animatable<Float, AnimationVector1D>,
     rotateTopTriangle: Animatable<Float, AnimationVector1D>,
     rotateBottomTriangle: Animatable<Float, AnimationVector1D>
 ) {
-    coroutineScope.launch {
-        delay(6000)
+    val totalDuration = 6000L
+    val perAnimDuration = 1500
+    val halfDuration = 3000L
+    val lastHalfDuration = 4500L
 
+    coroutineScope.launch {
+        delay(totalDuration)
+
+        // move 200 px in x axis
         coroutineScope.launch {
             offsetX.animateTo(
                 -200f,
-                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+                tween(easing = FastOutSlowInEasing, durationMillis = perAnimDuration)
             )
         }
+        // wait 1.5s and change arrow direction
         coroutineScope.launch {
-            delay(1500)
+            delay(perAnimDuration.toLong())
             rotateTopTriangle.animateTo(
-                33f,
-                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+                finalTopTriangleAngle,
+                tween(easing = FastOutSlowInEasing, durationMillis = perAnimDuration)
             )
         }
         coroutineScope.launch {
-            delay(1500)
+            delay(perAnimDuration.toLong())
             rotateBottomTriangle.animateTo(
-                160f,
-                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+                finalBottomTriangleAngle,
+                tween(easing = FastOutSlowInEasing, durationMillis = perAnimDuration)
             )
         }
+        // wait 3s and move to initial position in x axis
         coroutineScope.launch {
-            delay(3000)
+            delay(halfDuration)
             offsetX.animateTo(
                 0f,
-                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+                tween(easing = FastOutSlowInEasing, durationMillis = perAnimDuration)
             )
         }
+        // wait 4.5s and change arrow direction
         coroutineScope.launch {
-            delay(4500)
+            delay(lastHalfDuration)
             rotateTopTriangle.animateTo(
-                -28f,
-                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+                initialTopTriangleAngle,
+                tween(easing = FastOutSlowInEasing, durationMillis = perAnimDuration)
             )
         }
         coroutineScope.launch {
-            delay(4500)
+            delay(lastHalfDuration)
             rotateBottomTriangle.animateTo(
-                208f,
-                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+                initialBottomTriangleAngle,
+                tween(easing = FastOutSlowInEasing, durationMillis = perAnimDuration)
             )
         }
 
         runAnimation(
             coroutineScope = this,
             offsetX = offsetX,
-            offsetY = offsetY,
             rotateTopTriangle = rotateTopTriangle,
             rotateBottomTriangle = rotateBottomTriangle
         )
