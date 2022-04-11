@@ -12,19 +12,19 @@ import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.ui.theme.Typography
 
 
-const val anmolImageUrl = "https://ca.slack-edge.com/T02TLUWLZ-U2ZG961MW-176c142f9265-72"
+const val shubhamImageUrl = "https://ca.slack-edge.com/T02TLUWLZ-U02BR1HSNS2-59c1dffa5a83-72"
 
 @Composable
-fun AnmolVerma(modifier: Modifier = Modifier) {
+fun ShubhamSingh(modifier: Modifier = Modifier) {
   Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(4.dp)) {
-    CoilImageBox(Modifier.size(64.dp), anmolImageUrl)
+    CoilImageBox(Modifier.size(64.dp), shubhamImageUrl)
     Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
       Text(
-        text = stringResource(id = R.string.emp_mmh0158),
+        text = stringResource(id = R.string.shubham_name),
         style = Typography.h6.copy(MaterialTheme.colors.onSurface),
       )
       Text(
-        text = stringResource(id = R.string.emp_mmh0158_email),
+        text = stringResource(id = R.string.shubham_email),
         style = Typography.subtitle1.copy(MaterialTheme.colors.onSurface),
       )
     }
