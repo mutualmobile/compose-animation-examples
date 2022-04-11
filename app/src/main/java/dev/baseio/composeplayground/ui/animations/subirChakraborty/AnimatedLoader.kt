@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -32,7 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun Baap() {
+fun AnimatedLoader() {
     val offsetX = remember { Animatable(0f) }
     val offsetY = remember { Animatable(0f) }
     val offsetXX = remember { Animatable(0f) }
@@ -58,44 +57,44 @@ fun Baap() {
             .border(width = 2.dp, color = Color.Blue),
         contentAlignment = Alignment.Center
     ) {
-        BeesNBombs(offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion, Modifier)
-        BeesNBombs(
+        AnimatedSquare(offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion, Modifier)
+        AnimatedSquare(
             offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
             Modifier
                 .offset(x = 34.dp, y = 14.dp)
                 .rotate(45f)
         )
-        BeesNBombs(
+        AnimatedSquare(
             offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
             Modifier
                 .offset(x = 48.dp, y = 48.dp)
                 .rotate(90f)
         )
-        BeesNBombs(
+        AnimatedSquare(
             offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
             Modifier
                 .offset(x = 34.dp, y = 82.dp)
                 .rotate(135f)
         )
-        BeesNBombs(
+        AnimatedSquare(
             offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
             Modifier
                 .offset(x = 0.dp, y = 96.dp)
                 .rotate(180f)
         )
-        BeesNBombs(
+        AnimatedSquare(
             offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
             Modifier
                 .offset(x = (-34).dp, y = 82.dp)
                 .rotate(225f)
         )
-        BeesNBombs(
+        AnimatedSquare(
             offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
             Modifier
                 .offset(x = (-48).dp, y = 48.dp)
                 .rotate(270f)
         )
-        BeesNBombs(
+        AnimatedSquare(
             offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
             Modifier
                 .offset(x = (-34).dp, y = 14.dp)
@@ -105,7 +104,7 @@ fun Baap() {
 }
 
 @Composable
-fun BeesNBombs(
+fun AnimatedSquare(
     offsetX: Animatable<Float, AnimationVector1D>,
     offsetY: Animatable<Float, AnimationVector1D>,
     offsetXX: Animatable<Float, AnimationVector1D>,
@@ -227,10 +226,4 @@ fun runAnimation(
             rotateFullPortion = rotateFullPortion
         )
     }
-}
-
-@Preview
-@Composable
-fun PreviewTriangle() {
-    Baap()
 }
