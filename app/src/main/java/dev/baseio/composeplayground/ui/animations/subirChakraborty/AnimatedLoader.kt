@@ -3,13 +3,10 @@ package dev.baseio.composeplayground.ui.animations.subirChakraborty
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -23,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -34,20 +32,16 @@ import kotlinx.coroutines.launch
 fun AnimatedLoader() {
     val offsetX = remember { Animatable(0f) }
     val offsetY = remember { Animatable(0f) }
-    val offsetXX = remember { Animatable(0f) }
-    val offsetYY= remember { Animatable(0f) }
-    val rotateHalfPortion = remember { Animatable(0f) }
-    val rotateFullPortion = remember { Animatable(0f) }
+    val rotateTopTriangle = remember { Animatable(-28f) }
+    val rotateBottomTriangle = remember { Animatable(208f) }
 
     LaunchedEffect(key1 = true) {
         runAnimation(
             coroutineScope = this,
             offsetX = offsetX,
             offsetY = offsetY,
-            offsetXX = offsetXX,
-            offsetYY = offsetYY,
-            rotateHalfPortion = rotateHalfPortion,
-            rotateFullPortion = rotateFullPortion
+            rotateTopTriangle = rotateTopTriangle,
+            rotateBottomTriangle = rotateBottomTriangle
         )
     }
 
@@ -57,45 +51,45 @@ fun AnimatedLoader() {
             .border(width = 2.dp, color = Color.Blue),
         contentAlignment = Alignment.Center
     ) {
-        AnimatedSquare(offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion, Modifier)
+        AnimatedSquare(offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle, Modifier)
         AnimatedSquare(
-            offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
+            offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
             Modifier
                 .offset(x = 34.dp, y = 14.dp)
                 .rotate(45f)
         )
         AnimatedSquare(
-            offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
+            offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
             Modifier
                 .offset(x = 48.dp, y = 48.dp)
                 .rotate(90f)
         )
         AnimatedSquare(
-            offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
+            offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
             Modifier
                 .offset(x = 34.dp, y = 82.dp)
                 .rotate(135f)
         )
         AnimatedSquare(
-            offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
+            offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
             Modifier
                 .offset(x = 0.dp, y = 96.dp)
                 .rotate(180f)
         )
         AnimatedSquare(
-            offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
+            offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
             Modifier
                 .offset(x = (-34).dp, y = 82.dp)
                 .rotate(225f)
         )
         AnimatedSquare(
-            offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
+            offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
             Modifier
                 .offset(x = (-48).dp, y = 48.dp)
                 .rotate(270f)
         )
         AnimatedSquare(
-            offsetX, offsetY, offsetXX, offsetYY, rotateHalfPortion, rotateFullPortion,
+            offsetX, offsetY, rotateBottomTriangle, rotateTopTriangle,
             Modifier
                 .offset(x = (-34).dp, y = 14.dp)
                 .rotate(315f)
@@ -107,25 +101,19 @@ fun AnimatedLoader() {
 fun AnimatedSquare(
     offsetX: Animatable<Float, AnimationVector1D>,
     offsetY: Animatable<Float, AnimationVector1D>,
-    offsetXX: Animatable<Float, AnimationVector1D>,
-    offsetYY: Animatable<Float, AnimationVector1D>,
-    rotateHalf: Animatable<Float, AnimationVector1D>,
-    rotateFull: Animatable<Float, AnimationVector1D>,
+    rotateBottomTriangle: Animatable<Float, AnimationVector1D>,
+    rotateTopTriangle: Animatable<Float, AnimationVector1D>,
     modifier: Modifier
 ) {
-    Column(
+    Box(
         modifier = modifier
             .size(width = 40.dp, height = 40.dp)
-            .offset{IntOffset(x = offsetXX.value.toInt(), y = offsetYY.value.toInt())}
-            .rotate(rotateFull.value),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .offset { IntOffset(x = offsetX.value.toInt(), y = offsetY.value.toInt()) },
     ) {
-        Triangle(Modifier.rotate(180f))
-        Triangle(Modifier
-            .offset { IntOffset(x = offsetX.value.toInt(), y = offsetY.value.toInt()) }
-            .rotate(rotateHalf.value)
-        )
+        Triangle(
+            Modifier.rotate(rotateTopTriangle.value))
+        Triangle(
+            Modifier.rotate(rotateBottomTriangle.value))
     }
 }
 
@@ -133,16 +121,15 @@ fun AnimatedSquare(
 fun Triangle(
     modifier: Modifier,
     width: Dp = 40.dp,
-    height: Dp = 20.dp
+    color: Color = Color.Black
 ) {
-
     Canvas(
-        modifier = modifier.size(width = width, height = height),
+        modifier = modifier.size(width = width, height = width / 2),
         onDraw = {
             val trianglePath = Path()
-            trianglePath.moveTo(0.dp.toPx(), 0.dp.toPx())
-            trianglePath.lineTo(height.toPx(), height.toPx())
-            trianglePath.lineTo(width.toPx(), 0.dp.toPx())
+            trianglePath.moveTo(x = 0.dp.toPx(), y = 0.dp.toPx()) // top left
+            trianglePath.lineTo(x = size.width / 2, y = size.width / 2) //
+            trianglePath.lineTo(x = width.toPx(), y = 0.dp.toPx())
             trianglePath.close()
             clipPath(
                 path = trianglePath,
@@ -150,7 +137,7 @@ fun Triangle(
             ) {
                 drawPath(
                     path = trianglePath,
-                    brush = SolidColor(Color.Black)
+                    brush = SolidColor(color)
                 )
             }
         }
@@ -161,69 +148,66 @@ fun runAnimation(
     coroutineScope: CoroutineScope,
     offsetX: Animatable<Float, AnimationVector1D>,
     offsetY: Animatable<Float, AnimationVector1D>,
-    offsetXX: Animatable<Float, AnimationVector1D>,
-    offsetYY: Animatable<Float, AnimationVector1D>,
-    rotateHalfPortion: Animatable<Float, AnimationVector1D>,
-    rotateFullPortion: Animatable<Float, AnimationVector1D>
+    rotateTopTriangle: Animatable<Float, AnimationVector1D>,
+    rotateBottomTriangle: Animatable<Float, AnimationVector1D>
 ) {
     coroutineScope.launch {
-        delay(3000)
+        delay(6000)
 
         coroutineScope.launch {
             offsetX.animateTo(
-                74f,
-                tween(easing = LinearEasing, durationMillis = 1500)
-            )
-        }
-        coroutineScope.launch {
-            offsetY.animateTo(
-                20f,
-                tween(easing = LinearEasing, durationMillis = 1500)
-            )
-        }
-        coroutineScope.launch {
-            rotateHalfPortion.animateTo(
-                45f,
-                tween(easing = LinearEasing, durationMillis = 1500)
-            )
-        }
-        coroutineScope.launch {
-            delay(1500)
-            offsetX.snapTo(0f)
-            offsetY.snapTo(0f)
-            rotateHalfPortion.snapTo(0f)
-
-            rotateFullPortion.animateTo(
-                -135f,
+                -200f,
                 tween(easing = FastOutSlowInEasing, durationMillis = 1500)
             )
         }
         coroutineScope.launch {
             delay(1500)
-            offsetXX.animateTo(
-                100f,
+            rotateTopTriangle.animateTo(
+                28f,
                 tween(easing = FastOutSlowInEasing, durationMillis = 1500)
             )
         }
         coroutineScope.launch {
             delay(1500)
-            offsetYY.animateTo(
-                40f,
+            rotateBottomTriangle.animateTo(
+                152f,
                 tween(easing = FastOutSlowInEasing, durationMillis = 1500)
             )
         }
-        offsetXX.snapTo(0f)
-        offsetYY.snapTo(0f)
-        rotateFullPortion.snapTo(0f)
+        coroutineScope.launch {
+            delay(3000)
+            offsetX.animateTo(
+                0f,
+                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+            )
+        }
+        coroutineScope.launch {
+            delay(4500)
+            rotateTopTriangle.animateTo(
+                -28f,
+                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+            )
+        }
+        coroutineScope.launch {
+            delay(4500)
+            rotateBottomTriangle.animateTo(
+                208f,
+                tween(easing = FastOutSlowInEasing, durationMillis = 1500)
+            )
+        }
 
         runAnimation(
             coroutineScope = this,
             offsetX = offsetX,
             offsetY = offsetY,
-            offsetXX = offsetXX,
-            offsetYY = offsetYY,
-            rotateHalfPortion = rotateHalfPortion,
-            rotateFullPortion = rotateFullPortion
+            rotateTopTriangle = rotateTopTriangle,
+            rotateBottomTriangle = rotateBottomTriangle
         )
     }
+}
+
+@Preview
+@Composable
+fun Anim() {
+    AnimatedLoader()
 }
