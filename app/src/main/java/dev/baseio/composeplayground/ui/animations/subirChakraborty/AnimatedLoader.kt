@@ -143,7 +143,7 @@ fun AnimatedSquare(
 fun Triangle(
     modifier: Modifier,
     width: Dp = 40.dp,
-    color: Color = Color.Black
+    color: Color = Color.White
 ) {
     Canvas(
         modifier = modifier.size(width = width, height = width / 2),
