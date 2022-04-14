@@ -1,14 +1,22 @@
 package dev.baseio.composeplayground.ui.animations.adityabhawsar
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -17,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AdityaBhawsar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
@@ -57,23 +68,13 @@ fun AlarmSliderAnimation() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AlarmSlider() {
-  var lastState = 0f
 
   BoxWithConstraints(
     modifier = Modifier
       .fillMaxWidth()
       .height(80.dp)
   ) {
-    val swipeableState = rememberSwipeableState(0.5f) { state ->
-      if (state == 1f) {
-        //Todo  on Swipe End
-      } else {
-        //Todo on Swipe Start
-      }
-
-      lastState = state
-      true
-    }
+    val swipeableState = rememberSwipeableState(0.5f) { true }
 
     val swipeCenter: Float = (constraints.maxWidth / 2).toFloat() - ((constraints.maxHeight * 1.35f) / 2)
     val swipeRight: Float = constraints.maxWidth - (constraints.maxHeight * 1.35f)
@@ -84,6 +85,21 @@ fun AlarmSlider() {
       swipeCenter to 0.5f,
       swipeRight to 1f
     )
+
+    val boxAlpha = remember { Animatable(1f) }
+    val leftWeight = remember { Animatable(0.45f) }
+    val rightWeight = remember { Animatable(0.45f) }
+    val clockRotation = remember { Animatable(0f) }
+
+    LaunchedEffect(key1 = swipeableState.currentValue == 0.5f) {
+      runInactiveAnimation(
+        this,
+        boxAlpha,
+        leftWeight,
+        rightWeight,
+        clockRotation
+      )
+    }
 
     Box(
       modifier = Modifier
@@ -98,8 +114,28 @@ fun AlarmSlider() {
         )
     ) {
 
+      Row(modifier = Modifier
+        .fillMaxSize()
+        .align(Alignment.Center)) {
+
+        Box(modifier = Modifier.weight(leftWeight.value))
+        Box(
+          modifier = Modifier
+            .fillMaxHeight()
+            .alpha(boxAlpha.value)
+            .weight(1 - (leftWeight.value + rightWeight.value))
+            .padding(8.dp)
+            .clip(RoundedCornerShape(40.dp))
+            .background(Color(0xff626972))
+        )
+        Box(modifier = Modifier.weight(rightWeight.value))
+      }
+
+
       Text(
-        modifier = Modifier.align(Alignment.CenterStart).padding(16.dp),
+        modifier = Modifier
+          .align(Alignment.CenterStart)
+          .padding(16.dp),
         text = "Snooze",
         style = TextStyle(
           color = Color.White,
@@ -108,22 +144,14 @@ fun AlarmSlider() {
       )
 
       Text(
-        modifier = Modifier.align(Alignment.CenterEnd).padding(16.dp),
+        modifier = Modifier
+          .align(Alignment.CenterEnd)
+          .padding(16.dp),
         text = "Stop",
         style = TextStyle(
           color = Color.White,
           fontSize = 18.sp
         )
-      )
-
-      Box(
-        modifier = Modifier
-          .fillMaxHeight()
-          .aspectRatio(1.35f, true)
-          .padding(8.dp)
-          .clip(RoundedCornerShape(40.dp))
-          .background(Color(0xff626972))
-          .align(Alignment.Center)
       )
 
       Box(
@@ -138,6 +166,7 @@ fun AlarmSlider() {
         Icon(
           painter = painterResource(id = R.drawable.ic_alarm),
           modifier = Modifier
+            .rotate(clockRotation.value)
             .size(24.dp)
             .align(Alignment.Center),
           contentDescription = "",
@@ -145,5 +174,88 @@ fun AlarmSlider() {
         )
       }
     }
+  }
+}
+
+fun runInactiveAnimation(
+  coroutineScope: CoroutineScope,
+  boxAlpha: Animatable<Float, AnimationVector1D>,
+  leftWeight: Animatable<Float, AnimationVector1D>,
+  rightWeight: Animatable<Float, AnimationVector1D>,
+  clockRotation: Animatable<Float, AnimationVector1D>
+) {
+  coroutineScope.launch{
+
+    leftWeight.animateTo(
+      targetValue = 0.01f,
+      animationSpec = tween(750, easing = LinearEasing)
+    )
+
+    delay(50)
+
+    coroutineScope.launch {
+      clockRotation.animateTo(
+        targetValue = 30f,
+        animationSpec = tween(50, easing = LinearEasing)
+      )
+
+      clockRotation.animateTo(
+        targetValue = -30f,
+        animationSpec = tween(100, easing = LinearEasing)
+      )
+
+      clockRotation.animateTo(
+        targetValue = 0f,
+        animationSpec = tween(50, easing = LinearEasing)
+      )
+    }
+
+    boxAlpha.animateTo(
+      targetValue = 0f,
+      animationSpec = tween(200, easing = LinearEasing)
+    )
+
+    leftWeight.snapTo(0.45f)
+    boxAlpha.snapTo(1f)
+
+    rightWeight.animateTo(
+      targetValue = 0.01f,
+      animationSpec = tween(750, easing = LinearEasing)
+    )
+
+    delay(50)
+
+    coroutineScope.launch {
+      clockRotation.animateTo(
+        targetValue = 30f,
+        animationSpec = tween(50, easing = LinearEasing)
+      )
+
+      clockRotation.animateTo(
+        targetValue = -30f,
+        animationSpec = tween(100, easing = LinearEasing)
+      )
+
+      clockRotation.animateTo(
+        targetValue = 0f,
+        animationSpec = tween(50, easing = LinearEasing)
+      )
+    }
+
+    boxAlpha.animateTo(
+      targetValue = 0f,
+      animationSpec = tween(200, easing = LinearEasing)
+    )
+
+    rightWeight.snapTo(0.45f)
+    boxAlpha.snapTo(1f)
+
+    runInactiveAnimation(
+      coroutineScope,
+      boxAlpha,
+      leftWeight,
+      rightWeight,
+      clockRotation
+    )
   }
 }
