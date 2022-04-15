@@ -1,22 +1,24 @@
 package dev.baseio.composeplayground.ui.animations.adityabhawsar
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -25,9 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.baseio.composeplayground.R
 import dev.baseio.composeplayground.contributors.AdityaBhawsar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
 @Composable
@@ -74,32 +74,45 @@ fun AlarmSlider() {
       .fillMaxWidth()
       .height(80.dp)
   ) {
-    val swipeableState = rememberSwipeableState(0.5f) { true }
+
+    val boxAlpha = remember { Animatable(0f) }
+    val leftWeight = remember { Animatable(0.45f) }
+    val rightWeight = remember { Animatable(0.45f) }
+    val clockRotation = remember { Animatable(0f) }
+
+    val swipeableState = rememberSwipeableState(0.5f) { state -> true }
 
     val swipeCenter: Float = (constraints.maxWidth / 2).toFloat() - ((constraints.maxHeight * 1.35f) / 2)
     val swipeRight: Float = constraints.maxWidth - (constraints.maxHeight * 1.35f)
     val swipeLeft = 0f
+
+    LaunchedEffect(swipeableState.offset) {
+        if(swipeableState.offset.value == swipeCenter) {
+          boxAlpha.snapTo(0f)
+          leftWeight.snapTo(0.45f)
+          rightWeight.snapTo(0.45f)
+          clockRotation.snapTo(0f)
+
+          runInactiveAnimation(
+            this,
+            boxAlpha,
+            leftWeight,
+            rightWeight,
+            clockRotation
+          )
+        } else {
+          boxAlpha.snapTo(0f)
+          leftWeight.snapTo(0.45f)
+          rightWeight.snapTo(0.45f)
+          clockRotation.snapTo(0f)
+        }
+    }
 
     val anchors = mapOf(
       swipeLeft to 0f,
       swipeCenter to 0.5f,
       swipeRight to 1f
     )
-
-    val boxAlpha = remember { Animatable(1f) }
-    val leftWeight = remember { Animatable(0.45f) }
-    val rightWeight = remember { Animatable(0.45f) }
-    val clockRotation = remember { Animatable(0f) }
-
-    LaunchedEffect(key1 = swipeableState.currentValue == 0.5f) {
-      runInactiveAnimation(
-        this,
-        boxAlpha,
-        leftWeight,
-        rightWeight,
-        clockRotation
-      )
-    }
 
     Box(
       modifier = Modifier
@@ -114,23 +127,28 @@ fun AlarmSlider() {
         )
     ) {
 
-      Row(modifier = Modifier
-        .fillMaxSize()
-        .align(Alignment.Center)) {
+      AnimatedVisibility(
+        visible = (swipeableState.offset.value == swipeCenter),
+        enter = fadeIn(),
+        exit = fadeOut()
+      ) {
+        Row(modifier = Modifier
+          .fillMaxSize()
+          .align(Alignment.Center)) {
 
-        Box(modifier = Modifier.weight(leftWeight.value))
-        Box(
-          modifier = Modifier
-            .fillMaxHeight()
-            .alpha(boxAlpha.value)
-            .weight(1 - (leftWeight.value + rightWeight.value))
-            .padding(8.dp)
-            .clip(RoundedCornerShape(40.dp))
-            .background(Color(0xff626972))
-        )
-        Box(modifier = Modifier.weight(rightWeight.value))
+          Box(modifier = Modifier.weight(leftWeight.value))
+          Box(
+            modifier = Modifier
+              .fillMaxHeight()
+              .alpha(boxAlpha.value)
+              .weight(1 - (leftWeight.value + rightWeight.value))
+              .padding(8.dp)
+              .clip(RoundedCornerShape(40.dp))
+              .background(Color(0xff626972))
+          )
+          Box(modifier = Modifier.weight(rightWeight.value))
+        }
       }
-
 
       Text(
         modifier = Modifier
@@ -167,6 +185,53 @@ fun AlarmSlider() {
           painter = painterResource(id = R.drawable.ic_alarm),
           modifier = Modifier
             .rotate(clockRotation.value)
+            .alpha(if (swipeableState.offset.value == swipeCenter) 1f else 0f)
+            .size(24.dp)
+            .align(Alignment.Center),
+          contentDescription = "",
+          tint = Color.Black
+        )
+
+        Icon(
+          painter = painterResource(id = R.drawable.ic_alarm),
+          modifier = Modifier
+            .rotate(rotationClock(
+              swipeableState.offset.value,
+              swipeCenter,
+              swipeLeft,
+              swipeRight
+            ))
+            .alpha(alphaClock(
+              swipeableState.offset.value,
+              swipeCenter,
+              swipeLeft,
+              swipeRight
+            ))
+            .size(24.dp)
+            .align(Alignment.Center),
+          contentDescription = "",
+          tint = Color.Black
+        )
+
+        Icon(
+          painter = painterResource(id = R.drawable.ic_check),
+          modifier = Modifier
+            .rotate(rotationCheck(
+              swipeableState.offset.value,
+              swipeCenter,
+              swipeLeft,
+              swipeRight
+            ))
+            .scale(scaleCheck(
+              swipeableState.offset.value,
+              swipeCenter,
+              swipeLeft,
+              swipeRight
+            ))
+            .alpha(alphaCheck(
+              swipeableState.offset.value,
+              swipeCenter
+            ))
             .size(24.dp)
             .align(Alignment.Center),
           contentDescription = "",
@@ -177,6 +242,179 @@ fun AlarmSlider() {
   }
 }
 
+fun rotationClock(
+  currentPos: Float,
+  center: Float,
+  left: Float,
+  right: Float
+): Float {
+  when {
+    currentPos == center -> {
+      return 0f
+    }
+    currentPos > center -> {
+      // to right
+      val progressMade = currentPos - center
+      val total = right - center
+
+      val per = (progressMade/total) * 100
+
+      return if(per > 25) {
+        270f
+      } else {
+        (per * 10.8f)
+      }
+    }
+    currentPos < center -> {
+      //to left
+
+      val progressMade = center - currentPos
+      val total = center - left
+
+      val per = (progressMade/total) * 100
+
+      return if(per > 25) {
+        -270f
+      } else {
+        (per * 10.8f)*-1
+      }
+    }
+    else -> {
+      return 0f
+    }
+  }
+}
+
+fun alphaClock(
+  currentPos: Float,
+  center: Float,
+  left: Float,
+  right: Float
+): Float {
+  when {
+    currentPos == center -> {
+      return 0f
+    }
+    currentPos > center -> {
+      // to right
+      val progressMade = currentPos - center
+      val total = right - center
+      val per = (progressMade/total) * 100
+
+      return if(per > 25) {
+        0f
+      } else {
+        1 - (per * .04f)
+      }
+    }
+    currentPos < center -> {
+      //to left
+      val progressMade = center - currentPos
+      val total = center - left
+      val per = (progressMade/total) * 100
+
+      return if(per > 25) {
+        0f
+      } else {
+        1 - (per * 0.04f)
+      }
+    }
+    else -> {
+      return 0f
+    }
+  }
+}
+
+fun rotationCheck(
+  currentPos: Float,
+  center: Float,
+  left: Float,
+  right: Float
+): Float {
+  when {
+    currentPos == center -> {
+      return 90f
+    }
+    currentPos > center -> {
+      val progressMade = currentPos - center
+      val total = right - center
+      val per = (progressMade/total) * 100
+
+      return if(per <= 16.5){
+        90f + (per * 10.9f)
+      } else if(per > 16.5 && per <= 50) {
+        (270f + (90f * (per - 16.5f)/33.5f))
+      } else {
+        0f
+      }
+    }
+    currentPos < center -> {
+      val progressMade = center - currentPos
+      val total = center - left
+      val per = (progressMade/total) * 100
+
+      return if(per <= 16.5){
+        90f + ((per * 10.9f)* -1)
+      } else if(per > 16.5 && per <= 50) {
+        (-90f + (270f * ((per - 16.5f)/33.5f)*-1))
+      } else {
+        0f
+      }
+    }
+    else -> { return 0f}
+  }
+}
+
+fun alphaCheck(
+  currentPos: Float,
+  center: Float,
+): Float {
+  if(currentPos == center){
+    return 0f
+  }
+  return 1f
+}
+
+fun scaleCheck(
+  currentPos: Float,
+  center: Float,
+  left: Float,
+  right: Float
+): Float {
+  when {
+    currentPos == center -> {
+      return 0.4f
+    }
+    currentPos > center -> {
+      val progressMade = currentPos - center
+      val total = right - center
+      val per = (progressMade/total) * 100
+
+      return if(per <= 25){
+        0.4f
+      } else if(per > 25 && per <= 50) {
+        (0.4f + (0.6f * (per - 25)/25))
+      } else {
+        1f
+      }
+    }
+    currentPos < center -> {
+      val progressMade = center - currentPos
+      val total = center - left
+      val per = (progressMade/total) * 100
+      return if(per <= 25){
+        0.4f
+      } else if(per > 25 && per <= 50) {
+        (0.4f + (0.6f * (per - 25)/25))
+      } else {
+        1f
+      }
+    }
+    else -> { return 1f }
+  }
+}
+
+
 fun runInactiveAnimation(
   coroutineScope: CoroutineScope,
   boxAlpha: Animatable<Float, AnimationVector1D>,
@@ -185,6 +423,8 @@ fun runInactiveAnimation(
   clockRotation: Animatable<Float, AnimationVector1D>
 ) {
   coroutineScope.launch{
+
+    boxAlpha.snapTo(1f)
 
     leftWeight.animateTo(
       targetValue = 0.01f,
