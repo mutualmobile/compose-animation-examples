@@ -46,7 +46,7 @@ fun BreatheAnimation(modifier: Modifier = Modifier) {
       modifier = Modifier
         .fillMaxWidth()
         .padding(12.dp)
-        .align(Alignment.BottomEnd)
+        .align(Alignment.BottomCenter)
     ) {
       AdityaBhawsar(
         Modifier
