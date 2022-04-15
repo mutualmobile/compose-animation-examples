@@ -108,10 +108,10 @@ class MainActivity : ComponentActivity() {
           17 -> {
             CircleSquareAnimation()
           }
-          18 -> {
+          0 -> {
             NetflixIntroAnimation()
           }
-          0 -> {
+          18 -> {
             AlarmSliderAnimation()
           }
           11 -> {
