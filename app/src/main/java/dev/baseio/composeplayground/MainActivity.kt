@@ -20,6 +20,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.ui.animations.*
+import dev.baseio.composeplayground.ui.animations.adityabhawsar.AlarmSliderAnimation
 import dev.baseio.composeplayground.ui.animations.adityabhawsar.BreatheAnimation
 import dev.baseio.composeplayground.ui.animations.adityabhawsar.CircleSquareAnimation
 import dev.baseio.composeplayground.ui.animations.adityabhawsar.MicAnimation
@@ -67,7 +68,7 @@ class MainActivity : ComponentActivity() {
     ) {
       HorizontalPager(
         modifier = Modifier.fillMaxSize(),
-        count = 18, state = pagerState,
+        count = 19, state = pagerState,
       ) { page ->
         // Our page content
         when (page) {
@@ -109,6 +110,9 @@ class MainActivity : ComponentActivity() {
           }
           0 -> {
             NetflixIntroAnimation()
+          }
+          18 -> {
+            AlarmSliderAnimation()
           }
           11 -> {
             Box(modifier = Modifier.fillMaxSize()) {
