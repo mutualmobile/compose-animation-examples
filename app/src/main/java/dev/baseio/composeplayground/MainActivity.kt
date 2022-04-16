@@ -20,11 +20,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.ui.animations.*
-import dev.baseio.composeplayground.ui.animations.adityabhawsar.AlarmSliderAnimation
-import dev.baseio.composeplayground.ui.animations.adityabhawsar.BreatheAnimation
-import dev.baseio.composeplayground.ui.animations.adityabhawsar.CircleSquareAnimation
-import dev.baseio.composeplayground.ui.animations.adityabhawsar.FiSplashAnimation
-import dev.baseio.composeplayground.ui.animations.adityabhawsar.MicAnimation
+import dev.baseio.composeplayground.ui.animations.adityabhawsar.*
 import dev.baseio.composeplayground.ui.animations.anmolverma.BellAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.ShootingStarsAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.planetarysystem.PlanetarySystem
@@ -69,7 +65,7 @@ class MainActivity : ComponentActivity() {
     ) {
       HorizontalPager(
         modifier = Modifier.fillMaxSize(),
-        count = 20, state = pagerState,
+        count = 21, state = pagerState,
       ) { page ->
         // Our page content
         when (page) {
@@ -114,6 +110,9 @@ class MainActivity : ComponentActivity() {
           }
           18 -> {
             FiSplashAnimation()
+          }
+          20 -> {
+            BreatheRotatingAnimation()
           }
           19 -> {
             AlarmSliderAnimation()
