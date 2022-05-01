@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -41,6 +42,7 @@ import dev.baseio.composeplayground.ui.animations.anmolverma.BellAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.ShootingStarsAnimation
 import dev.baseio.composeplayground.ui.animations.anmolverma.planetarysystem.PlanetarySystem
 import dev.baseio.composeplayground.ui.animations.anmolverma.pulltorefresh.PullToRefreshOne
+import dev.baseio.composeplayground.ui.animations.niket.dino_game.game.DinoGameView
 import dev.baseio.composeplayground.ui.theme.ComposePlaygroundTheme
 
 class MainActivity : ComponentActivity() {
@@ -81,7 +83,7 @@ class MainActivity : ComponentActivity() {
         ) {
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
-                count = 15, state = pagerState,
+                count = 21, state = pagerState,
             ) { page ->
                 // Our page content
                 when (page) {
@@ -181,6 +183,18 @@ class MainActivity : ComponentActivity() {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             BottleLoadingAnimation()
                             ShubhamSingh(modifier = Modifier.align(Alignment.BottomCenter))
+                        }
+                    }
+                    20 -> {
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            DinoGameView(
+                                windowResource = applicationContext.resources,
+                                maxWidth = maxWidth,
+                                maxHeight = maxHeight,
+                            )
                         }
                     }
                 }
