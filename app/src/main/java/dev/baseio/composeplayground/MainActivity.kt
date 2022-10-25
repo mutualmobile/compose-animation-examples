@@ -22,6 +22,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import dev.baseio.composeplayground.contributors.ShubhamSingh
 import dev.baseio.composeplayground.ui.animations.AndroidMadSkills
+import dev.baseio.composeplayground.ui.animations.BladeAnimation
 import dev.baseio.composeplayground.ui.animations.BottleLoadingAnimation
 import dev.baseio.composeplayground.ui.animations.ChatMessageReactions
 import dev.baseio.composeplayground.ui.animations.Github404
@@ -81,7 +82,8 @@ class MainActivity : ComponentActivity() {
         ) {
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
-                count = 15, state = pagerState,
+                count = 21,
+                state = pagerState
             ) { page ->
                 // Our page content
                 when (page) {
@@ -183,6 +185,7 @@ class MainActivity : ComponentActivity() {
                             ShubhamSingh(modifier = Modifier.align(Alignment.BottomCenter))
                         }
                     }
+                    20 -> { BladeAnimation() }
                 }
             }
         }
